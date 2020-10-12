@@ -1,10 +1,33 @@
+#ifndef __CLASSFILE_H_INCLUDED__
+#define __CLASSFILE_H_INCLUDED__
+
 #include <iostream>
 #include <vector>
+
+#include "./cp_info.hpp"
 using namespace std;
 
 typedef unsigned char BYTE;
 
-typedef struct CPInfo {};
+typedef struct CPInfo {
+  uint8_t tag;
+  union {
+    ConstantClassInfo CONSTANT_Class_info;
+    ConstantFieldrefInfo CONSTANT_Fieldref_info;
+    ConstantMethodrefInfo CONSTANT_Methodref_info;
+    ConstantInterfaceMethodrefInfo CONSTANT_InterfaceMethodref_info;
+    ConstantStringInfo CONSTANT_String_info;
+    ConstantIntegerInfo CONSTANT_Integer_info;
+    ConstantFloatInfo CONSTANT_Float_info;
+    ConstantLongInfo CONSTANT_Long_info;
+    ConstantDoubleInfo CONSTANT_Double_info;
+    ConstantNameAndTypeInfo CONSTANT_NameAndType_info;
+    ConstantUTF8Info CONSTANT_Utf8_info;
+    ConstantMethodHandleInfo CONSTANT_MethodHandle_info;
+    ConstantMethodTypeInfo CONSTANT_MethodType_info;
+    ConstantInvokeDynamicInfo CONSTANT_InvokeDynamic_info;
+  };
+};
 
 typedef struct InterfaceInfo {};
 
@@ -35,4 +58,5 @@ typedef struct ClassFile {
 
 vector<BYTE> readFile(string filename);
 
-void printFile(string file);
+void loadFile(string file);
+#endif
