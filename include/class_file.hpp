@@ -34,7 +34,7 @@ typedef struct InterfaceInfo {};
 typedef struct AttributeInfo {
   uint16_t attribute_name_index;
   uint32_t attribute_length;
-  // vetor de tamanho attribute_length;
+  vector<uint32_t> info;
 };
 
 typedef struct FieldInfo {
