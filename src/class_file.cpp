@@ -58,7 +58,6 @@ CPInfo setConstantInfo(unsigned int tag, vector<BYTE> fileData, int position) {
 }
 
 int nextPosition(int tag, vector<BYTE> fileData, int position) {
-  cout << tag << endl;
   switch (tag) {
     case 7:
       return 3;
@@ -93,10 +92,9 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
     case 1: {
       uint16_t length;
       uint16_t result =
-          getDatafromArray(fileData, position, position + 2, length);
-      cout << "RESULTADO " << result << endl;
+          getDatafromArray(fileData, position + 1, position + 3, length);
 
-      return 4;
+      return 3 + result;
     } break;
     case 15:
       return 4;
@@ -121,19 +119,19 @@ void loadFile(string file) {
   classFile.constantPoolCount =
       getDatafromArray(fileData, 8, 10, classFile.constantPoolCount);
 
-  int position = 0;
+  int position = 10;  // inicializado em 10 pois a CP começa no 10o byte.
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
     // CPInfo aux = setConstantInfo(bitset<8>(fileData[10 + i]).to_ulong(),
     //                              fileData, 10 + i + position);
-    cout << "POSITION: " << position << endl;
+
     position =
-        position + nextPosition(bitset<8>(fileData[10 + position]).to_ulong(),
+        position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                 fileData, position);
 
     // cout << i << " " << position << endl;
   }
 
-  classFile.accessFlags = getDatafromArray(
-      fileData, position + 10, position + 12, classFile.accessFlags);
-  cout << hex << uppercase << classFile.accessFlags;
+  // classFile.accessFlags = getDatafromArray(
+  //     fileData, position + 10, position + 12, classFile.accessFlags);
+  // cout << hex << uppercase << classFile.accessFlags;
 };
