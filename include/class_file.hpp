@@ -31,11 +31,21 @@ typedef struct CPInfo {
 
 typedef struct InterfaceInfo {};
 
-typedef struct FieldInfo {};
+typedef struct AttributeInfo {
+  uint16_t attribute_name_index;
+  uint32_t attribute_length;
+  // vetor de tamanho attribute_length;
+};
+
+typedef struct FieldInfo {
+  uint16_t access_flags;
+  uint16_t name_index;
+  uint16_t descriptor_index;
+  uint16_t attributes_count;
+  vector<AttributeInfo> attributes;
+};
 
 typedef struct MethodInfo {};
-
-typedef struct AttributeInfo {};
 
 typedef struct ClassFile {
   uint32_t magic;

@@ -201,12 +201,16 @@ void printGeneralInformation() {
        << getMajorVersion(classFile.majorVersion) << ']' << endl;
   cout << "Constant pool count: " << dec << classFile.constantPoolCount << endl;
   cout << "Access flags: " << accessFlagsDecoder(classFile.accessFlags) << endl;
-  cout << "This class: " << endl;
-  cout << "Super class: " << endl;
-  cout << "Interfaces count: " << endl;
-  cout << "Fields count: " << endl;
-  cout << "Methods count: " << endl;
-  cout << "Atributes count: " << endl;
+  cout << "This class: "
+       << "referencia pra constant pool posicao: " << dec << uppercase
+       << classFile.thisClass << endl;
+  cout << "Super class: "
+       << "valor 0 ou referencia pra constant pool posicao: " << dec << uppercase
+       << classFile.superClass << endl;
+  cout << "Interfaces count: " << dec << classFile.interfacesCount << endl;
+  cout << "Fields count: " << dec << classFile.fieldsCount << endl;
+  cout << "Methods count: " << dec << classFile.methodsCount << endl;
+  cout << "Atributes count: " << dec << classFile.attributesCount << endl;
   cout << endl;
 };
 

@@ -109,35 +109,8 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
   }
 }
 
-string intToHex(uint16_t integer) {
-  stringstream aux;
-  aux << hex << uppercase << integer;
-  return aux.str();
-}
-
-void setAccessFlags(uint16_t flag) {
-
-  string hexFlag = intToHex(flag);
-  int hexSize = hexFlag.length();
-  string flagInHexString;
-
-  // append 0s ao começo da string (precisa ser sem 4 numeros)
-  flagInHexString = std::string(3, '0').append(hexFlag);
-  if (hexSize > 1) {
-    flagInHexString = std::string(2, '0').append(hexFlag);
-    
-  }
-  if (hexSize > 2) {
-    flagInHexString = std::string(1, '0').append(hexFlag);
-  }
-  if (hexSize > 3) {
-    flagInHexString = std::string(0, '0').append(hexFlag);
-  }
-
-  // atribuindo o hex ao Class File e retornando string completa.
-  classFile.accessFlags = std::stoi(flagInHexString, 0, 16);
-
-  return;
+int fieldPositionIncrement(int attr_counts) {
+  int increment = 8;
 }
 
 void loadFile(string file) {
@@ -163,6 +136,43 @@ void loadFile(string file) {
     // cout << i << " " << position << endl;
   }
 
-  setAccessFlags(getDatafromArray(fileData, position, position + 2,
-                                      classFile.accessFlags));
+  classFile.accessFlags =
+      getDatafromArray(fileData, position, position + 2, classFile.accessFlags);
+  position = position + 2;
+
+  classFile.thisClass =
+      getDatafromArray(fileData, position, position + 2, classFile.thisClass);
+  position = position + 2;
+
+  classFile.superClass =
+      getDatafromArray(fileData, position, position + 2, classFile.superClass);
+  position = position + 2;
+
+  classFile.interfacesCount = getDatafromArray(fileData, position, position + 2,
+                                               classFile.interfacesCount);
+  position = position + 2;
+
+  for (int i = 0; i < classFile.interfacesCount; i++) {
+    /*TODO*/
+    // array de referencias de interfaces. Atualmente só incrementa a posição
+    // (sempre u2) para continuar a leitura
+    position = position + 2;
+  }
+
+  classFile.fieldsCount =
+      getDatafromArray(fileData, position, position + 2, classFile.fieldsCount);
+  position = position + 2;
+
+  for (int i = 0; i < classFile.fieldsCount; i++) {
+    /*TODO*/
+    int attr_counts = 0;
+
+    /*
+      empaquei, não sei pegar o tamanho dos fields pq nao sei como acessar o numero de atributos dele para poder pegar o tamanho do attributes_info. 
+      muita coisa dentro de outra.
+      inception de tamanhos. rip.
+    */
+
+    position = position + fieldPositionIncrement(attr_counts);
+  }
 };
