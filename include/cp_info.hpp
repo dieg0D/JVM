@@ -49,7 +49,7 @@ typedef struct {
 
 typedef struct {
   uint16_t length;
-  uint8_t *bytes;
+  uint8_t bytes;
 } ConstantUTF8Info;
 
 typedef struct {
