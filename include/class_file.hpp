@@ -45,7 +45,13 @@ typedef struct FieldInfo {
   vector<AttributeInfo> attributes;
 };
 
-typedef struct MethodInfo {};
+typedef struct MethodInfo {
+  uint16_t access_flags;
+  uint16_t name_index;
+  uint16_t descriptor_index;
+  uint16_t attributes_count;
+  vector<AttributeInfo> attributes;
+};
 
 typedef struct ClassFile {
   uint32_t magic;
