@@ -18,6 +18,3 @@ comando de compilação `g++ src/*.cpp -std=c++11 -Wall -o bin/jvm` .
 
 Entre na pasta **bin** e rode o comando `./jvm <arquivo.class>`, substituindo o `<arquivo.class>` pelo arquivo que deseja testar. Exemplo: `.\bin\jvm.exe .\examples\HelloWorld.class` .
 
-
-
-
