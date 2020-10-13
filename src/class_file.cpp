@@ -3,6 +3,7 @@
 #include <bitset>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "../include/common.hpp"
@@ -108,14 +109,21 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
   }
 }
 
+int fieldPositionIncrement(int attr_counts) {
+  int increment = 8;
+}
+
 void loadFile(string file) {
   vector<BYTE> fileData = readFile(file);
 
   classFile.magic = getDatafromArray(fileData, 0, 4, classFile.magic);
+
   classFile.minorVersion =
       getDatafromArray(fileData, 4, 6, classFile.minorVersion);
+
   classFile.majorVersion =
       getDatafromArray(fileData, 6, 8, classFile.majorVersion);
+
   classFile.constantPoolCount =
       getDatafromArray(fileData, 8, 10, classFile.constantPoolCount);
 
@@ -123,15 +131,48 @@ void loadFile(string file) {
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
     // CPInfo aux = setConstantInfo(bitset<8>(fileData[10 + i]).to_ulong(),
     //                              fileData, 10 + i + position);
-
-    position =
-        position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
-                                fileData, position);
-
+    position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
+                                       fileData, position);
     // cout << i << " " << position << endl;
   }
 
-  // classFile.accessFlags = getDatafromArray(
-  //     fileData, position + 10, position + 12, classFile.accessFlags);
-  // cout << hex << uppercase << classFile.accessFlags;
+  classFile.accessFlags =
+      getDatafromArray(fileData, position, position + 2, classFile.accessFlags);
+  position = position + 2;
+
+  classFile.thisClass =
+      getDatafromArray(fileData, position, position + 2, classFile.thisClass);
+  position = position + 2;
+
+  classFile.superClass =
+      getDatafromArray(fileData, position, position + 2, classFile.superClass);
+  position = position + 2;
+
+  classFile.interfacesCount = getDatafromArray(fileData, position, position + 2,
+                                               classFile.interfacesCount);
+  position = position + 2;
+
+  for (int i = 0; i < classFile.interfacesCount; i++) {
+    /*TODO*/
+    // array de referencias de interfaces. Atualmente só incrementa a posição
+    // (sempre u2) para continuar a leitura
+    position = position + 2;
+  }
+
+  classFile.fieldsCount =
+      getDatafromArray(fileData, position, position + 2, classFile.fieldsCount);
+  position = position + 2;
+
+  for (int i = 0; i < classFile.fieldsCount; i++) {
+    /*TODO*/
+    int attr_counts = 0;
+
+    /*
+      empaquei, não sei pegar o tamanho dos fields pq nao sei como acessar o numero de atributos dele para poder pegar o tamanho do attributes_info. 
+      muita coisa dentro de outra.
+      inception de tamanhos. rip.
+    */
+
+    position = position + fieldPositionIncrement(attr_counts);
+  }
 };
