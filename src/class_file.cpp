@@ -115,146 +115,29 @@ string intToHex(uint16_t integer) {
   return aux.str();
 }
 
-string accessFlagsDecoder(uint16_t flag) {
-  bool acc_public = false;
-  bool acc_final = false;
-  bool acc_super = false;
-  bool acc_interface = false;
-  bool acc_abstract = false;
-  bool acc_synthetic = false;
-  bool acc_annotation = false;
-  bool acc_enum = false;
+void setAccessFlags(uint16_t flag) {
 
   string hexFlag = intToHex(flag);
   int hexSize = hexFlag.length();
   string flagInHexString;
-  string classFileAccessFlagString;
 
-  // set flags e append 0s ao começo da string (precisa ser sem 4 numeros)
+  // append 0s ao começo da string (precisa ser sem 4 numeros)
   flagInHexString = std::string(3, '0').append(hexFlag);
-  switch (hexFlag[hexSize - 1]) {
-    case '1':
-      acc_public = true;
-      break;
-  }
   if (hexSize > 1) {
     flagInHexString = std::string(2, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 2]) {
-      case '1':
-        acc_final = true;
-        break;
-      case '2':
-        acc_super = true;
-        break;
-      case '3':
-        acc_final = true;
-        acc_super = true;
-        break;
-    }
+    
   }
   if (hexSize > 2) {
     flagInHexString = std::string(1, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 3]) {
-      case '2':
-        acc_interface = true;
-        break;
-      case '4':
-        acc_abstract = true;
-        break;
-      case '6':
-        acc_interface = true;
-        acc_abstract = true;
-        break;
-    }
   }
   if (hexSize > 3) {
     flagInHexString = std::string(0, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 4]) {
-      case '1':
-        acc_synthetic = true;
-        break;
-      case '2':
-        acc_annotation = true;
-        break;
-      case '4':
-        acc_enum = true;
-        break;
-      case '3':
-        acc_synthetic = true;
-        acc_annotation = true;
-        break;
-      case '5':
-        acc_synthetic = true;
-        acc_enum = true;
-        break;
-      case '6':
-        acc_annotation = true;
-        acc_enum = true;
-        break;
-      case '7':
-        acc_synthetic = true;
-        acc_annotation = true;
-        acc_enum = true;
-        break;
-    }
   }
-
-  // flags validações
-  if (acc_interface == true) {
-    if (acc_abstract == false) {
-      cout << "Interface precisa ser declarada como abstrata. \n";
-    } else {
-      if (acc_final == true || acc_super == true || acc_enum == true) {
-        cout
-            << "Interface não pode ser declarada como Final, Super ou Enum. \n";
-      }
-    }
-  } else {
-    if (acc_annotation == true) {
-      cout << "Uma classe não pode ser declarada como Annotation. \n";
-    }
-    if (acc_final == true && acc_abstract == true) {
-      cout << "Classes não podem ser declaradas como Final e Abstract ao mesmo "
-              "tempo. \n";
-    }
-  }
-  if (acc_annotation == true && acc_interface == false) {
-    cout << "Annotations devem também ser declaradas como Interface. \n";
-  }
-
-  // construir string para exibir no General Info
-  classFileAccessFlagString = "0x" + flagInHexString + " [";
-  if (acc_public == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "public ";
-  };
-  if (acc_final == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "final ";
-  };
-  // if (acc_super == true) {
-  //   classFileAccessFlagString = classFileAccessFlagString + "super ";
-  // };
-  if (acc_interface == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "interface ";
-  };
-  if (acc_abstract == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "abstract ";
-  };
-  if (acc_synthetic == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "synthetic ";
-  };
-  if (acc_annotation == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "annotation ";
-  };
-  if (acc_enum == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "enum ";
-  };
-  classFileAccessFlagString.pop_back();
-  classFileAccessFlagString = classFileAccessFlagString + "]";
 
   // atribuindo o hex ao Class File e retornando string completa.
   classFile.accessFlags = std::stoi(flagInHexString, 0, 16);
 
-  return classFileAccessFlagString;
+  return;
 }
 
 void loadFile(string file) {
@@ -280,6 +163,6 @@ void loadFile(string file) {
     // cout << i << " " << position << endl;
   }
 
-  accessFlagsDecoder(getDatafromArray(fileData, position, position + 2,
+  setAccessFlags(getDatafromArray(fileData, position, position + 2,
                                       classFile.accessFlags));
 };
