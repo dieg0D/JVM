@@ -268,10 +268,11 @@ void loadFile(string file) {
   position = position + 2;
 
   for (int i = 0; i < classFile.interfacesCount; i++) {
-    /*TODO*/
-    // array de referencias de interfaces. Atualmente só incrementa a posição
-    // (sempre u2) para continuar a leitura
+    uint16_t inter_info;
+    inter_info = getDatafromArray(fileData, position, position + 2, inter_info);
     position = position + 2;
+
+    classFile.interfaces.push_back(inter_info);
   }
 
   classFile.fieldsCount =

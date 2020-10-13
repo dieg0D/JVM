@@ -29,8 +29,6 @@ typedef struct CPInfo {
   };
 };
 
-typedef struct InterfaceInfo {};
-
 typedef struct AttributeInfo {
   uint16_t attribute_name_index;
   uint32_t attribute_length;
@@ -63,7 +61,7 @@ typedef struct ClassFile {
   uint16_t thisClass;
   uint16_t superClass;
   uint16_t interfacesCount;
-  vector<InterfaceInfo> interfaces;
+  vector<uint16_t> interfaces;
   uint16_t fieldsCount;
   vector<FieldInfo> fields;
   uint16_t methodsCount;
