@@ -261,6 +261,16 @@ void loadFile(string file) {
     classFile.constantPool.push_back(setConstantInfo(
         bitset<8>(fileData[position]).to_ulong(), fileData, position));
 
+    stringstream stream;
+    stream << (unsigned int)(unsigned char)(classFile.constantPool[i].tag);
+    string tag_info = stream.str();
+    int tag = stoi(tag_info);
+    if (tag == 5 || tag == 6) {
+      CPInfo cp_info;
+      cp_info.tag = 99;
+      classFile.constantPool.push_back(cp_info);
+      i++;
+    }
     position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                        fileData, position);
   }
