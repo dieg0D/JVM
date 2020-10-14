@@ -418,6 +418,19 @@ void printConstantPool() {
 void printInterfaces() {
   cout << "______________________Interfaces_____________________" << endl
        << endl;
+  
+  for(int i = 0; i < classFile.interfacesCount; i++){
+    cout << endl << "[" << dec << i << "] ";
+
+    string inter_name =
+      getCPInfoFirst(classFile.constantPool,
+      classFile.interfaces[i] -1);
+
+      cout << "Interface: cp_info #"
+      <<classFile.interfaces[i] << " <" << inter_name
+      << " >" << endl << endl;
+      
+  }
 
   cout << endl;
 };
