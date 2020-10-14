@@ -67,7 +67,7 @@ typedef struct ClassFile {
   uint16_t methodsCount;
   vector<MethodInfo> methods;
   uint16_t attributesCount;
-  AttributeInfo attributes;
+  vector<AttributeInfo> attributes;
 };
 
 vector<BYTE> readFile(string filename);
