@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
          << "Arquivo recebido, tentado abrir..." << endl
          << endl;
     loadFile(argv[1]);
-    printClassFile();
+    //printClassFile();
   } else {
     cout << "[main] "
          << "O programa precisa de um arquivo.class para funcionar. Por favor "

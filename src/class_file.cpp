@@ -235,21 +235,6 @@ void loadFile(string file) {
     classFile.constantPool.push_back(setConstantInfo(
         bitset<8>(fileData[position]).to_ulong(), fileData, position));
 
-    // cout << hex << (unsigned int)(unsigned
-    // char)(classFile.constantPool[i].tag) << endl; if ((unsigned int)(unsigned
-    // char)(classFile.constantPool[i].tag) == 10) {
-    //   cout << "Class index "
-    //        << (unsigned int)(unsigned char)(classFile.constantPool[i]
-    //                                             .CONSTANT_Methodref_info
-    //                                             .class_index)
-    //        << endl;
-    //   cout << "Name index "
-    //        << (unsigned int)(unsigned char)(classFile.constantPool[i]
-    //                                             .CONSTANT_Methodref_info
-    //                                             .name_and_type_index)
-    //        << endl;
-    // }
-
     position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                        fileData, position);
   }
@@ -371,4 +356,24 @@ void loadFile(string file) {
   classFile.attributesCount = getDatafromArray(fileData, position, position + 2,
                                                classFile.attributesCount);
   position = position + 2;
+
+  for (int j = 0; j < classFile.attributesCount; j++) {
+      AttributeInfo attr_info;
+      attr_info.attribute_name_index = getDatafromArray(
+          fileData, position, position + 2, attr_info.attribute_name_index);
+      position = position + 2;
+
+      attr_info.attribute_length = getDatafromArray(
+          fileData, position, position + 4, attr_info.attribute_length);
+      position = position + 4;
+
+      int attr_lenght = (int)attr_info.attribute_length;
+      for (int k = 0; k < attr_lenght; k++) {
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
+        attr_info.info.push_back(info);
+      }
+      classFile.attributes.push_back(attr_info);
+    }
 };
