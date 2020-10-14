@@ -216,10 +216,169 @@ void printGeneralInformation() {
   cout << endl;
 };
 
-void printConstantPool() {
-  cout << "____________________Constant Pool____________________" << endl
-       << endl;
+string utf8Converter(uint8_t value){
+  stringstream stream;
+  stream << (unsigned int)(unsigned char)(value);
+  string convertedStr = stream.str();
+  return convertedStr;
+}
 
+string getCPInfoFirst (vector<CPInfo> cp_info, int indice){
+  stringstream stream;
+  stream << (unsigned int)(unsigned char)(cp_info[indice].tag);
+  string tag_info = stream.str();
+  int tag = stoi(tag_info);
+  
+  if(tag == 1){
+    return (char*)(cp_info[indice].CONSTANT_Utf8_info.bytes);
+  }
+
+  cout << "1-TAG: " << tag << endl;
+  switch (tag)
+  {
+  case 7:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_Class_info.name_index-1);
+  case 9:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_Fieldref_info.class_index-1);
+  case 10:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_Methodref_info.class_index-1);
+  case 11:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_InterfaceMethodref_info.class_index-1);
+  case 8:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_String_info.string_index-1);
+  case 12:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_NameAndType_info.name_index-1);
+  default:
+    return "";
+  }
+}
+
+string getCPInfoSecond (vector<CPInfo> cp_info, int indice){
+  stringstream stream;
+  stream << (unsigned int)(unsigned char)(cp_info[indice].tag);
+  string tag_info = stream.str();
+  int tag = stoi(tag_info);
+  
+  if(tag == 1){
+    return (char*)(cp_info[indice].CONSTANT_Utf8_info.bytes);
+  }
+  cout << "2-TAG: " << tag << endl;
+  switch (tag)
+  {
+  case 7:
+    return getCPInfoFirst(cp_info, cp_info[indice].CONSTANT_Class_info.name_index-1);
+  case 9:
+    return getCPInfoSecond(cp_info, cp_info[indice].CONSTANT_Fieldref_info.name_and_type_index-1);
+  case 10:
+    return getCPInfoSecond(cp_info, cp_info[indice].CONSTANT_Methodref_info.name_and_type_index-1);
+  case 11:
+    return getCPInfoSecond(cp_info, cp_info[indice].CONSTANT_InterfaceMethodref_info.name_and_type_index-1);
+  case 12:
+    return getCPInfoSecond(cp_info, cp_info[indice].CONSTANT_NameAndType_info.descriptor_index-1);
+  default:
+    return "";
+  }
+}
+
+
+void printConstantPool() {
+  cout << "____________________Constant Pool____________________" << endl;
+  vector<CPInfo> constant_pool = classFile.constantPool;
+  for(int i = 0; i < classFile.constantPoolCount - 1; i++){
+    cout << "[" << i+1 << "] ";
+    int tag = stoi(utf8Converter(constant_pool[i].tag));
+    switch (tag) {
+    case 7: {
+      cout << "CONSTANT_Class_info" << endl;
+      string class_name = getCPInfoFirst(constant_pool, i);
+      cout << "Class name: cp_info#" << constant_pool[i].CONSTANT_Class_info.name_index << " <" << class_name << "> " << endl;
+    }
+      break;
+    case 9: {
+      cout << "CONSTANT_Fieldref_info" << endl;
+      string class_name = getCPInfoFirst(constant_pool, i);
+      string name_and_type = getCPInfoSecond(constant_pool, i);
+      cout << "Class name:    cp_info#" << constant_pool[i].CONSTANT_Fieldref_info.class_index << " <" << class_name << "> " << endl;
+      cout << "Name and type: cp_info#" << constant_pool[i].CONSTANT_Fieldref_info.name_and_type_index << " <" << name_and_type << "> " << endl;
+    }
+      break;
+    case 10:{
+      cout << "CONSTANT_Methodref_info" << endl;
+      string class_name = getCPInfoFirst(constant_pool, i);
+      string name_and_type = getCPInfoSecond(constant_pool, i);
+      cout << "Class name:    cp_info#" << constant_pool[i].CONSTANT_Methodref_info.class_index << " <" << class_name << "> " << endl;
+      cout << "Name and type: cp_info#" << constant_pool[i].CONSTANT_Methodref_info.name_and_type_index << " <" << name_and_type << "> " << endl;
+    }
+      break;
+    case 11:{
+      cout << "CONSTANT_InterfaceMethodref_info" << endl;
+      string class_name = getCPInfoFirst(constant_pool, i);
+      string name_and_type = getCPInfoSecond(constant_pool, i);
+      cout << "Class name:    cp_info #" << constant_pool[i].CONSTANT_InterfaceMethodref_info.class_index << " <" << class_name << ">" << endl;
+      cout << "Name and type: cp_info #" << constant_pool[i].CONSTANT_InterfaceMethodref_info.name_and_type_index << " <" << name_and_type << ">";
+    }
+      break;
+    case 8:{
+      cout << "CONSTANT_String_info" << endl;
+      string value = getCPInfoFirst(constant_pool, i);
+      cout << "String: cp_info#" << constant_pool[i].CONSTANT_String_info.string_index << " <" << value << "> " << endl;
+    }
+      break;
+    case 3:{
+      cout << "CONSTANT_Integer" << endl;
+      cout << "Bytes: " << constant_pool[i].CONSTANT_Integer_info.bytes << endl;
+    }
+      break;
+    case 4:{
+      cout << "CONSTANT_Float_info" << endl;
+      cout << "Bytes: " << constant_pool[i].CONSTANT_Float_info.bytes << endl;
+    }
+      break;
+    case 5:{
+      cout << "CONSTANT_Long_info" << endl;
+      cout << "High Bytes: " << endl;
+      cout << "Low Bytes:  " << endl;
+      cout << "Long:       " << endl;
+    }
+      break;
+    case 6:{
+      cout << "CONSTANT_Double_info" << endl;
+      cout << "High Bytes: " << endl;
+      cout << "Low Bytes:  " << endl;
+      cout << "Long:       " << endl;
+    }
+      break;
+    case 12:{
+      cout << "CONSTANT_NameAndType_info" << endl;
+      string name = getCPInfoFirst(constant_pool, i);
+      string descriptor = getCPInfoSecond(constant_pool, i);
+      cout << "Name:       cp_info #" << constant_pool[i].CONSTANT_NameAndType_info.name_index << " <" << name << ">" << endl;
+      cout << "Descriptor: cp_info #" << constant_pool[i].CONSTANT_NameAndType_info.descriptor_index << " <" << descriptor << ">" << endl;
+    }
+      break;
+    case 1: {
+      cout << "CONSTANT_Utf8_info" << endl;
+      string name = getCPInfoFirst(constant_pool, i);
+      string descriptor = getCPInfoSecond(constant_pool, i);
+      cout << "Length of byte array: " << constant_pool[i].CONSTANT_Utf8_info.length << endl;
+      cout << "Length of string:     " << constant_pool[i].CONSTANT_Utf8_info.length << endl;
+      cout << "String:               " << constant_pool[i].CONSTANT_Utf8_info.bytes  << endl;
+    }
+      break;
+    case 15:{
+      cout << "CONSTANT_MethodHandle_info" << endl;
+    }
+      break;
+    case 16:{
+      cout << "CONSTANT_MethodType_info" << endl;
+    }
+      break;
+    case 18:{
+      cout << "CONSTANT_InvokeDynamic_info" << endl;
+    }
+      break;
+    }
+  }
   cout << endl;
 };
 

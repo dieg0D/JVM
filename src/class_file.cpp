@@ -130,6 +130,22 @@ CPInfo setConstantInfo(int tag, vector<BYTE> fileData, int position) {
       constant.CONSTANT_Utf8_info.length =
           getDatafromArray(fileData, position + 1, position + 3,
                            constant.CONSTANT_Utf8_info.length);
+      
+      stringstream stream;
+      stream << (unsigned int)(unsigned char)(constant.CONSTANT_Utf8_info.length);
+      string tam = stream.str();
+      int tamanho = stoi(tam);
+      
+      int pos = position + 3;
+      constant.CONSTANT_Utf8_info.bytes = (uint8_t *) calloc(tamanho, sizeof(uint8_t));
+      for(int i = 0; i < tamanho; i++){
+        constant.CONSTANT_Utf8_info.bytes[i] =
+          getDatafromArray(fileData, pos, pos + 1,
+                           sizeof(constant.CONSTANT_Utf8_info.bytes));
+          pos++;
+      }
+      constant.CONSTANT_Utf8_info.bytes[tamanho] = '\0';
+
     } break;
     case 15: {
       constant.tag = tag;
