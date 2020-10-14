@@ -231,11 +231,14 @@ void loadFile(string file) {
   int position = 10;  // inicializado em 10 pois a CP começa no 10o byte.
 
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
-    // A UNION NÃO TÁ FUNCIONANDO AINDA ENTÃO TEMQ EU VER ESSE ROLÊ BEM
     classFile.constantPool.push_back(setConstantInfo(
         bitset<8>(fileData[position]).to_ulong(), fileData, position));
 
     // cout << hex << classFile.constantPool[i].tag << endl;
+    if((unsigned int)(unsigned char)(classFile.constantPool[i].tag) == 10){
+      cout << "Class index " << (unsigned int)(unsigned char)(classFile.constantPool[i].CONSTANT_Methodref_info.class_index) << endl;
+      cout << "Name index " << (unsigned int)(unsigned char)(classFile.constantPool[i].CONSTANT_Methodref_info.name_and_type_index) << endl;
+    }
 
     position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                        fileData, position);
