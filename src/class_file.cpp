@@ -22,7 +22,7 @@ vector<BYTE> readFile(string filename) {
 
   // read the data:
   vector<BYTE> fileData(fileSize);
-  file.read((char*)&fileData[0], fileSize);
+  file.read((char *)&fileData[0], fileSize);
   return fileData;
 };
 
@@ -130,19 +130,20 @@ CPInfo setConstantInfo(int tag, vector<BYTE> fileData, int position) {
       constant.CONSTANT_Utf8_info.length =
           getDatafromArray(fileData, position + 1, position + 3,
                            constant.CONSTANT_Utf8_info.length);
-      
+
       stringstream stream;
-      stream << (unsigned int)(unsigned char)(constant.CONSTANT_Utf8_info.length);
+      stream
+          << (unsigned int)(unsigned char)(constant.CONSTANT_Utf8_info.length);
       string tam = stream.str();
       int tamanho = stoi(tam);
-      
+
       int pos = position + 3;
-      constant.CONSTANT_Utf8_info.bytes = (uint8_t *) calloc(tamanho, sizeof(uint8_t));
-      for(int i = 0; i < tamanho; i++){
-        constant.CONSTANT_Utf8_info.bytes[i] =
-          getDatafromArray(fileData, pos, pos + 1,
-                           sizeof(constant.CONSTANT_Utf8_info.bytes));
-          pos++;
+      constant.CONSTANT_Utf8_info.bytes =
+          (uint8_t *)calloc(tamanho, sizeof(uint8_t));
+      for (int i = 0; i < tamanho; i++) {
+        constant.CONSTANT_Utf8_info.bytes[i] = getDatafromArray(
+            fileData, pos, pos + 1, sizeof(constant.CONSTANT_Utf8_info.bytes));
+        pos++;
       }
       constant.CONSTANT_Utf8_info.bytes[tamanho] = '\0';
 
@@ -251,6 +252,16 @@ void loadFile(string file) {
     classFile.constantPool.push_back(setConstantInfo(
         bitset<8>(fileData[position]).to_ulong(), fileData, position));
 
+    stringstream stream;
+    stream << (unsigned int)(unsigned char)(classFile.constantPool[i].tag);
+    string tag_info = stream.str();
+    int tag = stoi(tag_info);
+    if (tag == 5 || tag == 6) {
+      CPInfo cp_info;
+      cp_info.tag = 99;
+      classFile.constantPool.push_back(cp_info);
+      i++;
+    }
     position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                        fileData, position);
   }
@@ -329,7 +340,6 @@ void loadFile(string file) {
                                             classFile.methodsCount);
   position = position + 2;
   for (int i = 0; i < classFile.methodsCount; i++) {
-
     MethodInfo methods;
     methods.access_flags = getDatafromArray(fileData, position, position + 2,
                                             methods.access_flags);
@@ -374,22 +384,22 @@ void loadFile(string file) {
   position = position + 2;
 
   for (int j = 0; j < classFile.attributesCount; j++) {
-      AttributeInfo attr_info;
-      attr_info.attribute_name_index = getDatafromArray(
-          fileData, position, position + 2, attr_info.attribute_name_index);
-      position = position + 2;
+    AttributeInfo attr_info;
+    attr_info.attribute_name_index = getDatafromArray(
+        fileData, position, position + 2, attr_info.attribute_name_index);
+    position = position + 2;
 
-      attr_info.attribute_length = getDatafromArray(
-          fileData, position, position + 4, attr_info.attribute_length);
-      position = position + 4;
+    attr_info.attribute_length = getDatafromArray(
+        fileData, position, position + 4, attr_info.attribute_length);
+    position = position + 4;
 
-      int attr_lenght = (int)attr_info.attribute_length;
-      for (int k = 0; k < attr_lenght; k++) {
-        uint8_t info;
-        info = getDatafromArray(fileData, position, position + 1, info);
-        position = position + 1;
-        attr_info.info.push_back(info);
-      }
-      classFile.attributes.push_back(attr_info);
+    int attr_lenght = (int)attr_info.attribute_length;
+    for (int k = 0; k < attr_lenght; k++) {
+      uint8_t info;
+      info = getDatafromArray(fileData, position, position + 1, info);
+      position = position + 1;
+      attr_info.info.push_back(info);
     }
+    classFile.attributes.push_back(attr_info);
+  }
 };

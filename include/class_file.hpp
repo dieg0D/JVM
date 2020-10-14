@@ -26,6 +26,7 @@ typedef struct {
     ConstantMethodHandleInfo CONSTANT_MethodHandle_info;
     ConstantMethodTypeInfo CONSTANT_MethodType_info;
     ConstantInvokeDynamicInfo CONSTANT_InvokeDynamic_info;
+    LargeNumeric CONSTANT_LargeNumeric_info;
   };
 } CPInfo;
 

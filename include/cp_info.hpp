@@ -66,4 +66,7 @@ typedef struct {
   uint16_t bootstrap_method_attr_index;
   uint16_t name_and_type_index;
 } ConstantInvokeDynamicInfo;
+
+typedef struct {
+} LargeNumeric;
 #endif
