@@ -736,6 +736,19 @@ void printConstantPool() {
 void printInterfaces() {
   cout << "______________________Interfaces_____________________" << endl
        << endl;
+  
+  for(int i = 0; i < classFile.interfacesCount; i++){
+    cout << endl << "[" << dec << i << "] ";
+
+    string inter_name =
+      getCPInfoFirst(classFile.constantPool,
+      classFile.interfaces[i] -1);
+
+      cout << "Interface: cp_info #"
+      <<classFile.interfaces[i] << " <" << inter_name
+      << " >" << endl << endl;
+      
+  }
 
   cout << endl;
 };
@@ -815,6 +828,24 @@ void printMethods() {
 void printAttributes() {
   cout << "_____________________Attributes______________________" << endl
        << endl;
+  for (int i = 0; i < classFile.attributesCount; i++) {
+    string attr_name =
+        getCPInfoFirst(classFile.constantPool,
+                       classFile.attributes[i].attribute_name_index - 1);
+
+    cout << endl << "[" << dec << i + 1 << "] " << attr_name << endl;
+    cout << "Generic info ---------------------------------------------"
+         << endl;
+    cout << "Attribute name index: cp_info #"
+         << classFile.attributes[i].attribute_name_index << " <" << attr_name
+         << ">" << endl;
+    cout << "Attribute length:     " << classFile.attributes[i].attribute_length
+         << endl
+         << endl;
+    // cout << "Specific info --------------------------------------------" <<
+    // endl
+    //      << endl;
+  }
 
   cout << endl;
 };

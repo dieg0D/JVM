@@ -22,7 +22,7 @@ vector<BYTE> readFile(string filename) {
 
   // read the data:
   vector<BYTE> fileData(fileSize);
-  file.read((char*)&fileData[0], fileSize);
+  file.read((char *)&fileData[0], fileSize);
   return fileData;
 };
 
@@ -130,19 +130,20 @@ CPInfo setConstantInfo(int tag, vector<BYTE> fileData, int position) {
       constant.CONSTANT_Utf8_info.length =
           getDatafromArray(fileData, position + 1, position + 3,
                            constant.CONSTANT_Utf8_info.length);
-      
+
       stringstream stream;
-      stream << (unsigned int)(unsigned char)(constant.CONSTANT_Utf8_info.length);
+      stream
+          << (unsigned int)(unsigned char)(constant.CONSTANT_Utf8_info.length);
       string tam = stream.str();
       int tamanho = stoi(tam);
-      
+
       int pos = position + 3;
-      constant.CONSTANT_Utf8_info.bytes = (uint8_t *) calloc(tamanho, sizeof(uint8_t));
-      for(int i = 0; i < tamanho; i++){
-        constant.CONSTANT_Utf8_info.bytes[i] =
-          getDatafromArray(fileData, pos, pos + 1,
-                           sizeof(constant.CONSTANT_Utf8_info.bytes));
-          pos++;
+      constant.CONSTANT_Utf8_info.bytes =
+          (uint8_t *)calloc(tamanho, sizeof(uint8_t));
+      for (int i = 0; i < tamanho; i++) {
+        constant.CONSTANT_Utf8_info.bytes[i] = getDatafromArray(
+            fileData, pos, pos + 1, sizeof(constant.CONSTANT_Utf8_info.bytes));
+        pos++;
       }
       constant.CONSTANT_Utf8_info.bytes[tamanho] = '\0';
 
@@ -233,19 +234,28 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
 
 void loadFile(string file) {
   vector<BYTE> fileData = readFile(file);
+  int position = 0;
 
-  classFile.magic = getDatafromArray(fileData, 0, 4, classFile.magic);
+  classFile.magic =
+      getDatafromArray(fileData, position, position + 4, classFile.magic);
+  position = position + 4;
 
-  classFile.minorVersion =
-      getDatafromArray(fileData, 4, 6, classFile.minorVersion);
+  if (classFile.magic != 3405691582) {
+    cout << "O magic number nao e 0xCAFEBABE! Programa encerrado!" << endl;
+    exit(0);
+  }
 
-  classFile.majorVersion =
-      getDatafromArray(fileData, 6, 8, classFile.majorVersion);
+  classFile.minorVersion = getDatafromArray(fileData, position, position + 2,
+                                            classFile.minorVersion);
+  position = position + 2;
 
-  classFile.constantPoolCount =
-      getDatafromArray(fileData, 8, 10, classFile.constantPoolCount);
+  classFile.majorVersion = getDatafromArray(fileData, position, position + 2,
+                                            classFile.majorVersion);
+  position = position + 2;
 
-  int position = 10;  // inicializado em 10 pois a CP começa no 10o byte.
+  classFile.constantPoolCount = getDatafromArray(
+      fileData, position, position + 2, classFile.constantPoolCount);
+  position = position + 2;
 
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
     classFile.constantPool.push_back(setConstantInfo(
@@ -329,7 +339,6 @@ void loadFile(string file) {
                                             classFile.methodsCount);
   position = position + 2;
   for (int i = 0; i < classFile.methodsCount; i++) {
-
     MethodInfo methods;
     methods.access_flags = getDatafromArray(fileData, position, position + 2,
                                             methods.access_flags);
@@ -374,22 +383,22 @@ void loadFile(string file) {
   position = position + 2;
 
   for (int j = 0; j < classFile.attributesCount; j++) {
-      AttributeInfo attr_info;
-      attr_info.attribute_name_index = getDatafromArray(
-          fileData, position, position + 2, attr_info.attribute_name_index);
-      position = position + 2;
+    AttributeInfo attr_info;
+    attr_info.attribute_name_index = getDatafromArray(
+        fileData, position, position + 2, attr_info.attribute_name_index);
+    position = position + 2;
 
-      attr_info.attribute_length = getDatafromArray(
-          fileData, position, position + 4, attr_info.attribute_length);
-      position = position + 4;
+    attr_info.attribute_length = getDatafromArray(
+        fileData, position, position + 4, attr_info.attribute_length);
+    position = position + 4;
 
-      int attr_lenght = (int)attr_info.attribute_length;
-      for (int k = 0; k < attr_lenght; k++) {
-        uint8_t info;
-        info = getDatafromArray(fileData, position, position + 1, info);
-        position = position + 1;
-        attr_info.info.push_back(info);
-      }
-      classFile.attributes.push_back(attr_info);
+    int attr_lenght = (int)attr_info.attribute_length;
+    for (int k = 0; k < attr_lenght; k++) {
+      uint8_t info;
+      info = getDatafromArray(fileData, position, position + 1, info);
+      position = position + 1;
+      attr_info.info.push_back(info);
     }
+    classFile.attributes.push_back(attr_info);
+  }
 };
