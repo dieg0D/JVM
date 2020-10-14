@@ -210,7 +210,7 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
       return 5;
       break;
     case 1: {
-      uint16_t length;
+      uint16_t length = 0;
       uint16_t result =
           getDatafromArray(fileData, position + 1, position + 3, length);
 
@@ -225,10 +225,11 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
     case 18:
       return 5;
       break;
+    default:
+      return 0;
+      break;
   }
 }
-
-int fieldPositionIncrement(int attr_counts) { int increment = 8; }
 
 void loadFile(string file) {
   vector<BYTE> fileData = readFile(file);
@@ -249,12 +250,6 @@ void loadFile(string file) {
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
     classFile.constantPool.push_back(setConstantInfo(
         bitset<8>(fileData[position]).to_ulong(), fileData, position));
-
-    // cout << hex << classFile.constantPool[i].tag << endl;
-    if((unsigned int)(unsigned char)(classFile.constantPool[i].tag) == 10){
-      cout << "Class index " << (unsigned int)(unsigned char)(classFile.constantPool[i].CONSTANT_Methodref_info.class_index) << endl;
-      cout << "Name index " << (unsigned int)(unsigned char)(classFile.constantPool[i].CONSTANT_Methodref_info.name_and_type_index) << endl;
-    }
 
     position = position + nextPosition(bitset<8>(fileData[position]).to_ulong(),
                                        fileData, position);
@@ -277,10 +272,11 @@ void loadFile(string file) {
   position = position + 2;
 
   for (int i = 0; i < classFile.interfacesCount; i++) {
-    /*TODO*/
-    // array de referencias de interfaces. Atualmente só incrementa a posição
-    // (sempre u2) para continuar a leitura
+    uint16_t inter_info;
+    inter_info = getDatafromArray(fileData, position, position + 2, inter_info);
     position = position + 2;
+
+    classFile.interfaces.push_back(inter_info);
   }
 
   classFile.fieldsCount =
@@ -288,16 +284,112 @@ void loadFile(string file) {
   position = position + 2;
 
   for (int i = 0; i < classFile.fieldsCount; i++) {
-    /*TODO*/
-    int attr_counts = 0;
+    FieldInfo fields;
+    fields.access_flags =
+        getDatafromArray(fileData, position, position + 2, fields.access_flags);
+    position = position + 2;
 
-    /*
-      empaquei, não sei pegar o tamanho dos fields pq nao sei como acessar o
-      numero de atributos dele para poder pegar o tamanho do attributes_info.
-      muita coisa dentro de outra.
-      inception de tamanhos. rip.
-    */
+    fields.name_index =
+        getDatafromArray(fileData, position, position + 2, fields.name_index);
+    position = position + 2;
 
-    position = position + fieldPositionIncrement(attr_counts);
+    fields.descriptor_index = getDatafromArray(fileData, position, position + 2,
+                                               fields.descriptor_index);
+    position = position + 2;
+
+    fields.attributes_count = getDatafromArray(fileData, position, position + 2,
+                                               fields.attributes_count);
+    position = position + 2;
+
+    for (int j = 0; j < fields.attributes_count; j++) {
+      AttributeInfo attr_info;
+      attr_info.attribute_name_index = getDatafromArray(
+          fileData, position, position + 2, attr_info.attribute_name_index);
+      position = position + 2;
+
+      attr_info.attribute_length = getDatafromArray(
+          fileData, position, position + 4, attr_info.attribute_length);
+      position = position + 4;
+
+      int attr_lenght = (int)attr_info.attribute_length;
+      for (int k = 0; k < attr_lenght; k++) {
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
+
+        attr_info.info.push_back(info);
+      }
+
+      fields.attributes.push_back(attr_info);
+    }
+    classFile.fields.push_back(fields);
   }
+
+  classFile.methodsCount = getDatafromArray(fileData, position, position + 2,
+                                            classFile.methodsCount);
+  position = position + 2;
+  for (int i = 0; i < classFile.methodsCount; i++) {
+
+    MethodInfo methods;
+    methods.access_flags = getDatafromArray(fileData, position, position + 2,
+                                            methods.access_flags);
+    position = position + 2;
+
+    methods.name_index =
+        getDatafromArray(fileData, position, position + 2, methods.name_index);
+    position = position + 2;
+
+    methods.descriptor_index = getDatafromArray(
+        fileData, position, position + 2, methods.descriptor_index);
+    position = position + 2;
+
+    methods.attributes_count = getDatafromArray(
+        fileData, position, position + 2, methods.attributes_count);
+    position = position + 2;
+
+    for (int j = 0; j < methods.attributes_count; j++) {
+      AttributeInfo attr_info;
+      attr_info.attribute_name_index = getDatafromArray(
+          fileData, position, position + 2, attr_info.attribute_name_index);
+      position = position + 2;
+
+      attr_info.attribute_length = getDatafromArray(
+          fileData, position, position + 4, attr_info.attribute_length);
+      position = position + 4;
+
+      int attr_lenght = (int)attr_info.attribute_length;
+      for (int k = 0; k < attr_lenght; k++) {
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
+        attr_info.info.push_back(info);
+      }
+      methods.attributes.push_back(attr_info);
+    }
+    classFile.methods.push_back(methods);
+  }
+
+  classFile.attributesCount = getDatafromArray(fileData, position, position + 2,
+                                               classFile.attributesCount);
+  position = position + 2;
+
+  for (int j = 0; j < classFile.attributesCount; j++) {
+      AttributeInfo attr_info;
+      attr_info.attribute_name_index = getDatafromArray(
+          fileData, position, position + 2, attr_info.attribute_name_index);
+      position = position + 2;
+
+      attr_info.attribute_length = getDatafromArray(
+          fileData, position, position + 4, attr_info.attribute_length);
+      position = position + 4;
+
+      int attr_lenght = (int)attr_info.attribute_length;
+      for (int k = 0; k < attr_lenght; k++) {
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
+        attr_info.info.push_back(info);
+      }
+      classFile.attributes.push_back(attr_info);
+    }
 };

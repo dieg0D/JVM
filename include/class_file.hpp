@@ -9,7 +9,7 @@ using namespace std;
 
 typedef unsigned char BYTE;
 
-typedef struct CPInfo {
+typedef struct {
   uint8_t tag;
   union {
     ConstantClassInfo CONSTANT_Class_info;
@@ -27,33 +27,31 @@ typedef struct CPInfo {
     ConstantMethodTypeInfo CONSTANT_MethodType_info;
     ConstantInvokeDynamicInfo CONSTANT_InvokeDynamic_info;
   };
-};
+} CPInfo;
 
-typedef struct InterfaceInfo {};
-
-typedef struct AttributeInfo {
+typedef struct {
   uint16_t attribute_name_index;
   uint32_t attribute_length;
-  // vetor de tamanho attribute_length;
-};
+  vector<uint8_t> info;
+} AttributeInfo;
 
-typedef struct FieldInfo {
+typedef struct {
   uint16_t access_flags;
   uint16_t name_index;
   uint16_t descriptor_index;
   uint16_t attributes_count;
   vector<AttributeInfo> attributes;
-};
+} FieldInfo;
 
-typedef struct MethodInfo {
+typedef struct {
   uint16_t access_flags;
   uint16_t name_index;
   uint16_t descriptor_index;
   uint16_t attributes_count;
   vector<AttributeInfo> attributes;
-};
+} MethodInfo;
 
-typedef struct ClassFile {
+typedef struct {
   uint32_t magic;
   uint16_t minorVersion;
   uint16_t majorVersion;
@@ -63,14 +61,14 @@ typedef struct ClassFile {
   uint16_t thisClass;
   uint16_t superClass;
   uint16_t interfacesCount;
-  vector<InterfaceInfo> interfaces;
+  vector<uint16_t> interfaces;
   uint16_t fieldsCount;
   vector<FieldInfo> fields;
   uint16_t methodsCount;
   vector<MethodInfo> methods;
   uint16_t attributesCount;
-  AttributeInfo attributes;
-};
+  vector<AttributeInfo> attributes;
+} ClassFile;
 
 vector<BYTE> readFile(string filename);
 
