@@ -234,19 +234,28 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
 
 void loadFile(string file) {
   vector<BYTE> fileData = readFile(file);
+  int position = 0;
 
-  classFile.magic = getDatafromArray(fileData, 0, 4, classFile.magic);
+  classFile.magic =
+      getDatafromArray(fileData, position, position + 4, classFile.magic);
+  position = position + 4;
 
-  classFile.minorVersion =
-      getDatafromArray(fileData, 4, 6, classFile.minorVersion);
+  if (classFile.magic != 3405691582) {
+    cout << "O magic number nao e 0xCAFEBABE! Programa encerrado!" << endl;
+    exit(0);
+  }
 
-  classFile.majorVersion =
-      getDatafromArray(fileData, 6, 8, classFile.majorVersion);
+  classFile.minorVersion = getDatafromArray(fileData, position, position + 2,
+                                            classFile.minorVersion);
+  position = position + 2;
 
-  classFile.constantPoolCount =
-      getDatafromArray(fileData, 8, 10, classFile.constantPoolCount);
+  classFile.majorVersion = getDatafromArray(fileData, position, position + 2,
+                                            classFile.majorVersion);
+  position = position + 2;
 
-  int position = 10;  // inicializado em 10 pois a CP começa no 10o byte.
+  classFile.constantPoolCount = getDatafromArray(
+      fileData, position, position + 2, classFile.constantPoolCount);
+  position = position + 2;
 
   for (int i = 0; i < classFile.constantPoolCount - 1; i++) {
     classFile.constantPool.push_back(setConstantInfo(
