@@ -32,7 +32,7 @@ typedef struct {
 typedef struct {
   uint16_t attribute_name_index;
   uint32_t attribute_length;
-  vector<uint32_t> info;
+  vector<uint8_t> info;
 } AttributeInfo;
 
 typedef struct {

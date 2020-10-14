@@ -310,10 +310,11 @@ void loadFile(string file) {
           fileData, position, position + 4, attr_info.attribute_length);
       position = position + 4;
 
-      for (uint32_t k = 0; k < attr_info.attribute_length; k++) {
-        uint32_t info;
-        info = getDatafromArray(fileData, position, position + 4, info);
-        position = position + 4;
+      int attr_lenght = (int)attr_info.attribute_length;
+      for (int k = 0; k < attr_lenght; k++) {
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
 
         attr_info.info.push_back(info);
       }
@@ -326,8 +327,8 @@ void loadFile(string file) {
   classFile.methodsCount = getDatafromArray(fileData, position, position + 2,
                                             classFile.methodsCount);
   position = position + 2;
-  cout << "methods att count " << classFile.methodsCount << endl;
   for (int i = 0; i < classFile.methodsCount; i++) {
+
     MethodInfo methods;
     methods.access_flags = getDatafromArray(fileData, position, position + 2,
                                             methods.access_flags);
@@ -345,7 +346,6 @@ void loadFile(string file) {
         fileData, position, position + 2, methods.attributes_count);
     position = position + 2;
 
-    cout << "methods count " << methods.attributes_count << endl;
     for (int j = 0; j < methods.attributes_count; j++) {
       AttributeInfo attr_info;
       attr_info.attribute_name_index = getDatafromArray(
@@ -357,24 +357,18 @@ void loadFile(string file) {
       position = position + 4;
 
       int attr_lenght = (int)attr_info.attribute_length;
-      cout << position << " "
-           << "att length " << attr_lenght << endl;
       for (int k = 0; k < attr_lenght; k++) {
-        uint32_t info;
-        info = getDatafromArray(fileData, position, position + 4, info);
-        position = position + 4;
-
+        uint8_t info;
+        info = getDatafromArray(fileData, position, position + 1, info);
+        position = position + 1;
         attr_info.info.push_back(info);
       }
-      cout << position << " "
-           << "att length " << attr_lenght << endl;
       methods.attributes.push_back(attr_info);
     }
     classFile.methods.push_back(methods);
   }
 
-  // classFile.attributesCount = getDatafromArray(fileData, position, position +
-  // 2,
-  //                                              classFile.attributesCount);
-  // position = position + 2;
+  classFile.attributesCount = getDatafromArray(fileData, position, position + 2,
+                                               classFile.attributesCount);
+  position = position + 2;
 };
