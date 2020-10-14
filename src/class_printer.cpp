@@ -193,29 +193,6 @@ string accessFlagsDecoder(uint16_t flag) {
   return classFileAccessFlagString;
 }
 
-void printGeneralInformation() {
-  cout << "_________________General Information_________________" << endl
-       << endl;
-  cout << "Magic Number: "
-       << "0x" << hex << uppercase << classFile.magic << endl;
-  cout << "Minor version: " << dec << classFile.minorVersion << endl;
-  cout << "Major version: " << dec << classFile.majorVersion << '['
-       << getMajorVersion(classFile.majorVersion) << ']' << endl;
-  cout << "Constant pool count: " << dec << classFile.constantPoolCount << endl;
-  cout << "Access flags: " << accessFlagsDecoder(classFile.accessFlags) << endl;
-  cout << "This class: "
-       << "referencia pra constant pool posicao: " << dec << uppercase
-       << classFile.thisClass << endl;
-  cout << "Super class: "
-       << "valor 0 ou referencia pra constant pool posicao: " << dec
-       << uppercase << classFile.superClass << endl;
-  cout << "Interfaces count: " << dec << classFile.interfacesCount << endl;
-  cout << "Fields count: " << dec << classFile.fieldsCount << endl;
-  cout << "Methods count: " << dec << classFile.methodsCount << endl;
-  cout << "Atributes count: " << dec << classFile.attributesCount << endl;
-  cout << endl;
-};
-
 string utf8Converter(uint8_t value){
   stringstream stream;
   stream << (unsigned int)(unsigned char)(value);
@@ -233,7 +210,6 @@ string getCPInfoFirst (vector<CPInfo> cp_info, int indice){
     return (char*)(cp_info[indice].CONSTANT_Utf8_info.bytes);
   }
 
-  cout << "1-TAG: " << tag << endl;
   switch (tag)
   {
   case 7:
@@ -262,7 +238,6 @@ string getCPInfoSecond (vector<CPInfo> cp_info, int indice){
   if(tag == 1){
     return (char*)(cp_info[indice].CONSTANT_Utf8_info.bytes);
   }
-  cout << "2-TAG: " << tag << endl;
   switch (tag)
   {
   case 7:
@@ -280,12 +255,39 @@ string getCPInfoSecond (vector<CPInfo> cp_info, int indice){
   }
 }
 
+void printGeneralInformation() {
+  cout << "_________________General Information_________________" << endl
+       << endl;
+  cout << "Magic Number: "
+       << "0x" << hex << uppercase << classFile.magic << endl;
+  cout << "Minor version: " << dec << classFile.minorVersion << endl;
+  cout << "Major version: " << dec << classFile.majorVersion << '['
+       << getMajorVersion(classFile.majorVersion) << ']' << endl;
+  cout << "Constant pool count: " << dec << classFile.constantPoolCount << endl;
+  cout << "Access flags: " << accessFlagsDecoder(classFile.accessFlags) << endl;
+  string this_class = getCPInfoFirst(classFile.constantPool, classFile.thisClass-1);
+  cout << "This class: cp_info#"  << classFile.thisClass << " <" << this_class << ">" << endl;
+  if(classFile.superClass == 1) {
+        cout << "Super class:  cp_info#" << classFile.superClass << "<invalid constant pool reference>" << endl;
+    }
+    else {
+      string super_class = getCPInfoFirst(classFile.constantPool, classFile.superClass-1);
+      cout << "Super class:    cp_info#" << classFile.superClass << " <" << super_class << ">" << endl;
+  }
+  cout << "Interfaces count: " << dec << classFile.interfacesCount << endl;
+  cout << "Fields count: " << dec << classFile.fieldsCount << endl;
+  cout << "Methods count: " << dec << classFile.methodsCount << endl;
+  cout << "Atributes count: " << dec << classFile.attributesCount << endl;
+  cout << endl;
+};
+
+
 
 void printConstantPool() {
-  cout << "____________________Constant Pool____________________" << endl;
+  cout << "____________________Constant Pool____________________" << endl << endl;
   vector<CPInfo> constant_pool = classFile.constantPool;
   for(int i = 0; i < classFile.constantPoolCount - 1; i++){
-    cout << "[" << i+1 << "] ";
+    cout << endl << "[" << dec << i+1 << "] ";
     int tag = stoi(utf8Converter(constant_pool[i].tag));
     switch (tag) {
     case 7: {
@@ -343,8 +345,8 @@ void printConstantPool() {
       break;
     case 6:{
       cout << "CONSTANT_Double_info" << endl;
-      cout << "High Bytes: " << endl;
-      cout << "Low Bytes:  " << endl;
+      cout << "High Bytes: 0x" << setfill('0') << setw(8) << hex << constant_pool[i].CONSTANT_Double_info.high_bytes << endl;
+      cout << "Low Bytes:  0x" << setfill('0') << setw(8) << hex << constant_pool[i].CONSTANT_Double_info.high_bytes << endl;
       cout << "Long:       " << endl;
     }
       break;
