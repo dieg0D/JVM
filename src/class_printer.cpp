@@ -44,6 +44,8 @@ string getMajorVersion(unsigned int major) {
 
     case 57:
       return "1.13";
+    default:
+      return "0";
   }
 }
 string integerToHex(uint16_t integer) {
@@ -205,8 +207,8 @@ void printGeneralInformation() {
        << "referencia pra constant pool posicao: " << dec << uppercase
        << classFile.thisClass << endl;
   cout << "Super class: "
-       << "valor 0 ou referencia pra constant pool posicao: " << dec << uppercase
-       << classFile.superClass << endl;
+       << "valor 0 ou referencia pra constant pool posicao: " << dec
+       << uppercase << classFile.superClass << endl;
   cout << "Interfaces count: " << dec << classFile.interfacesCount << endl;
   cout << "Fields count: " << dec << classFile.fieldsCount << endl;
   cout << "Methods count: " << dec << classFile.methodsCount << endl;
