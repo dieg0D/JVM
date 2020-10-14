@@ -2,6 +2,7 @@
 #define __CLASSPRINTER_H_INCLUDED__
 
 #include <iostream>
+#include <utility>
 
 using namespace std;
 

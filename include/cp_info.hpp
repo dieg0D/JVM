@@ -1,6 +1,7 @@
 #ifndef __CPINFO_H_INCLUDED__
 #define __CPINFO_H_INCLUDED__
 
+#include <vector>
 typedef struct {
   uint16_t name_index;
 } ConstantClassInfo;
@@ -49,7 +50,7 @@ typedef struct {
 
 typedef struct {
   uint16_t length;
-  uint8_t bytes;
+  uint8_t *bytes;
 } ConstantUTF8Info;
 
 typedef struct {
