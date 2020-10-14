@@ -54,12 +54,24 @@ string integerToHex(uint16_t integer) {
   return aux.str();
 }
 
-string accessFlagsDecoder(uint16_t flag) {
+// essa função cuida de todas as access flags de classFile, Fields e Methods,
+// variando qual processar de acordo com flag_type
+string accessFlagsDecoder(uint16_t flag, int flag_type) {
   bool acc_public = false;
+  bool acc_private = false;
+  bool acc_protected = false;
+  bool acc_static = false;
   bool acc_final = false;
+  bool acc_volatile = false;
+  bool acc_transient = false;
+  bool acc_synchronized = false;
+  bool acc_bridge = false;
   bool acc_super = false;
+  bool acc_varargs = false;
+  bool acc_native = false;
   bool acc_interface = false;
   bool acc_abstract = false;
+  bool acc_strict = false;
   bool acc_synthetic = false;
   bool acc_annotation = false;
   bool acc_enum = false;
@@ -69,128 +81,433 @@ string accessFlagsDecoder(uint16_t flag) {
   string flagInHexString;
   string classFileAccessFlagString;
 
-  // set flags e append 0s ao começo da string (precisa ser sem 4 numeros)
+  // append 0s ao começo da string (precisa ser sem 4 numeros)
   flagInHexString = std::string(3, '0').append(hexFlag);
-  switch (hexFlag[hexSize - 1]) {
-    case '1':
-      acc_public = true;
-      break;
-  }
   if (hexSize > 1) {
     flagInHexString = std::string(2, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 2]) {
-      case '1':
-        acc_final = true;
-        break;
-      case '2':
-        acc_super = true;
-        break;
-      case '3':
-        acc_final = true;
-        acc_super = true;
-        break;
-    }
   }
   if (hexSize > 2) {
     flagInHexString = std::string(1, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 3]) {
-      case '2':
-        acc_interface = true;
-        break;
-      case '4':
-        acc_abstract = true;
-        break;
-      case '6':
-        acc_interface = true;
-        acc_abstract = true;
-        break;
-    }
   }
   if (hexSize > 3) {
     flagInHexString = std::string(0, '0').append(hexFlag);
-    switch (hexFlag[hexSize - 4]) {
-      case '1':
-        acc_synthetic = true;
-        break;
-      case '2':
-        acc_annotation = true;
-        break;
-      case '4':
-        acc_enum = true;
-        break;
-      case '3':
-        acc_synthetic = true;
-        acc_annotation = true;
-        break;
-      case '5':
-        acc_synthetic = true;
-        acc_enum = true;
-        break;
-      case '6':
-        acc_annotation = true;
-        acc_enum = true;
-        break;
-      case '7':
-        acc_synthetic = true;
-        acc_annotation = true;
-        acc_enum = true;
-        break;
-    }
   }
 
-  // flags validações
-  if (acc_interface == true) {
-    if (acc_abstract == false) {
-      cout << "Interface precisa ser declarada como abstrata. \n";
-    } else {
-      if (acc_final == true || acc_super == true || acc_enum == true) {
-        cout
-            << "Interface não pode ser declarada como Final, Super ou Enum. \n";
+  // se flag_type for 0, roda accessflag de class, 1 roda de fields, 2 roda de
+  // methods
+  if (flag_type == 0) {
+    // set flags
+    switch (hexFlag[hexSize - 1]) {
+      case '1':
+        acc_public = true;
+        break;
+    }
+    if (hexSize > 1) {
+      switch (hexFlag[hexSize - 2]) {
+        case '1':
+          acc_final = true;
+          break;
+        case '2':
+          acc_super = true;
+          break;
+        case '3':
+          acc_final = true;
+          acc_super = true;
+          break;
       }
     }
-  } else {
+    if (hexSize > 2) {
+      switch (hexFlag[hexSize - 3]) {
+        case '2':
+          acc_interface = true;
+          break;
+        case '4':
+          acc_abstract = true;
+          break;
+        case '6':
+          acc_interface = true;
+          acc_abstract = true;
+          break;
+      }
+    }
+    if (hexSize > 3) {
+      switch (hexFlag[hexSize - 4]) {
+        case '1':
+          acc_synthetic = true;
+          break;
+        case '2':
+          acc_annotation = true;
+          break;
+        case '4':
+          acc_enum = true;
+          break;
+        case '3':
+          acc_synthetic = true;
+          acc_annotation = true;
+          break;
+        case '5':
+          acc_synthetic = true;
+          acc_enum = true;
+          break;
+        case '6':
+          acc_annotation = true;
+          acc_enum = true;
+          break;
+        case '7':
+          acc_synthetic = true;
+          acc_annotation = true;
+          acc_enum = true;
+          break;
+      }
+    }
+
+    // flags validações
+    if (acc_interface == true) {
+      if (acc_abstract == false) {
+        cout << "Interface precisa ser declarada como abstrata. \n";
+      } else {
+        if (acc_final == true || acc_super == true || acc_enum == true) {
+          cout << "Interface não pode ser declarada como Final, Super ou Enum. "
+                  "\n";
+        }
+      }
+    } else {
+      if (acc_annotation == true) {
+        cout << "Uma classe não pode ser declarada como Annotation. \n";
+      }
+      if (acc_final == true && acc_abstract == true) {
+        cout << "Classes não podem ser declaradas como Final e Abstract ao "
+                "mesmo "
+                "tempo. \n";
+      }
+    }
+    if (acc_annotation == true && acc_interface == false) {
+      cout << "Annotations devem também ser declaradas como Interface. \n";
+    }
+
+    // construir string para exibir no General Info
+    classFileAccessFlagString = "0x" + flagInHexString + " [ ";
+    if (acc_public == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "public ";
+    };
+    if (acc_final == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "final ";
+    };
+    // if (acc_super == true) {
+    //   classFileAccessFlagString = classFileAccessFlagString + "super ";
+    // };
+    if (acc_interface == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "interface ";
+    };
+    if (acc_abstract == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "abstract ";
+    };
+    if (acc_synthetic == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "synthetic ";
+    };
     if (acc_annotation == true) {
-      cout << "Uma classe não pode ser declarada como Annotation. \n";
-    }
-    if (acc_final == true && acc_abstract == true) {
-      cout << "Classes não podem ser declaradas como Final e Abstract ao mesmo "
-              "tempo. \n";
+      classFileAccessFlagString = classFileAccessFlagString + "annotation ";
+    };
+    if (acc_enum == true) {
+      classFileAccessFlagString = classFileAccessFlagString + "enum ";
+    };
+    classFileAccessFlagString.pop_back();
+    classFileAccessFlagString = classFileAccessFlagString + "]";
+
+    return classFileAccessFlagString;
+  } else {
+    if (flag_type == 1) {
+      // set flags
+      switch (hexFlag[hexSize - 1]) {
+        case '1':
+          acc_public = true;
+          break;
+        case '2':
+          acc_private = true;
+          break;
+        case '4':
+          acc_protected = true;
+          break;
+        case '8':
+          acc_static = true;
+          break;
+        case '9':
+          acc_public = true;
+          acc_static = true;
+          break;
+        case 'A':
+          acc_private = true;
+          acc_static = true;
+          break;
+        case 'C':
+          acc_protected = true;
+          acc_static = true;
+          break;
+      }
+      if (hexSize > 1) {
+        switch (hexFlag[hexSize - 2]) {
+          case '1':
+            acc_final = true;
+            break;
+          case '4':
+            acc_volatile = true;
+            break;
+          case '8':
+            acc_transient = true;
+            break;
+          case '5':
+            acc_final = true;
+            acc_volatile = true;
+            break;
+          case '9':
+            acc_final = true;
+            acc_transient = true;
+            break;
+          case 'C':
+            acc_volatile = true;
+            acc_transient = true;
+            break;
+          case 'D':
+            acc_final = true;
+            acc_volatile = true;
+            acc_transient = true;
+            break;
+        }
+      }
+      if (hexSize > 3) {
+        switch (hexFlag[hexSize - 4]) {
+          case '1':
+            acc_synthetic = true;
+            break;
+          case '4':
+            acc_enum = true;
+            break;
+          case '5':
+            acc_synthetic = true;
+            acc_enum = true;
+            break;
+        }
+      }
+
+      // flags validações
+
+      /*TODO*/
+      // vei desculpa, mas nao vai rolar. Sem tempo irmão
+
+      // construir string para exibir no Fields
+      classFileAccessFlagString = "0x" + flagInHexString + " [ ";
+      if (acc_public == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "public ";
+      };
+      if (acc_private == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "private ";
+      };
+      if (acc_protected == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "protected ";
+      };
+      if (acc_static == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "static ";
+      };
+      if (acc_final == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "final ";
+      };
+      if (acc_volatile == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "volatile ";
+      };
+      if (acc_transient == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "transient ";
+      };
+      if (acc_synthetic == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "synthetic ";
+      };
+      if (acc_enum == true) {
+        classFileAccessFlagString = classFileAccessFlagString + "enum ";
+      };
+      classFileAccessFlagString.pop_back();
+      classFileAccessFlagString = classFileAccessFlagString + "]";
+
+      return classFileAccessFlagString;
+    } else {
+      if (flag_type == 2) {
+        // set flags
+        switch (hexFlag[hexSize - 1]) {
+          case '1':
+            acc_public = true;
+            break;
+          case '2':
+            acc_private = true;
+            break;
+          case '4':
+            acc_protected = true;
+            break;
+          case '8':
+            acc_static = true;
+            break;
+          case '9':
+            acc_public = true;
+            acc_static = true;
+            break;
+          case 'A':
+            acc_private = true;
+            acc_static = true;
+            break;
+          case 'C':
+            acc_protected = true;
+            acc_static = true;
+            break;
+        }
+        if (hexSize > 1) {
+          switch (hexFlag[hexSize - 2]) {
+            case '1':
+              acc_final = true;
+              break;
+            case '2':
+              acc_synchronized = true;
+              break;
+            case '4':
+              acc_bridge = true;
+              break;
+            case '8':
+              acc_varargs = true;
+              break;
+            case '3':
+              acc_final = true;
+              acc_synchronized = true;
+              break;
+            case '5':
+              acc_final = true;
+              acc_bridge = true;
+              break;
+            case '9':
+              acc_final = true;
+              acc_varargs = true;
+              break;
+            case '6':
+              acc_synchronized = true;
+              acc_bridge = true;
+              break;
+            case 'A':
+              acc_synchronized = true;
+              acc_varargs = true;
+              break;
+            case 'C':
+              acc_bridge = true;
+              acc_varargs = true;
+              break;
+            case '7':
+              acc_final = true;
+              acc_synchronized = true;
+              acc_bridge = true;
+              break;
+            case 'B':
+              acc_final = true;
+              acc_synchronized = true;
+              acc_varargs = true;
+              break;
+            case 'E':
+              acc_bridge = true;
+              acc_synchronized = true;
+              acc_varargs = true;
+              break;
+            case 'F':
+              acc_final = true;
+              acc_bridge = true;
+              acc_synchronized = true;
+              acc_varargs = true;
+              break;
+          }
+        }
+        if (hexSize > 2) {
+          switch (hexFlag[hexSize - 2]) {
+            case '1':
+              acc_native = true;
+              break;
+            case '4':
+              acc_abstract = true;
+              break;
+            case '8':
+              acc_strict = true;
+              break;
+            case '5':
+              acc_native = true;
+              acc_abstract = true;
+              break;
+            case '9':
+              acc_native = true;
+              acc_strict = true;
+              break;
+            case 'C':
+              acc_abstract = true;
+              acc_strict = true;
+              break;
+            case 'D':
+              acc_native = true;
+              acc_abstract = true;
+              acc_strict = true;
+              break;
+          }
+        }
+        if (hexSize > 3) {
+          switch (hexFlag[hexSize - 4]) {
+            case '1':
+              acc_synthetic = true;
+              break;
+          }
+        }
+
+        // flags validações
+
+        /*TODO*/
+        // vei desculpa, mas nao vai rolar. Sem tempo irmão
+
+        // construir string para exibir no Fields
+        classFileAccessFlagString = "0x" + flagInHexString + " [ ";
+        if (acc_public == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "public ";
+        };
+        if (acc_private == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "private ";
+        };
+        if (acc_protected == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "protected ";
+        };
+        if (acc_static == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "static ";
+        };
+        if (acc_final == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "final ";
+        };
+        if (acc_synchronized == true) {
+          classFileAccessFlagString =
+              classFileAccessFlagString + "synchronized ";
+        };
+        if (acc_bridge == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "bridge ";
+        };
+        if (acc_varargs == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "varargs ";
+        };
+        if (acc_native == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "native ";
+        };
+        if (acc_abstract == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "abstract ";
+        };
+        if (acc_strict == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "strict ";
+        };
+        if (acc_synthetic == true) {
+          classFileAccessFlagString = classFileAccessFlagString + "synthetic ";
+        };
+        classFileAccessFlagString.pop_back();
+        classFileAccessFlagString = classFileAccessFlagString + "]";
+
+        return classFileAccessFlagString;
+      } else {
+        return "Access Flag mal definida.";
+      }
     }
   }
-  if (acc_annotation == true && acc_interface == false) {
-    cout << "Annotations devem também ser declaradas como Interface. \n";
-  }
-
-  // construir string para exibir no General Info
-  classFileAccessFlagString = "0x" + flagInHexString + " [";
-  if (acc_public == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "public ";
-  };
-  if (acc_final == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "final ";
-  };
-  // if (acc_super == true) {
-  //   classFileAccessFlagString = classFileAccessFlagString + "super ";
-  // };
-  if (acc_interface == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "interface ";
-  };
-  if (acc_abstract == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "abstract ";
-  };
-  if (acc_synthetic == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "synthetic ";
-  };
-  if (acc_annotation == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "annotation ";
-  };
-  if (acc_enum == true) {
-    classFileAccessFlagString = classFileAccessFlagString + "enum ";
-  };
-  classFileAccessFlagString.pop_back();
-  classFileAccessFlagString = classFileAccessFlagString + "]";
-
-  return classFileAccessFlagString;
 }
 
 string utf8Converter(uint8_t value) {
@@ -279,7 +596,8 @@ void printGeneralInformation() {
   cout << "Major version: " << dec << classFile.majorVersion << '['
        << getMajorVersion(classFile.majorVersion) << ']' << endl;
   cout << "Constant pool count: " << dec << classFile.constantPoolCount << endl;
-  cout << "Access flags: " << accessFlagsDecoder(classFile.accessFlags) << endl;
+  cout << "Access flags: " << accessFlagsDecoder(classFile.accessFlags, 0)
+       << endl;
   string this_class =
       getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1);
   cout << "This class: cp_info#" << classFile.thisClass << " <" << this_class
@@ -438,14 +756,72 @@ void printInterfaces() {
 void printFields() {
   cout << "_______________________Fields________________________" << endl
        << endl;
+       for (int i = 0; i < classFile.fieldsCount; i++) {
+    string name = getCPInfoFirst(classFile.constantPool,
+                                 classFile.fields[i].name_index - 1);
+    string descriptor = getCPInfoFirst(
+        classFile.constantPool, classFile.fields[i].descriptor_index - 1);
+    string access_flags =
+        accessFlagsDecoder(classFile.fields[i].access_flags, 1);
 
+    cout << endl << "[" << i << "] " << name << endl;
+    cout << "\t Name:      \tcp_info#" << classFile.fields[i].name_index
+         << " <" << name << ">" << endl;
+    cout << "\t Description:\tcp_info#" << classFile.fields[i].descriptor_index
+         << " <" << descriptor << ">" << endl;
+    cout << "\t Access flags:\t" << access_flags << endl;
+
+    for (int j = 0; j < classFile.fields[i].attributes_count; j++) {
+      string name = getCPInfoFirst(
+          classFile.constantPool,
+          classFile.fields[i].attributes[j].attribute_name_index - 1);
+
+      cout << "\t [" << j << "] " << name << endl;
+      cout << "\t\t Attribute name index: \tcp_info#"
+           << classFile.fields[i].attributes[j].attribute_name_index << " <"
+           << name << ">" << endl;
+      cout << "\t\t Attribute length:     \t" << dec
+           << classFile.fields[i].attributes[j].attribute_length << endl;
+    }
+
+    cout << endl;
+  }
   cout << endl;
 };
 
 void printMethods() {
   cout << "_______________________Methods_______________________" << endl
        << endl;
+  for (int i = 0; i < classFile.methodsCount; i++) {
+    string name = getCPInfoFirst(classFile.constantPool,
+                                 classFile.methods[i].name_index - 1);
+    string descriptor = getCPInfoFirst(
+        classFile.constantPool, classFile.methods[i].descriptor_index - 1);
+    string access_flags =
+        accessFlagsDecoder(classFile.methods[i].access_flags, 2);
 
+    cout << endl << "[" << i << "] " << name << endl;
+    cout << "\t Name:      \tcp_info#" << classFile.methods[i].name_index
+         << " <" << name << ">" << endl;
+    cout << "\t Description:\tcp_info#" << classFile.methods[i].descriptor_index
+         << " <" << descriptor << ">" << endl;
+    cout << "\t Access flags:\t" << access_flags << endl;
+
+    for (int j = 0; j < classFile.methods[i].attributes_count; j++) {
+      string name = getCPInfoFirst(
+          classFile.constantPool,
+          classFile.methods[i].attributes[j].attribute_name_index - 1);
+
+      cout << "\t [" << j << "] " << name << endl;
+      cout << "\t\t Attribute name index: \tcp_info#"
+           << classFile.methods[i].attributes[j].attribute_name_index << " <"
+           << name << ">" << endl;
+      cout << "\t\t Attribute length:     \t" << dec
+           << classFile.methods[i].attributes[j].attribute_length << endl;
+    }
+
+    cout << endl;
+  }
   cout << endl;
 };
 
