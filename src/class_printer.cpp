@@ -524,9 +524,7 @@ string getCPInfoFirst(vector<CPInfo> cp_info, int indice) {
   int tag = stoi(tag_info);
 
   if (tag == 1) {
-
     return (char *)(cp_info[indice].CONSTANT_Utf8_info.bytes);
-
   }
 
   switch (tag) {
@@ -622,7 +620,29 @@ pair<string, string> getCPInfoSecond(vector<CPInfo> cp_info, int indice) {
     };
     default:
       return make_pair("", "");
+  }
+}
 
+void printAttributes(string attributeName, vector<uint8_t> info) {
+  if (attributeName == "Code") {
+    int index = 0;
+    for (auto i : info) {
+      cout << index << " " << (unsigned int)(unsigned char)i;
+      index++;
+    };
+    cout << endl << endl;
+  } else if (attributeName == "ConstantValue") {
+  } else if (attributeName == "Exceptions") {
+  } else if (attributeName == "InnerClasses") {
+  } else if (attributeName == "SourceFile") {
+    cout << "Source File name index:     cp_info# ";
+    for (auto i : info) {
+      cout << (unsigned int)(unsigned char)i;
+    };
+    cout << endl << endl;
+
+  } else if (attributeName == "LineNumberTable") {
+  } else if (attributeName == "LocalVariableTable") {
   }
 }
 
@@ -805,7 +825,6 @@ void printConstantPool() {
       case 99: {
         cout << "(large numeric continued)" << endl;
       }
-
     }
   }
   cout << endl;
@@ -814,18 +833,16 @@ void printConstantPool() {
 void printInterfaces() {
   cout << "______________________Interfaces_____________________" << endl
        << endl;
-  
-  for(int i = 0; i < classFile.interfacesCount; i++){
+
+  for (int i = 0; i < classFile.interfacesCount; i++) {
     cout << endl << "[" << dec << i << "] ";
 
     string inter_name =
-      getCPInfoFirst(classFile.constantPool,
-      classFile.interfaces[i] -1);
+        getCPInfoFirst(classFile.constantPool, classFile.interfaces[i] - 1);
 
-      cout << "Interface: cp_info #"
-      <<classFile.interfaces[i] << " <" << inter_name
-      << " >" << endl << endl;
-      
+    cout << "Interface: cp_info #" << classFile.interfaces[i] << " <"
+         << inter_name << " >" << endl
+         << endl;
   }
 
   cout << endl;
@@ -834,7 +851,7 @@ void printInterfaces() {
 void printFields() {
   cout << "_______________________Fields________________________" << endl
        << endl;
-       for (int i = 0; i < classFile.fieldsCount; i++) {
+  for (int i = 0; i < classFile.fieldsCount; i++) {
     string name = getCPInfoFirst(classFile.constantPool,
                                  classFile.fields[i].name_index - 1);
     string descriptor = getCPInfoFirst(
@@ -843,8 +860,8 @@ void printFields() {
         accessFlagsDecoder(classFile.fields[i].access_flags, 1);
 
     cout << endl << "[" << i << "] " << name << endl;
-    cout << "\t Name:      \tcp_info#" << classFile.fields[i].name_index
-         << " <" << name << ">" << endl;
+    cout << "\t Name:      \tcp_info#" << classFile.fields[i].name_index << " <"
+         << name << ">" << endl;
     cout << "\t Description:\tcp_info#" << classFile.fields[i].descriptor_index
          << " <" << descriptor << ">" << endl;
     cout << "\t Access flags:\t" << access_flags << endl;
@@ -896,6 +913,8 @@ void printMethods() {
            << name << ">" << endl;
       cout << "\t\t Attribute length:     \t" << dec
            << classFile.methods[i].attributes[j].attribute_length << endl;
+
+      printAttributes(name, classFile.methods[i].attributes[j].info);
     }
 
     cout << endl;
@@ -920,9 +939,9 @@ void printAttributes() {
     cout << "Attribute length:     " << classFile.attributes[i].attribute_length
          << endl
          << endl;
-    // cout << "Specific info --------------------------------------------" <<
-    // endl
-    //      << endl;
+    cout << "Specific info --------------------------------------------" << endl
+         << endl;
+    printAttributes(attr_name, classFile.attributes[i].info);
   }
 
   cout << endl;
