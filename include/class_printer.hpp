@@ -1,9 +1,10 @@
 #ifndef __CLASSPRINTER_H_INCLUDED__
 #define __CLASSPRINTER_H_INCLUDED__
 
-#include <iostream>
-#include <utility>
 #include <iomanip>
+#include <iostream>
+
+#include "./class_file.hpp"
 
 using namespace std;
 
@@ -20,4 +21,7 @@ void printMethods();
 void printAttributes();
 
 void printClassFile();
+
+string getCPInfoFirst(vector<CPInfo> cp_info, int indice);
+
 #endif

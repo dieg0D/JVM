@@ -23,6 +23,8 @@ vector<BYTE> readFile(string filename) {
   // read the data:
   vector<BYTE> fileData(fileSize);
   file.read((char *)&fileData[0], fileSize);
+
+  file.close();
   return fileData;
 };
 
