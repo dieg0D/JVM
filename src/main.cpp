@@ -14,6 +14,7 @@ ClassFile classFile;
 MethodArea methodArea;
 ExecutionEngine executionEngine;
 JavaVirtualMachineThread jvmThread;
+vector<Instruction> instructions;
 
 string getProjectPath(string commandLinePath) {
   int i = commandLinePath.size() - 1;

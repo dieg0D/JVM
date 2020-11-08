@@ -1,10 +1,11 @@
 #include "../include/class_printer.hpp"
 
+#include <bitset>
 #include <iostream>
 #include <sstream>
 
 #include "../include/common.hpp"
-
+#include "../include/instructions.hpp"
 using namespace std;
 
 string getMajorVersion(unsigned int major) {
@@ -524,9 +525,7 @@ string getCPInfoFirst(vector<CPInfo> cp_info, int indice) {
   int tag = stoi(tag_info);
 
   if (tag == 1) {
-
     return (char *)(cp_info[indice].CONSTANT_Utf8_info.bytes);
-
   }
 
   switch (tag) {
@@ -622,7 +621,127 @@ pair<string, string> getCPInfoSecond(vector<CPInfo> cp_info, int indice) {
     };
     default:
       return make_pair("", "");
+  }
+}
 
+// begin é a posição que eu quero e end é aposição depois da que eu quero
+unsigned int getData(vector<uint8_t> fileData, int begin, int end,
+                     unsigned int size) {
+  vector<uint8_t> newVec;
+
+  newVec.insert(newVec.begin(), fileData.begin() + begin,
+                fileData.begin() + end);
+  string data = "";
+
+  for (auto i : newVec) {
+    data = (data + bitset<8>(i).to_string());
+  }
+
+  return bitset<sizeof(size) * 8>(data).to_ulong();
+};
+
+void printAttributes(string attributeName, vector<uint8_t> info) {
+  uint8_t uint8_t_size = 0;
+  if (attributeName == "Code") {
+    int position = 0;
+    uint16_t max_stack = getData(info, position, position + 2, uint8_t_size);
+    position += 2;
+    uint16_t max_locals = getData(info, position, position + 2, uint8_t_size);
+    position += 2;
+    uint32_t code_length = getData(info, position, position + 4, uint8_t_size);
+    position += 4;
+
+    cout << "\t\t BYTECODE----------------------" << endl;
+    for (unsigned int i = 0; i < code_length; i++) {
+      // cout << "OPCODE: " << hex
+      //      << (unsigned int)(unsigned char)info[position + i] << endl;
+      uint8_t opcode = (unsigned int)(unsigned char)info[position + i];
+      string mnemonic = "";
+      int length = -1;
+      tie(mnemonic, length) = get_mnemonic(opcode);
+      cout << "DEBUG"
+           << "\t\t " << i << ": " << mnemonic << "--- opcode: " << hex
+           << (unsigned int)(unsigned char)opcode << endl;
+      if (mnemonic == "wide") {
+        // uint8_t modifiedOpcode = bytecode[++i];
+        // cout << instructions[modifiedOpcode].getMnemonic() << " ";
+
+        // if ((modifiedOpcode >= Instruction::iload &&
+        //      modifiedOpcode <= Instruction::aload) ||
+        //     (modifiedOpcode >= Instruction::istore &&
+        //      modifiedOpcode <= Instruction::astore) ||
+        //     (modifiedOpcode == Instruction::ret)) {
+        //   uint8_t indexbyte1 = bytecode[++i];
+        //   uint8_t indexbyte2 = bytecode[++i];
+        //   uint16_t index = (indexbyte1 << 8) | indexbyte2;
+
+        //   cout << index << endl;
+        // } else if (modifiedOpcode == Instruction::iinc) {
+        //   uint8_t indexbyte1 = bytecode[++i];
+        //   uint8_t indexbyte2 = bytecode[++i];
+        //   uint16_t index = (indexbyte1 << 8) | indexbyte2;
+
+        //   uint8_t constbyte1 = bytecode[++i];
+        //   uint8_t constbyte2 = bytecode[++i];
+        //   int16_t constImmediate = (constbyte1 << 8) | constbyte2;
+        //   cout << index << " by " << constImmediate << endl;
+        // }
+      } else if (length == 0) {
+        cout << endl;
+      } else if (length == 0) {
+        cout << endl;
+      } else if (length == 1) {
+        // Fazem referencia ao ConstantPool
+        if (mnemonic == "ldc") {
+          cout << "************"
+               << (unsigned int)(unsigned char)info[position + i] << endl;
+          // cout << "#" << i << " <" <<
+          // constantPool[index-1]->getInfo(constantPool).first << ">" << endl;
+        }
+        cout << "\t\t " << i << ": " << mnemonic << endl;
+      } else if (length == 2) {
+      }
+    }
+    cout << "\t\t Exception Table---------------" << endl;
+
+    cout << "\t\t MISC--------------------------" << endl;
+    cout << "\t\t Maximum stack size: " << max_stack << endl;
+    cout << "\t\t Maximum local variables: " << max_locals << endl;
+    cout << "\t\t Code length: " << code_length << endl;
+
+    uint16_t exception_table_length = getData(
+        info, position + code_length, position + code_length + 2, uint8_t_size);
+    cout << endl << endl;
+
+    cout << "exception_table_length: "
+         << (unsigned int)(unsigned char)exception_table_length << endl;
+
+    uint16_t attributes_count = getData(
+        info, position + code_length + exception_table_length + 2,
+        position + code_length + exception_table_length + 2 + 2, uint8_t_size);
+    cout << "attributes_count: "
+         << (unsigned int)(unsigned char)attributes_count << endl;
+
+    int attr_position = position + code_length + exception_table_length + 2 + 2;
+    for (unsigned int i = 0; i < attributes_count; i++) {
+      cout << "\t\t\t [" << i << "] "
+           << utf8Converter(
+                  getData(info, attr_position, attr_position + 2, uint8_t_size))
+           << endl;
+    }
+
+    cout << endl << endl;
+  } else if (attributeName == "ConstantValue") {
+  } else if (attributeName == "Exceptions") {
+  } else if (attributeName == "InnerClasses") {
+  } else if (attributeName == "SourceFile") {
+    cout << "Source File name index:     cp_info# ";
+    for (auto i : info) {
+      cout << (unsigned int)(unsigned char)i;
+    };
+    cout << endl << endl;
+  } else if (attributeName == "LineNumberTable") {
+  } else if (attributeName == "LocalVariableTable") {
   }
 }
 
@@ -805,7 +924,6 @@ void printConstantPool() {
       case 99: {
         cout << "(large numeric continued)" << endl;
       }
-
     }
   }
   cout << endl;
@@ -814,18 +932,16 @@ void printConstantPool() {
 void printInterfaces() {
   cout << "______________________Interfaces_____________________" << endl
        << endl;
-  
-  for(int i = 0; i < classFile.interfacesCount; i++){
+
+  for (int i = 0; i < classFile.interfacesCount; i++) {
     cout << endl << "[" << dec << i << "] ";
 
     string inter_name =
-      getCPInfoFirst(classFile.constantPool,
-      classFile.interfaces[i] -1);
+        getCPInfoFirst(classFile.constantPool, classFile.interfaces[i] - 1);
 
-      cout << "Interface: cp_info #"
-      <<classFile.interfaces[i] << " <" << inter_name
-      << " >" << endl << endl;
-      
+    cout << "Interface: cp_info #" << classFile.interfaces[i] << " <"
+         << inter_name << " >" << endl
+         << endl;
   }
 
   cout << endl;
@@ -834,7 +950,7 @@ void printInterfaces() {
 void printFields() {
   cout << "_______________________Fields________________________" << endl
        << endl;
-       for (int i = 0; i < classFile.fieldsCount; i++) {
+  for (int i = 0; i < classFile.fieldsCount; i++) {
     string name = getCPInfoFirst(classFile.constantPool,
                                  classFile.fields[i].name_index - 1);
     string descriptor = getCPInfoFirst(
@@ -843,8 +959,8 @@ void printFields() {
         accessFlagsDecoder(classFile.fields[i].access_flags, 1);
 
     cout << endl << "[" << i << "] " << name << endl;
-    cout << "\t Name:      \tcp_info#" << classFile.fields[i].name_index
-         << " <" << name << ">" << endl;
+    cout << "\t Name:      \tcp_info#" << classFile.fields[i].name_index << " <"
+         << name << ">" << endl;
     cout << "\t Description:\tcp_info#" << classFile.fields[i].descriptor_index
          << " <" << descriptor << ">" << endl;
     cout << "\t Access flags:\t" << access_flags << endl;
@@ -896,6 +1012,8 @@ void printMethods() {
            << name << ">" << endl;
       cout << "\t\t Attribute length:     \t" << dec
            << classFile.methods[i].attributes[j].attribute_length << endl;
+
+      printAttributes(name, classFile.methods[i].attributes[j].info);
     }
 
     cout << endl;
@@ -920,9 +1038,9 @@ void printAttributes() {
     cout << "Attribute length:     " << classFile.attributes[i].attribute_length
          << endl
          << endl;
-    // cout << "Specific info --------------------------------------------" <<
-    // endl
-    //      << endl;
+    cout << "Specific info --------------------------------------------" << endl
+         << endl;
+    printAttributes(attr_name, classFile.attributes[i].info);
   }
 
   cout << endl;
@@ -931,6 +1049,7 @@ void printAttributes() {
 void printClassFile() {
   printGeneralInformation();
   printConstantPool();
+  initialize_instruction();
   printInterfaces();
   printFields();
   printMethods();

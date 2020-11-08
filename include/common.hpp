@@ -5,7 +5,9 @@
 #include "./class_file.hpp"
 #include "./execution_engine.hpp"
 #include "./method_area.hpp"
+#include "./instructions.hpp"
 
+extern vector<Instruction> instructions;
 extern ClassFile classFile;
 extern MethodArea methodArea;
 extern ExecutionEngine executionEngine;
