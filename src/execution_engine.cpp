@@ -48,7 +48,7 @@ void execute() {
 
   do {
     Frame currentFrame = getCurrentFrame();
-    vector<uint8_t> bytecode = currentFrame.codeAttribute.code;
+    uint8_t* bytecode = currentFrame.codeAttribute.code;
     uint32_t bytecodeLength = currentFrame.codeAttribute.codeLength;
     uint8_t opcode = bytecode[jvmThread.pc];
     // Instruction instruction = instructions[opcode];

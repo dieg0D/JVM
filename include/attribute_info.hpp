@@ -4,12 +4,10 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <vector>
-
-#include "./class_file.hpp"
 
 using namespace std;
 
+struct AttributeInfo;
 typedef struct {
   uint16_t constantValueIndex;
 } ConstantValueAttribute;
@@ -25,11 +23,11 @@ typedef struct {
   uint16_t maxStack;
   uint16_t maxLocals;
   uint32_t codeLength;
-  vector<uint8_t> code;
+  uint8_t* code;
   uint16_t exceptionTableLength;
-  ExceptionHandler exceptionTable;
+  ExceptionHandler* exceptionTable;
   uint16_t attributesCount;
-  AttributeInfo attributes;
+  AttributeInfo* attributes;
 } CodeAttribute;
 
 typedef struct {
@@ -46,7 +44,7 @@ typedef struct {
 
 typedef struct {
   uint16_t numberOfClasses;
-  vector<ClassInfo> classes;
+  ClassInfo* classes;
 } InnerClassesAttribute;
 
 typedef struct {
@@ -60,7 +58,7 @@ typedef struct {
 
 typedef struct {
   uint16_t lineNumberTableLength;
-  vector<LineNumber> lineNumberTable;
+  LineNumber* lineNumberTable;
 } LineNumberTableAttribute;
 
 typedef struct {
@@ -73,7 +71,22 @@ typedef struct {
 
 typedef struct {
   uint16_t localVariableTableLength;
-  vector<LocalVariable> localVariableTable;
+  LocalVariable* localVariableTable;
 } LocalVariableTableAttribute;
+
+struct AttributeInfo {
+  uint16_t attribute_name_index;
+  uint32_t attribute_length;
+  union {
+    ConstantValueAttribute constantValue;
+    CodeAttribute code;
+    ExceptionsAttribute exceptions;
+    InnerClassesAttribute innerClasses;
+    SourceFileAttribute sourceFile;
+    LineNumberTableAttribute lineNumberTable;
+    LocalVariableTableAttribute localVariableTable;
+  };
+  vector<uint8_t> info;
+};
 
 #endif

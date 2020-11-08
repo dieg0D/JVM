@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     loadClassFile(className, projectPath);
 
     if (option.compare("-e") == 0) {
-      printClassFile();
+      // printClassFile();
     } else if (option.compare("-i") == 0) {
       loadSuperClasses(projectPath);
       findMainMethod();

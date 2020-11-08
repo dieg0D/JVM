@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "./cp_info.hpp"
+#include "./attribute_info.hpp"
 using namespace std;
 
 typedef unsigned char BYTE;
@@ -30,11 +31,6 @@ typedef struct {
   };
 } CPInfo;
 
-typedef struct {
-  uint16_t attribute_name_index;
-  uint32_t attribute_length;
-  vector<uint8_t> info;
-} AttributeInfo;
 
 typedef struct {
   uint16_t access_flags;
