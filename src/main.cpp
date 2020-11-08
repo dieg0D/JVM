@@ -12,6 +12,8 @@ using namespace std;
 
 ClassFile classFile;
 MethodArea methodArea;
+ExecutionEngine executionEngine;
+JavaVirtualMachineThread jvmThread;
 
 string getProjectPath(string commandLinePath) {
   int i = commandLinePath.size() - 1;
@@ -58,8 +60,8 @@ int main(int argc, char* argv[]) {
       printClassFile();
     } else if (option.compare("-i") == 0) {
       loadSuperClasses(projectPath);
-      cout << projectPath << className << endl;
-      
+      findMainMethod();
+      execute();
     } else {
       cout << "O segundo argumento deve ser -e para exibidor ou -i para "
               "interpretador."
