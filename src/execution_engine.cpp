@@ -46,44 +46,15 @@ void execute() {
 
   pushToJVMStack(mainFrame);
 
-  // Frame currentFrame = getCurrentFrame();
-  // uint8_t* bytecode = currentFrame.codeAttribute.code;
-  // uint32_t bytecodeLength = currentFrame.codeAttribute.codeLength;
-
-  // for (unsigned int i = 0; i < bytecodeLength; i++) {
-  //   uint8_t opcode = bytecode[i];
-
-  //   cout << "OPCODE " << hex << (unsigned int)(unsigned char)opcode << " "
-  //        << get_mnemonic(opcode).first << endl;
-  //   // cout << i << " : " << get_mnemonic(opcode).first << " ";
-
-  //   i = i + get_mnemonic(opcode).second;
-  // }
-
   do {
     Frame currentFrame = getCurrentFrame();
     uint8_t* bytecode = currentFrame.codeAttribute.code;
-    uint32_t bytecodeLength = currentFrame.codeAttribute.codeLength;
-
-    for (unsigned int i = 0; i < bytecodeLength; i++) {
-      uint8_t opcode = bytecode[i];
-      cout << i << ": " << get_mnemonic(opcode).first << " ";
-      i = i + get_mnemonic(opcode).second;
-    }
 
     uint8_t opcode = bytecode[jvmThread.pc];
-    Instruction instruction = instructions[opcode];
 
-    cout << bytecode << endl;
+    incrementPcBy(func_exec(currentFrame));
 
-    // Para debug
-    cout << "Executando: " << jvmThread.pc << " " << get_mnemonic(opcode).first
-         << endl;
-
-    jvmThread.pc = instruction.func(currentFrame);
-    jvmThread.pc = get_mnemonic(opcode).second;
-
-    if (get_mnemonic(opcode).first.compare("return") == 0) {
+    if (get_mnemonic(opcode).first.compare("returnOp") == 0) {
       popFromJVMStack();
       if (!isJVMStackEmpty()) {
         jvmThread.pc = getCurrentFrame().localPC;

@@ -5,10 +5,14 @@
 #include <map>
 #include <vector>
 
+#include "../include/frame.hpp"
+
 using namespace std;
 void initialize_instruction();
 
 pair<string, int> get_mnemonic(uint8_t opcode);
+
+uint32_t func_exec(Frame currentFrame);
 typedef struct {
   uint8_t opcode;
   string mnemonic;
@@ -116,7 +120,7 @@ static const uint8_t dup_x2 = 0x5b;
 static const uint8_t dup2 = 0x5c;
 static const uint8_t dup2_x1 = 0x5d;
 static const uint8_t dup2_x2 = 0x5e;
-static const uint8_t swap = 0x5f;
+static const uint8_t swapOp = 0x5f;
 
 // Math
 static const uint8_t iadd = 0x60;
