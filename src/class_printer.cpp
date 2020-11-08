@@ -1,10 +1,11 @@
 #include "../include/class_printer.hpp"
 
+#include <bitset>
 #include <iostream>
 #include <sstream>
 
 #include "../include/common.hpp"
-
+#include "../include/instructions.hpp"
 using namespace std;
 
 string getMajorVersion(unsigned int major) {
@@ -623,13 +624,112 @@ pair<string, string> getCPInfoSecond(vector<CPInfo> cp_info, int indice) {
   }
 }
 
+// begin é a posição que eu quero e end é aposição depois da que eu quero
+unsigned int getData(vector<uint8_t> fileData, int begin, int end,
+                     unsigned int size) {
+  vector<uint8_t> newVec;
+
+  newVec.insert(newVec.begin(), fileData.begin() + begin,
+                fileData.begin() + end);
+  string data = "";
+
+  for (auto i : newVec) {
+    data = (data + bitset<8>(i).to_string());
+  }
+
+  return bitset<sizeof(size) * 8>(data).to_ulong();
+};
+
 void printAttributes(string attributeName, vector<uint8_t> info) {
+  uint8_t uint8_t_size = 0;
   if (attributeName == "Code") {
-    int index = 0;
-    for (auto i : info) {
-      cout << index << " " << (unsigned int)(unsigned char)i;
-      index++;
-    };
+    int position = 0;
+    uint16_t max_stack = getData(info, position, position + 2, uint8_t_size);
+    position += 2;
+    uint16_t max_locals = getData(info, position, position + 2, uint8_t_size);
+    position += 2;
+    uint32_t code_length = getData(info, position, position + 4, uint8_t_size);
+    position += 4;
+
+    cout << "\t\t BYTECODE----------------------" << endl;
+    for (unsigned int i = 0; i < code_length; i++) {
+      // cout << "OPCODE: " << hex
+      //      << (unsigned int)(unsigned char)info[position + i] << endl;
+      uint8_t opcode = (unsigned int)(unsigned char)info[position + i];
+      string mnemonic = "";
+      int length = -1;
+      tie(mnemonic, length) = get_mnemonic(opcode);
+      cout << "DEBUG"
+           << "\t\t " << i << ": " << mnemonic << "--- opcode: " << hex
+           << (unsigned int)(unsigned char)opcode << endl;
+      if (mnemonic == "wide") {
+        // uint8_t modifiedOpcode = bytecode[++i];
+        // cout << instructions[modifiedOpcode].getMnemonic() << " ";
+
+        // if ((modifiedOpcode >= Instruction::iload &&
+        //      modifiedOpcode <= Instruction::aload) ||
+        //     (modifiedOpcode >= Instruction::istore &&
+        //      modifiedOpcode <= Instruction::astore) ||
+        //     (modifiedOpcode == Instruction::ret)) {
+        //   uint8_t indexbyte1 = bytecode[++i];
+        //   uint8_t indexbyte2 = bytecode[++i];
+        //   uint16_t index = (indexbyte1 << 8) | indexbyte2;
+
+        //   cout << index << endl;
+        // } else if (modifiedOpcode == Instruction::iinc) {
+        //   uint8_t indexbyte1 = bytecode[++i];
+        //   uint8_t indexbyte2 = bytecode[++i];
+        //   uint16_t index = (indexbyte1 << 8) | indexbyte2;
+
+        //   uint8_t constbyte1 = bytecode[++i];
+        //   uint8_t constbyte2 = bytecode[++i];
+        //   int16_t constImmediate = (constbyte1 << 8) | constbyte2;
+        //   cout << index << " by " << constImmediate << endl;
+        // }
+      } else if (length == 0) {
+        cout << endl;
+      } else if (length == 0) {
+        cout << endl;
+      } else if (length == 1) {
+        // Fazem referencia ao ConstantPool
+        if (mnemonic == "ldc") {
+          cout << "************"
+               << (unsigned int)(unsigned char)info[position + i] << endl;
+          // cout << "#" << i << " <" <<
+          // constantPool[index-1]->getInfo(constantPool).first << ">" << endl;
+        }
+        cout << "\t\t " << i << ": " << mnemonic << endl;
+      } else if (length == 2) {
+      }
+    }
+    cout << "\t\t Exception Table---------------" << endl;
+
+    cout << "\t\t MISC--------------------------" << endl;
+    cout << "\t\t Maximum stack size: " << max_stack << endl;
+    cout << "\t\t Maximum local variables: " << max_locals << endl;
+    cout << "\t\t Code length: " << code_length << endl;
+
+    uint16_t exception_table_length = getData(
+        info, position + code_length, position + code_length + 2, uint8_t_size);
+    cout << endl << endl;
+
+    cout << "exception_table_length: "
+         << (unsigned int)(unsigned char)exception_table_length << endl;
+
+    uint16_t attributes_count = getData(
+        info, position + code_length + exception_table_length + 2,
+        position + code_length + exception_table_length + 2 + 2, uint8_t_size);
+    cout << "attributes_count: "
+         << (unsigned int)(unsigned char)attributes_count << endl;
+
+    int attr_position = position + code_length + exception_table_length + 2 + 2;
+    for (unsigned int i = 0; i < attributes_count; i++) {
+      cout << "\t\t\t [" << i << "] "
+           << utf8Converter(
+                  getData(info, attr_position, attr_position + 2, uint8_t_size))
+           << endl;
+    }
+
     cout << endl << endl;
   } else if (attributeName == "ConstantValue") {
   } else if (attributeName == "Exceptions") {
@@ -640,7 +740,6 @@ void printAttributes(string attributeName, vector<uint8_t> info) {
       cout << (unsigned int)(unsigned char)i;
     };
     cout << endl << endl;
-
   } else if (attributeName == "LineNumberTable") {
   } else if (attributeName == "LocalVariableTable") {
   }
@@ -950,6 +1049,7 @@ void printAttributes() {
 void printClassFile() {
   printGeneralInformation();
   printConstantPool();
+  initialize_instruction();
   printInterfaces();
   printFields();
   printMethods();

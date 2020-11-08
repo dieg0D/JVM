@@ -8,7 +8,7 @@
 using namespace std;
 
 ClassFile classFile;
-
+vector<Instruction> instructions;
 int main(int argc, char* argv[]) {
   // Verifica se os argumentos foram passados
   if (argc == 2) {
