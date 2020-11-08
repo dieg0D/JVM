@@ -1079,11 +1079,12 @@ pair<string, int> get_mnemonic(uint8_t opcode) {
   string mnemonic = "";
   int length = -1;
   for (auto i : instructions) {
-    if (i.opcode == opcode) {
+       if (i.opcode == opcode) {
       mnemonic = i.mnemonic;
       length = i.length;
       break;
+    } else {
     }
   }
   return make_pair(mnemonic, length);
-}
+};

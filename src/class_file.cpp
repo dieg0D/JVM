@@ -149,7 +149,6 @@ CPInfo setConstantInfo(int tag, vector<BYTE> fileData, int position) {
             fileData, pos, pos + 1, sizeof(constant.CONSTANT_Utf8_info.bytes));
         pos++;
       }
-      constant.CONSTANT_Utf8_info.bytes[tamanho] = '\0';
 
     } break;
     case 15: {
@@ -239,6 +238,7 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
 pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData, int position,
                                            string son = "NO") {
   AttributeInfo attr_info;
+  attr_info.attribute_name_index = 0;
   attr_info.attribute_name_index = getDatafromArray(
       fileData, position, position + 2, attr_info.attribute_name_index);
   position = position + 2;
@@ -427,6 +427,17 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData, int position,
     }
 
     attr_info.localVariableTable = localVariableTableAttribute;
+  } else {
+    // cout << "AttributeName nao foi reconhecido: " << attributeName << endl;
+    uint8_t *info =
+        (uint8_t *)calloc(attr_info.attribute_length, sizeof(uint8_t));
+    /* Ignore attribute if it doesn't exist */
+    for (unsigned int i = 0; i < attr_info.attribute_length; i++) {
+      info[i] =
+          getDatafromArray(fileData, position, position + 1, sizeof(info));
+      position = position + 1;
+    }
+    attr_info.info = info;
   }
 
   return make_pair(attr_info, position);
@@ -434,7 +445,9 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData, int position,
 
 void loadFile(string file) {
   vector<BYTE> fileData = readFile(file);
+
   int position = 0;
+  classFile = {};
 
   classFile.magic =
       getDatafromArray(fileData, position, position + 4, classFile.magic);

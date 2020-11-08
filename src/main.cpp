@@ -54,15 +54,18 @@ int main(int argc, char* argv[]) {
     string option = argv[1];
     string projectPath = getProjectPath(argv[2]);
     string className = getClassName(argv[2]);
+    initialize_instruction();
 
     loadClassFile(className, projectPath);
-    cout << "voltei" << endl;
+
     if (option.compare("-e") == 0) {
       printClassFile();
     } else if (option.compare("-i") == 0) {
       loadSuperClasses(projectPath);
+      classFile = methodArea.classes.begin()->second;
       findMainMethod();
       execute();
+
     } else {
       cout << "O segundo argumento deve ser -e para exibidor ou -i para "
               "interpretador."

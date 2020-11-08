@@ -14,12 +14,22 @@ void loadClassFile(string className, string projectPath) {
   if (className.compare("java/lang/Object") == 0) {
     path = "java/lang/Object.class";
   } else {
-    path = (projectPath + className).c_str();
+    path = (projectPath + className);
   }
 
   if (path != "") {
     loadFile(path);
+
     insertClass();
+
+    // if (className.compare(getCPInfoFirst(classFile.constantPool,
+    //                                      classFile.thisClass - 1)) != 0) {
+    //   printf(
+    //       "O nome do .class nao bate com o nome da classe encontrato no "
+    //       "constant pool!\n");
+    //   exit(-1);
+    // }
+
     return;
   }
   cout << "Nao foi possivel abrir o arquivo! Programa terminado!" << projectPath
@@ -41,10 +51,13 @@ void loadSuperClasses(string projectPath) {
   //     return;
   // }
 
+  // cout << superClassPath << endl;
+
   if (superClassPath.compare("java/lang/Object") == 0) {
     loadClassFile("java/lang/Object", projectPath);
   } else {
     loadClassFile(superClassPath + ".class", projectPath);
     loadSuperClasses(projectPath);
   }
+  return;
 }

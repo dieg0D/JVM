@@ -29,9 +29,9 @@ Frame createFrame(vector<CPInfo> constantPool, MethodInfo method) {
   }
 
   if (foundCode) {
-    // uint16_t maxLocals = attributes[i].getCodeAttribute().getMaxLocals();
-    // frame.codeAttribute = attributes[i].getCodeAttribute();
-    // frame.localVariables = vector<JavaType>(maxLocals);
+    uint16_t maxLocals = attributes[i].code.maxLocals;
+    frame.codeAttribute = attributes[i].code;
+    frame.localVariables = vector<JavaType>(maxLocals);
     frame.localPC = 0;
   } else {
     printf("Atributo Code nao encontrado no metodo [%d]\n", method.name_index);

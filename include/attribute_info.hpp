@@ -85,8 +85,8 @@ struct AttributeInfo {
     SourceFileAttribute sourceFile;
     LineNumberTableAttribute lineNumberTable;
     LocalVariableTableAttribute localVariableTable;
+    uint8_t* info;
   };
-  vector<uint8_t> info;
 };
 
 #endif

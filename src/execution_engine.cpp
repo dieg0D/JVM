@@ -4,6 +4,7 @@
 
 #include "../include/class_printer.hpp"
 #include "../include/common.hpp"
+#include "../include/instructions.hpp"
 #include "../include/method_area.hpp"
 
 using namespace std;
@@ -42,29 +43,51 @@ void findMainMethod() {
 void execute() {
   Frame mainFrame =
       createFrame(classFile.constantPool, executionEngine.mainMethod);
-  // Instruction* instructions = instructionSet->getInstructionSet();
 
   pushToJVMStack(mainFrame);
+
+  // Frame currentFrame = getCurrentFrame();
+  // uint8_t* bytecode = currentFrame.codeAttribute.code;
+  // uint32_t bytecodeLength = currentFrame.codeAttribute.codeLength;
+
+  // for (unsigned int i = 0; i < bytecodeLength; i++) {
+  //   uint8_t opcode = bytecode[i];
+
+  //   cout << "OPCODE " << hex << (unsigned int)(unsigned char)opcode << " "
+  //        << get_mnemonic(opcode).first << endl;
+  //   // cout << i << " : " << get_mnemonic(opcode).first << " ";
+
+  //   i = i + get_mnemonic(opcode).second;
+  // }
 
   do {
     Frame currentFrame = getCurrentFrame();
     uint8_t* bytecode = currentFrame.codeAttribute.code;
     uint32_t bytecodeLength = currentFrame.codeAttribute.codeLength;
+
+    for (unsigned int i = 0; i < bytecodeLength; i++) {
+      uint8_t opcode = bytecode[i];
+      cout << i << ": " << get_mnemonic(opcode).first << " ";
+      i = i + get_mnemonic(opcode).second;
+    }
+
     uint8_t opcode = bytecode[jvmThread.pc];
-    // Instruction instruction = instructions[opcode];
+    Instruction instruction = instructions[opcode];
+
+    cout << bytecode << endl;
 
     // Para debug
-    // cout << "Executando: " << jvmThread.pc << " " <<
-    // instruction.getMnemonic()
-    //      << " " << currentFrame << " " << instruction.func << endl;
+    cout << "Executando: " << jvmThread.pc << " " << get_mnemonic(opcode).first
+         << endl;
 
-    // jvmThread.pc = instruction.func(currentFrame);
+    jvmThread.pc = instruction.func(currentFrame);
+    jvmThread.pc = get_mnemonic(opcode).second;
 
-    // if (instruction.getMnemonic().compare("return") == 0) {
-    //   popFromJVMStack();
-    //   if (!isJVMStackEmpty()) {
-    //     jvmThread.pc = getCurrentFrame().localPC;
-    //   }
-    // }
+    if (get_mnemonic(opcode).first.compare("return") == 0) {
+      popFromJVMStack();
+      if (!isJVMStackEmpty()) {
+        jvmThread.pc = getCurrentFrame().localPC;
+      }
+    }
   } while (!isJVMStackEmpty());
 }

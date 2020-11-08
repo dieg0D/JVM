@@ -679,9 +679,9 @@ void printGeneralInformation() {
       getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1);
   cout << "This class: cp_info#" << classFile.thisClass << " <" << this_class
        << ">" << endl;
-  if (classFile.superClass == 1) {
+  if (classFile.superClass == 0) {
     cout << "Super class:  cp_info#" << classFile.superClass
-         << "<invalid constant pool reference>" << endl;
+         << " <invalid constant pool reference>" << endl;
   } else {
     string super_class =
         getCPInfoFirst(classFile.constantPool, classFile.superClass - 1);
@@ -966,7 +966,6 @@ void printAttributes() {
 void printClassFile() {
   printGeneralInformation();
   printConstantPool();
-  initialize_instruction();
   printInterfaces();
   printFields();
   printMethods();
