@@ -56,9 +56,9 @@ int main(int argc, char* argv[]) {
     string className = getClassName(argv[2]);
 
     loadClassFile(className, projectPath);
-
+    cout << "voltei" << endl;
     if (option.compare("-e") == 0) {
-      // printClassFile();
+      printClassFile();
     } else if (option.compare("-i") == 0) {
       loadSuperClasses(projectPath);
       findMainMethod();

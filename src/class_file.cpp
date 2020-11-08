@@ -236,12 +236,8 @@ int nextPosition(int tag, vector<BYTE> fileData, int position) {
   }
 }
 
-pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
-                                           int position) {
-  stringstream stream;
-  string tam = "";
-  int tamanho = 0;
-
+pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData, int position,
+                                           string son = "NO") {
   AttributeInfo attr_info;
   attr_info.attribute_name_index = getDatafromArray(
       fileData, position, position + 2, attr_info.attribute_name_index);
@@ -254,7 +250,7 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
   string name = getCPInfoFirst(classFile.constantPool,
                                attr_info.attribute_name_index - 1);
 
-  cout << "NAme: " << name << endl;
+  // cout << son << "  Name: " << name << endl;
 
   if (name == "Code") {
     CodeAttribute code;
@@ -268,28 +264,22 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
         getDatafromArray(fileData, position, position + 4, code.codeLength);
     position = position + 4;
 
-    stream << (unsigned int)(unsigned char)(code.codeLength);
-    tam = stream.str();
-    tamanho = stoi(tam);
-    code.code = (uint8_t *)calloc(tamanho, sizeof(uint8_t));
-    for (int i = 0; i < tamanho; i++) {
+    code.code = (uint8_t *)calloc(code.codeLength, sizeof(uint8_t));
+
+    for (unsigned int i = 0; i < code.codeLength; i++) {
       code.code[i] =
           getDatafromArray(fileData, position, position + 1, sizeof(code.code));
-      position++;
-    }
-    code.code[tamanho] = '\0';
+      position = position + 1;
+    };
 
     code.exceptionTableLength = getDatafromArray(
         fileData, position, position + 2, code.exceptionTableLength);
     position = position + 2;
 
-    stream << (unsigned int)(unsigned char)(code.exceptionTableLength);
-    tam = stream.str();
-    tamanho = stoi(tam);
+    code.exceptionTable = (ExceptionHandler *)calloc(code.exceptionTableLength,
+                                                     sizeof(ExceptionHandler));
 
-    code.exceptionTable =
-        (ExceptionHandler *)calloc(tamanho, sizeof(ExceptionHandler));
-    for (int i = 0; i < tamanho; i++) {
+    for (unsigned int i = 0; i < code.exceptionTableLength; i++) {
       code.exceptionTable[i].startPC = getDatafromArray(
           fileData, position, position + 2, code.exceptionTable->startPC);
       position = position + 2;
@@ -311,19 +301,21 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
                                             code.attributesCount);
     position = position + 2;
 
-    stream << (unsigned int)(unsigned char)(code.attributesCount);
-    tam = stream.str();
-    tamanho = stoi(tam);
-
-    // code.attributes = (AttributeInfo *)calloc(tamanho,
-    // sizeof(AttributeInfo));
-    for (int i = 0; i < tamanho; i++) {
+    code.attributes =
+        (AttributeInfo *)calloc(code.attributesCount, sizeof(AttributeInfo));
+    for (unsigned int i = 0; i < code.attributesCount; i++) {
       AttributeInfo attr;
-      tie(attr, position) = setAttributesInfo(fileData, position);
-      // code.attributes[i] = &attr;
+      tie(attr, position) = setAttributesInfo(fileData, position, "YES");
+      code.attributes[i] = attr;
     }
 
+    attr_info.code = code;
   } else if (name == "ConstantValue") {
+    ConstantValueAttribute constant;
+    constant.constantValueIndex = getDatafromArray(
+        fileData, position, position + 2, constant.constantValueIndex);
+    position = position + 2;
+    attr_info.constantValue = constant;
   } else if (name == "Exceptions") {
     ExceptionsAttribute exception_attribute;
     exception_attribute.numberOfExceptions =
@@ -336,6 +328,35 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
     position = position + 2;
     attr_info.exceptions = exception_attribute;
   } else if (name == "InnerClasses") {
+    InnerClassesAttribute inner_class;
+    inner_class.numberOfClasses = getDatafromArray(
+        fileData, position, position + 2, inner_class.numberOfClasses);
+    position = position + 2;
+
+    inner_class.classes =
+        (ClassInfo *)calloc(inner_class.numberOfClasses, sizeof(ClassInfo));
+    for (unsigned int i = 0; i < inner_class.numberOfClasses; i++) {
+      inner_class.classes[i].innerClassInfoIndex =
+          getDatafromArray(fileData, position, position + 2,
+                           inner_class.classes->innerClassInfoIndex);
+      position = position + 2;
+
+      inner_class.classes[i].outerClassInfoIndex =
+          getDatafromArray(fileData, position, position + 2,
+                           inner_class.classes->outerClassInfoIndex);
+      position = position + 2;
+      inner_class.classes[i].innerNameIndex =
+          getDatafromArray(fileData, position, position + 2,
+                           inner_class.classes->innerNameIndex);
+      position = position + 2;
+      inner_class.classes[i].innerClassAccessFlags =
+          getDatafromArray(fileData, position, position + 2,
+                           inner_class.classes->innerClassAccessFlags);
+      position = position + 2;
+    }
+
+    attr_info.innerClasses = inner_class;
+
   } else if (name == "SourceFile") {
     SourceFileAttribute source_file;
     source_file.sourcefileIndex = getDatafromArray(
@@ -349,13 +370,10 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
                          lineNumberTableAttribute.lineNumberTableLength);
     position = position + 2;
 
-    stream << (unsigned int)(unsigned char)(lineNumberTableAttribute
-                                                .lineNumberTableLength);
-    tam = stream.str();
-    tamanho = stoi(tam);
-    lineNumberTableAttribute.lineNumberTable =
-        (LineNumber *)calloc(tamanho, sizeof(LineNumber));
-    for (int i = 0; i < tamanho; i++) {
+    lineNumberTableAttribute.lineNumberTable = (LineNumber *)calloc(
+        lineNumberTableAttribute.lineNumberTableLength, sizeof(LineNumber));
+    for (unsigned int i = 0; i < lineNumberTableAttribute.lineNumberTableLength;
+         i++) {
       lineNumberTableAttribute.lineNumberTable[i].startPC =
           getDatafromArray(fileData, position, position + 2,
                            lineNumberTableAttribute.lineNumberTable->startPC);
@@ -373,13 +391,11 @@ pair<AttributeInfo, int> setAttributesInfo(vector<BYTE> fileData,
                          localVariableTableAttribute.localVariableTableLength);
     position = position + 2;
 
-    stream << (unsigned int)(unsigned char)(localVariableTableAttribute
-                                                .localVariableTableLength);
-    tam = stream.str();
-    tamanho = stoi(tam);
-    localVariableTableAttribute.localVariableTable =
-        (LocalVariable *)calloc(tamanho, sizeof(LocalVariable));
-    for (int i = 0; i < tamanho; i++) {
+    localVariableTableAttribute.localVariableTable = (LocalVariable *)calloc(
+        localVariableTableAttribute.localVariableTableLength,
+        sizeof(LocalVariable));
+    for (unsigned int i = 0;
+         i < localVariableTableAttribute.localVariableTableLength; i++) {
       localVariableTableAttribute.localVariableTable[i].startPC =
           getDatafromArray(
               fileData, position, position + 2,
@@ -507,22 +523,7 @@ void loadFile(string file) {
 
     for (int j = 0; j < fields.attributes_count; j++) {
       AttributeInfo attr_info;
-      attr_info.attribute_name_index = getDatafromArray(
-          fileData, position, position + 2, attr_info.attribute_name_index);
-      position = position + 2;
-
-      attr_info.attribute_length = getDatafromArray(
-          fileData, position, position + 4, attr_info.attribute_length);
-      position = position + 4;
-
-      int attr_lenght = (int)attr_info.attribute_length;
-      for (int k = 0; k < attr_lenght; k++) {
-        uint8_t info;
-        info = getDatafromArray(fileData, position, position + 1, info);
-        position = position + 1;
-
-        attr_info.info.push_back(info);
-      }
+      tie(attr_info, position) = setAttributesInfo(fileData, position);
 
       fields.attributes.push_back(attr_info);
     }
@@ -552,21 +553,8 @@ void loadFile(string file) {
 
     for (int j = 0; j < methods.attributes_count; j++) {
       AttributeInfo attr_info;
-      attr_info.attribute_name_index = getDatafromArray(
-          fileData, position, position + 2, attr_info.attribute_name_index);
-      position = position + 2;
+      tie(attr_info, position) = setAttributesInfo(fileData, position);
 
-      attr_info.attribute_length = getDatafromArray(
-          fileData, position, position + 4, attr_info.attribute_length);
-      position = position + 4;
-
-      int attr_lenght = (int)attr_info.attribute_length;
-      for (int k = 0; k < attr_lenght; k++) {
-        uint8_t info;
-        info = getDatafromArray(fileData, position, position + 1, info);
-        position = position + 1;
-        attr_info.info.push_back(info);
-      }
       methods.attributes.push_back(attr_info);
     }
     classFile.methods.push_back(methods);
@@ -576,11 +564,10 @@ void loadFile(string file) {
                                                classFile.attributesCount);
   position = position + 2;
 
-  cout << "classFile.attributesCount: " << classFile.attributesCount << endl;
   for (int j = 0; j < classFile.attributesCount; j++) {
     AttributeInfo attr_info;
     tie(attr_info, position) = setAttributesInfo(fileData, position);
-    cout << "SourceFileIndex: " << attr_info.sourceFile.sourcefileIndex << endl;
+
     classFile.attributes.push_back(attr_info);
   }
 };
