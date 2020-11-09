@@ -14,6 +14,9 @@ void findMainMethod() {
       getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1);
   ClassFile mainClassFile = getClassFile(mainClassFileName);
 
+  // cout << "mainClassFileName: " << mainClassFileName << endl;
+  // cout << "classFile.thisClass - 1: " << classFile.thisClass - 1 << endl;
+
   int i;
   bool foundMain = false;
 
@@ -25,6 +28,8 @@ void findMainMethod() {
     ;
     string descriptor =
         getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+
+    // cout << "Descriptor: " << descriptor << "\nName: " << name << endl;
 
     if (name.compare("main") == 0 &&
         descriptor.compare("([Ljava/lang/String;)V") == 0) {

@@ -14,6 +14,7 @@ const uint8_t CAT_NULL = 0;
 const uint8_t CAT1 = 1;
 const uint8_t CAT2 = 2;
 
+struct Frame;
 typedef struct {
   uint8_t tag;
   union {
@@ -31,14 +32,15 @@ typedef struct {
   };
 } JavaType;
 
-typedef struct {
+struct Frame {
   MethodInfo method;
   vector<CPInfo> constantPool;
   CodeAttribute codeAttribute;
   stack<JavaType> operandStack;
   vector<JavaType> localVariables;
+  stack<Frame>* jvmStack;
   uint32_t localPC = 0;
-} Frame;
+};
 
 Frame createFrame(vector<CPInfo> constantPool, MethodInfo method);
 #endif

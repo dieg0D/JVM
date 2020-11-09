@@ -10,7 +10,7 @@ using namespace std;
 
 void loadClassFile(string className) {
   string path = "";
-
+  // cout << "ClassName: " << className << endl;
   if (className.compare("java/lang/Object") == 0) {
     path = "java/lang/Object.class";
   } else {
@@ -21,7 +21,6 @@ void loadClassFile(string className) {
     loadFile(path);
 
     insertClass();
-
     // if (className.compare(getCPInfoFirst(classFile.constantPool,
     //                                      classFile.thisClass - 1)) != 0) {
     //   printf(
