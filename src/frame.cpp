@@ -8,7 +8,8 @@
 
 using namespace std;
 
-Frame createFrame(vector<CPInfo> constantPool, MethodInfo method) {
+Frame createFrame(vector<CPInfo> constantPool, MethodInfo method,
+                  stack<Frame>* jvmStack) {
   Frame frame;
 
   uint16_t attributesCount = method.attributes_count;
@@ -35,6 +36,7 @@ Frame createFrame(vector<CPInfo> constantPool, MethodInfo method) {
     frame.localPC = 0;
     frame.constantPool = constantPool;
     frame.method = method;
+    frame.jvmStack = jvmStack;
   } else {
     printf("Atributo Code nao encontrado no metodo [%d]\n", method.name_index);
     exit(0);

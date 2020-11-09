@@ -25,7 +25,7 @@ void findMainMethod() {
     uint16_t nameIndex = method.name_index;
     uint16_t descriptorIndex = method.descriptor_index;
     string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
-    ;
+    
     string descriptor =
         getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
 
@@ -46,8 +46,9 @@ void findMainMethod() {
 }
 
 void execute() {
-  Frame mainFrame =
-      createFrame(classFile.constantPool, executionEngine.mainMethod);
+  stack<Frame> jvmStack = getJVMStack();
+  Frame mainFrame = createFrame(classFile.constantPool,
+                                executionEngine.mainMethod, &jvmStack);
 
   pushToJVMStack(mainFrame);
   Frame currentFrame = getCurrentFrame();

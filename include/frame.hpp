@@ -15,22 +15,6 @@ const uint8_t CAT1 = 1;
 const uint8_t CAT2 = 2;
 
 struct Frame;
-typedef struct {
-  uint8_t tag;
-  union {
-    uint32_t type_empty;
-    uint32_t type_boolean;
-    uint32_t type_byte;
-    uint32_t type_char;
-    uint32_t type_short;
-    uint32_t type_int;
-    uint32_t type_float;
-    uint64_t type_reference;
-    uint32_t type_returnAddress;
-    uint64_t type_long;
-    uint64_t type_double;
-  };
-} JavaType;
 
 struct Frame {
   MethodInfo method;
@@ -42,5 +26,5 @@ struct Frame {
   uint32_t localPC = 0;
 };
 
-Frame createFrame(vector<CPInfo> constantPool, MethodInfo method);
+Frame createFrame(vector<CPInfo> constantPool, MethodInfo method, stack<Frame>* jvmStack);
 #endif

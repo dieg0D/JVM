@@ -21,13 +21,6 @@ void loadClassFile(string className) {
     loadFile(path);
 
     insertClass();
-    // if (className.compare(getCPInfoFirst(classFile.constantPool,
-    //                                      classFile.thisClass - 1)) != 0) {
-    //   printf(
-    //       "O nome do .class nao bate com o nome da classe encontrato no "
-    //       "constant pool!\n");
-    //   exit(-1);
-    // }
 
     return;
   }

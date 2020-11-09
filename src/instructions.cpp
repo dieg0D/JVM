@@ -46,6 +46,69 @@ vector<JavaType>* buildMultiAnewArray(vector<int> dimensions, int index,
   return array;
 }
 
+map<string, JavaType>* initializeFields() {
+  map<string, JavaType>* object = new map<string, JavaType>;
+  ClassFile objectClass = classFile;
+
+  do {
+    for (uint16_t i = 0; i < classFile.fieldsCount; i++) {
+      string fieldName = getCPInfoFirst(classFile.constantPool,
+                                        classFile.fields[i].name_index - 1);
+
+      string fieldDescriptor = getCPInfoFirst(
+          classFile.constantPool, classFile.fields[i].descriptor_index - 1);
+      JavaType fieldContent;
+
+      if (fieldDescriptor.compare("C") == 0) {
+        fieldContent.tag = CAT1;
+        fieldContent.type_char = 0;
+      } else if (fieldDescriptor.compare("I") == 0) {
+        fieldContent.tag = CAT1;
+        fieldContent.type_int = 0;
+      } else if (fieldDescriptor.compare("F") == 0) {
+        fieldContent.tag = CAT1;
+        fieldContent.type_float = 0;
+      } else if (fieldDescriptor.compare("D") == 0) {
+        fieldContent.tag = CAT2;
+        fieldContent.type_double = 0;
+      } else if (fieldDescriptor.compare("J") == 0) {
+        fieldContent.tag = CAT2;
+        fieldContent.type_long = 0;
+      } else if (fieldDescriptor.compare("Z") == 0) {
+        fieldContent.tag = CAT1;
+        fieldContent.type_boolean = 0;
+      } else if (fieldDescriptor[0] == 'L') {
+        fieldContent.tag = CAT1;
+        fieldContent.type_reference = JAVA_NULL;
+      } else if (fieldDescriptor[0] == '[') {
+        fieldContent.tag = CAT1;
+        fieldContent.type_reference = JAVA_NULL;
+      } else {
+        printf("Criacao de fields: tipo do descritor nao reconhecido: %s\n",
+               fieldDescriptor.c_str());
+        exit(0);
+      }
+
+      object->insert(make_pair(fieldName, fieldContent));
+    }
+
+    string superClassName =
+        getCPInfoFirst(classFile.constantPool, classFile.superClass - 1);
+    classFile = getClassFile(superClassName);
+  } while (classFile.superClass != 0);
+
+  // Warning!
+  // cout << "Warning: os atributos de interfaces ainda nao estao sendo
+  // buscados!" << endl;
+
+  JavaType thisClass;
+  string thisClassName =
+      getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1);
+  thisClass.type_reference = (uint64_t) new string(thisClassName);
+  object->insert(make_pair("<this_class>", thisClass));
+  return object;
+}
+
 void initialize_instruction() {
   Instruction instruction;
   // Constantes
@@ -628,7 +691,7 @@ void initialize_instruction() {
   instruction.length = 0;
   instructions.push_back(instruction);
 
-  instruction.mnemonic = "drem";
+  instruction.mnemonic = "dremOp";
   instruction.opcode = 0x73;
   instruction.length = 0;
   instructions.push_back(instruction);
@@ -1286,6 +1349,7 @@ uint32_t func_exec(Frame& frame) {
 
       value.type_short = (int32_t)((((int16_t)(int8_t)byte1 << 8)) | byte2);
       value.tag = CAT1;
+      frame.operandStack.push(value);
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
@@ -1346,7 +1410,7 @@ uint32_t func_exec(Frame& frame) {
       string tag_info = stream.str();
       int tag = stoi(tag_info);
 
-      switch (cpInfo.tag) {
+      switch (tag) {
         case 5:
           value.type_long =
               ((uint64_t)cpInfo.CONSTANT_Long_info.high_bytes << 32) |
@@ -2516,7 +2580,7 @@ uint32_t func_exec(Frame& frame) {
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
-    case drem: {
+    case dremOp: {
       JavaType value1;
       JavaType value2;
       JavaType result;
@@ -3424,9 +3488,9 @@ uint32_t func_exec(Frame& frame) {
       JavaType key = frame.operandStack.top();
       frame.operandStack.pop();
 
-      frame.localPC + 1;
+      frame.localPC = frame.localPC + 1;
       while ((frame.localPC) % 4 != 0) {
-        frame.localPC + 1;
+        frame.localPC = frame.localPC + 1;
       }
 
       uint8_t defaultByte1 = bytecode[frame.localPC + 1];
@@ -3450,7 +3514,7 @@ uint32_t func_exec(Frame& frame) {
       int32_t high =
           (highByte1 << 24) | (highByte2 << 16) | (highByte3 << 8) | highByte4;
 
-      for (int match = low; match <= high; match + 1) {
+      for (int match = low; match <= high; match++) {
         uint8_t offsetByte1 = bytecode[frame.localPC + 13];
         uint8_t offsetByte2 = bytecode[frame.localPC + 14];
         uint8_t offsetByte3 = bytecode[frame.localPC + 15];
@@ -3528,65 +3592,62 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case lreturn: {
-      // JavaType value;
+      JavaType value;
 
-      // value.tag = CAT2;
-      // value.type_long = frame->operandStack.top().type_long;
-      // frame->operandStack.pop();
-      // frame->jvmStack->pop();
+      value.tag = CAT2;
+      value.type_long = frame.operandStack.top().type_long;
+      frame.operandStack.pop();
+      frame.jvmStack->pop();
 
-      // Frame* invoker = &(frame->jvmStack->top());
-      // invoker->operandStack.push(value);
-      // return invoker->localPC;
+      Frame* invoker = &(frame.jvmStack->top());
+      invoker->operandStack.push(value);
+      return invoker->localPC;
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
     case freturn: {
-      // JavaType value;
+      JavaType value;
 
-      // value.tag = CAT1;
-      // value.type_float = frame->operandStack.top().type_float;
-      // frame->operandStack.pop();
-      // frame->jvmStack->pop();
+      value.tag = CAT1;
+      value.type_float = frame.operandStack.top().type_float;
+      frame.operandStack.pop();
+      frame.jvmStack->pop();
 
-      // Frame* invoker = &(frame->jvmStack->top());
-      // invoker->operandStack.push(value);
-      // return invoker->localPC;
+      Frame* invoker = &(frame.jvmStack->top());
+      invoker->operandStack.push(value);
+      return invoker->localPC;
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
     case dreturn: {
-      // JavaType value;
+      JavaType value;
 
-      // value.tag = CAT2;
-      // value.type_double = frame->operandStack.top().type_double;
-      // frame->operandStack.pop();
-      // frame->jvmStack->pop();
+      value.tag = CAT2;
+      value.type_double = frame.operandStack.top().type_double;
+      frame.operandStack.pop();
+      frame.jvmStack->pop();
 
-      // Frame* invoker = &(frame->jvmStack->top());
-      // invoker->operandStack.push(value);
-      // return invoker->localPC;
+      Frame* invoker = &(frame.jvmStack->top());
+      invoker->operandStack.push(value);
+      return invoker->localPC;
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
     case areturn: {
-      // JavaType value;
+      JavaType value;
 
-      // value.tag = CAT1;
-      // value.type_reference = frame->operandStack.top().type_reference;
-      // frame->operandStack.pop();
-      // frame->jvmStack->pop();
+      value.tag = CAT1;
+      value.type_reference = frame.operandStack.top().type_reference;
+      frame.operandStack.pop();
+      frame.jvmStack->pop();
 
-      // Frame* invoker = &(frame->jvmStack->top());
-      // invoker->operandStack.push(value);
-      // return invoker->localPC;
+      Frame* invoker = &(frame.jvmStack->top());
+      invoker->operandStack.push(value);
+      return invoker->localPC;
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
     case returnOp: {
-      // if (!frame.operandStack.empty()) {
-      //   printf("A pilha de operandos nao esta vazia! Pode haver erros!\n");
-      // }
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
@@ -3608,90 +3669,82 @@ uint32_t func_exec(Frame& frame) {
         frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
         return frame.localPC;  // incrementa jvthread.pc em 1
       } else {
-        // if (!isClassInitialized(className)) {
-        //   setClassAsInitialized(className);
+        if (!isClassInitialized(className)) {
+          setClassAsInitialized(className);
 
-        //   loadClassFile(className + ".class");
-        //   loadSuperClasses();
-        //   ClassFile* classFile =
-        //   classLoader->getClassFromMethodArea(className); vector<CPInfo*>
-        //   constantPool = classFile->getConstantPool(); vector<MethodInfo*>
-        //   methods = classFile->getMethods(); MethodInfo* method;
+          loadClassFile(className + ".class");
+          loadSuperClasses();
+          ClassFile classFile = getClassFile(className);
+          MethodInfo method;
 
-        //   bool foundClinit = false;
-        //   for (int i = 0; i < classFile->getMethodsCount() && !foundClinit;
-        //        i++) {
-        //     method = methods[i];
-        //     uint16_t nameIndex = method->getNameIndex();
-        //     uint16_t descriptorIndex = method->getDescriptorIndex();
-        //     string name =
-        //         constantPool[nameIndex - 1]->getInfo(constantPool).first;
-        //     string classDescriptor =
-        //         constantPool[descriptorIndex -
-        //         1]->getInfo(constantPool).first;
-        //     if (name.compare("<clinit>") == 0 &&
-        //         classDescriptor.compare("()V") == 0) {
-        //       foundClinit = true;
-        //     }
-        //   }
+          bool foundClinit = false;
+          for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
+            method = classFile.methods[i];
+            uint16_t nameIndex = method.name_index;
+            uint16_t descriptorIndex = method.descriptor_index;
+            string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
 
-        //   if (foundClinit) {
-        //     Frame clinitMethodFrame(constantPool, method, frame->jvmStack);
-        //     frame->jvmStack->push(clinitMethodFrame);
-        //     frame->localPC -= 2;
-        //     return clinitMethodFrame.localPC;
-        //   }
+            string classDescriptor =
+                getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+
+            if (name.compare("<clinit>") == 0 &&
+                classDescriptor.compare("()V") == 0) {
+              foundClinit = true;
+            }
+          }
+
+          if (foundClinit) {
+            Frame clinitMethodFrame =
+                createFrame(classFile.constantPool, method, frame.jvmStack);
+            frame.jvmStack->push(clinitMethodFrame);
+            return clinitMethodFrame.localPC;
+          }
+        }
+
+        ClassFile classFile = getClassFile(className);
+        FieldInfo field;
+        bool foundField = false;
+
+        for (int i = 0; i < classFile.fieldsCount && !foundField; i++) {
+          field = classFile.fields[i];
+          uint16_t nameIndex = field.name_index;
+          uint16_t descriptorIndex = field.descriptor_index;
+          string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+
+          string descriptor =
+              getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+
+          if (name.compare(fieldName) == 0 &&
+              descriptor.compare(fieldDescriptor) == 0) {
+            foundField = true;
+          }
+        }
+
+        if (!foundField) {
+          printf("getstatic: o field especificado nao pode ser resolvido!");
+          exit(0);
+        }
+
+        if (fieldDescriptor.compare("C") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor.compare("I") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor.compare("F") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor.compare("D") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor.compare("J") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor.compare("Z") == 0) {
+          frame.operandStack.push(field.staticValue);
+        } else if (fieldDescriptor[0] == '[') {
+          frame.operandStack.push(field.staticValue);
+        } else {
+          printf("getstatic: tipo do descritor nao reconhecido: %s\n",
+                 fieldDescriptor.c_str());
+          exit(0);
+        }
       }
-
-      //   ClassFile* classFile = methodArea->getClassFile(className);
-      //   vector<CPInfo*> constantPool = classFile->getConstantPool();
-      //   vector<FieldInfo*> fields = classFile->getFields();
-      //   FieldInfo* field;
-      //   bool foundField = false;
-
-      //   for (int i = 0; i < classFile->getFieldsCount() && !foundField; i++)
-      //   {
-      //     field = fields[i];
-      //     uint16_t nameIndex = field->getNameIndex();
-      //     uint16_t descriptorIndex = field->getDescriptorIndex();
-      //     string name =
-      //         constantPool[nameIndex - 1]->getInfo(constantPool).first;
-      //     string descriptor =
-      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
-      //     if (name.compare(fieldName) == 0 &&
-      //         descriptor.compare(fieldDescriptor) == 0) {
-      //       foundField = true;
-      //     }
-      //   }
-
-      //   if (!foundField) {
-      //     printf(
-      //         "getstatic: o field especificado nao pode ser resolvido! Deve "
-      //         "estar em uma superclasse ou superinterface! Falta "
-      //         "implementar!\n");
-      //     exit(0);
-      //   }
-
-      //   if (fieldDescriptor.compare("C") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor.compare("I") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor.compare("F") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor.compare("D") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor.compare("J") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor.compare("Z") == 0) {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else if (fieldDescriptor[0] == '[') {
-      //     frame->operandStack.push(field->staticValue);
-      //   } else {
-      //     printf("getstatic: tipo do descritor nao reconhecido: %s\n",
-      //            fieldDescriptor.c_str());
-      //     exit(0);
-      //   }
-      // }
 
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
@@ -3705,36 +3758,28 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case putfield: {
-      // uint8_t* bytecode = frame.codeAttribute.code;
-      // uint8_t byte1 = bytecode[frame.localPC + 1];
-      // uint8_t byte2 = bytecode[frame.localPC +2];
-      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      uint8_t byte1 = bytecode[frame.localPC + 1];
+      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
 
-      // string className =
-      //     frame->constantPool[index - 1]->getInfo(frame->constantPool).first;
-      // string nameAndType =
-      //     frame->constantPool[index -
-      //     1]->getInfo(frame->constantPool).second;
-      // int j = 0;
+      string className = getCPInfoFirst(frame.constantPool, index - 1);
 
-      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
-      //   j++;
-      // }
-      // string fieldName = nameAndType.substr(0, j);
-      // string fieldDescriptor = nameAndType.substr(j + 3, nameAndType.size());
+      string fieldName = getCPInfoSecond(frame.constantPool, index - 1).second;
 
-      // // Falta resolver o field!
+      string fieldDescriptor =
+          getCPInfoSecond(frame.constantPool, index - 1).first;
+      // Falta resolver o field!
 
-      // JavaType value = frame->operandStack.top();
-      // frame->operandStack.pop();
-      // JavaType objectref = frame->operandStack.top();
-      // frame->operandStack.pop();
+      JavaType value = frame.operandStack.top();
+      frame.operandStack.pop();
+      JavaType objectref = frame.operandStack.top();
+      frame.operandStack.pop();
 
-      // map<string, JavaType>* object =
-      //     (map<string, JavaType>*)objectref.type_reference;
-      // object->at(fieldName) = value;
-      // frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      // return frame.localPC;
+      map<string, JavaType>* object =
+          (map<string, JavaType>*)objectref.type_reference;
+      object->at(fieldName) = value;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokevirtual: {
       uint8_t byte1 = bytecode[frame.localPC + 1];
@@ -3796,9 +3841,9 @@ uint32_t func_exec(Frame& frame) {
           } else if (descriptor.compare("()V") == 0) {
             cout << endl;
           } else {
-            cout
-                << "invokevirtualFunction: tipo do descritor nao reconhecido : "
-                << descriptor.c_str() << endl;
+            cout << "invokevirtualFunction: tipo do descritor nao "
+                    "reconhecido : "
+                 << descriptor.c_str() << endl;
             exit(0);
           }
         } else if (methodName.compare("print") == 0) {
@@ -3842,9 +3887,9 @@ uint32_t func_exec(Frame& frame) {
           } else if (descriptor.compare("()V") == 0) {
             // Nao faz nada
           } else {
-            cout
-                << "invokevirtualFunction: tipo do descritor nao reconhecido : "
-                << descriptor.c_str() << endl;
+            cout << "invokevirtualFunction: tipo do descritor nao "
+                    "reconhecido : "
+                 << descriptor.c_str() << endl;
             exit(0);
           }
         } else {
@@ -3934,7 +3979,8 @@ uint32_t func_exec(Frame& frame) {
             objectref.tag = CAT1;
           } else {
             printf(
-                "invokevirtual: StringBuilder: descritor nao reconhecido: %s\n",
+                "invokevirtual: StringBuilder: descritor nao reconhecido: "
+                "%s\n",
                 descriptor.c_str());
             exit(0);
           }
@@ -3942,7 +3988,8 @@ uint32_t func_exec(Frame& frame) {
           // Fingindo que estou convertendo em string
         } else {
           printf(
-              "invokevirtualFunction: Metodo do StringBuilder nao reconhecido "
+              "invokevirtualFunction: Metodo do StringBuilder nao "
+              "reconhecido "
               "%s\n",
               methodName.c_str());
           exit(0);
@@ -3975,124 +4022,113 @@ uint32_t func_exec(Frame& frame) {
         }
 
         // ORIENTACAO OBJETOS NAO IMPLEMENTADA AINDA
-        // bool foundMethod = false;
-        // vector<CPInfo*> constantPool;
-        // MethodInfo* method;
+        bool foundMethod = false;
+        MethodInfo method;
 
-        // JavaType objectref = frame.operandStack.top();
-        // frame.operandStack.pop();
-        // map<string, JavaType>* object =
-        //     (map<string, JavaType>*)objectref.type_reference;
+        JavaType objectref = frame.operandStack.top();
+        frame.operandStack.pop();
+        map<string, JavaType>* object =
+            (map<string, JavaType>*)objectref.type_reference;
 
-        // string* objectClassName =
-        //     (string*)object.at("<this_class>").type_reference;
+        string* objectClassName =
+            (string*)object->at("<this_class>").type_reference;
 
-        // ClassFile* objectClassFile =
-        // methodArea.getClassFile(*objectClassName);
+        ClassFile objectClassFile = getClassFile(*objectClassName);
 
-        // constantPool = objectClassFile.getConstantPool();
-        // vector<MethodInfo*> methods = objectClassFile.getMethods();
+        for (int i = 0; i < objectClassFile.methodsCount && !foundMethod; i++) {
+          method = objectClassFile.methods[i];
+          uint16_t nameIndex = method.name_index;
+          uint16_t descriptorIndex = method.descriptor_index;
+          string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
 
-        // for (int i = 0; i < objectClassFile.getMethodsCount() &&
-        // !foundMethod;
-        //      i++) {
-        //   method = methods[i];
-        //   uint16_t nameIndex = method.getNameIndex();
-        //   uint16_t descriptorIndex = method.getDescriptorIndex();
-        //   string name = constantPool[nameIndex -
-        //   1].getInfo(constantPool).first; string methodDescriptor =
-        //       constantPool[descriptorIndex - 1].getInfo(constantPool).first;
-        //   if (name.compare(methodName) == 0 &&
-        //       methodDescriptor.compare(descriptor) == 0) {
-        //     foundMethod = true;
-        //   }
-        // }
+          string methodDescriptor =
+              getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+          if (name.compare(methodName) == 0 &&
+              methodDescriptor.compare(descriptor) == 0) {
+            foundMethod = true;
+          }
+        }
 
         // // Caso nao encontre checa as superclasses
-        // if (!foundMethod) {
-        //   do {
-        //     ClassFile* classFile = methodArea.getClassFile(className);
-        //     constantPool = classFile.getConstantPool();
-        //     vector<MethodInfo*> methods = classFile.getMethods();
+        if (!foundMethod) {
+          do {
+            ClassFile classFile = getClassFile(className);
 
-        //     for (int i = 0; i < classFile.getMethodsCount() && !foundMethod;
-        //          i++) {
-        //       method = methods[i];
-        //       uint16_t nameIndex = method.getNameIndex();
-        //       uint16_t descriptorIndex = method.getDescriptorIndex();
-        //       string name =
-        //           constantPool[nameIndex - 1].getInfo(constantPool).first;
-        //       string methodDescriptor =
-        //           constantPool[descriptorIndex -
-        //           1].getInfo(constantPool).first;
-        //       if (name.compare(methodName) == 0 &&
-        //           methodDescriptor.compare(descriptor) == 0) {
-        //         foundMethod = true;
-        //       }
-        //     }
+            for (int i = 0; i < classFile.methodsCount && !foundMethod; i++) {
+              method = classFile.methods[i];
+              uint16_t nameIndex = method.name_index;
+              uint16_t descriptorIndex = method.descriptor_index;
+              string name =
+                  getCPInfoFirst(classFile.constantPool, nameIndex - 1);
 
-        //     if (!foundMethod) {
-        //       if (classFile.getSuperClass() == 0) {
-        //         printf(
-        //             "invokevirutal:  metodo nao foi encontrado em nenhuma
-        //             " "superclasse! Talvez esteja em uma interface, falta
-        //             " "Implementar!\n");
-        //         exit(0);
-        //       }
-        //       className = constantPool[classFile.getSuperClass() - 1]
-        //                       .getInfo(constantPool)
-        //                       .first;
-        //     }
-        //   } while (!foundMethod);
-        // }
+              string methodDescriptor =
+                  getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
 
-        // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+              if (name.compare(methodName) == 0 &&
+                  methodDescriptor.compare(descriptor) == 0) {
+                foundMethod = true;
+              }
+            }
 
-        // int argCnt = 1;
-        // for (int i = 1; descriptor[i] != ')'; i++) {
-        //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
-        //     JavaType arg = auxstack.top();
-        //     auxstack.pop();
-        //     staticMethodFrame.localVariables[argCnt] = arg;
-        //     argCnt++;
-        //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
-        //     JavaType arg = auxstack.top();
-        //     auxstack.pop();
-        //     staticMethodFrame.localVariables[argCnt] = arg;
-        //     argCnt += 2;
-        //   } else if (descriptor[i] == 'L') {
-        //     int j = i;
-        //     while (descriptor[i] != ';') {
-        //       i++;
-        //     }
-        //     JavaType arg = auxstack.top();
-        //     auxstack.pop();
-        //     staticMethodFrame.localVariables[argCnt] = arg;
-        //     argCnt++;
-        //   } else if (descriptor[i] == '[') {
-        //     while (descriptor[i] == '[') {
-        //       i++;
-        //     }
-        //     if (descriptor[i] == 'L') {
-        //       while (descriptor[i] != ';') {
-        //         i++;
-        //       }
-        //     }
-        //     JavaType arg = auxstack.top();
-        //     auxstack.pop();
-        //     staticMethodFrame.localVariables[argCnt] = arg;
-        //     argCnt++;
-        //   } else {
-        //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i]
-        //          << endl;
-        //     exit(0);
-        //   }
-        // }
-        // staticMethodFrame.localVariables[0] = objectref;
+            if (!foundMethod) {
+              if (classFile.superClass == 0) {
+                printf(
+                    "invokevirutal:  metodo nao foi encontrado em nenhuma "
+                    "superclasse!");
+                exit(0);
+              }
 
-        // frame->jvmStack->push(staticMethodFrame);
-        // frame->localPC++;
-        // return staticMethodFrame.localPC;
+              className = getCPInfoFirst(classFile.constantPool,
+                                         classFile.superClass - 1);
+            }
+          } while (!foundMethod);
+        }
+
+        Frame staticMethodFrame =
+            createFrame(classFile.constantPool, method, frame.jvmStack);
+
+        int argCnt = 1;
+        for (int i = 1; descriptor[i] != ')'; i++) {
+          if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+            JavaType arg = auxstack.top();
+            auxstack.pop();
+            staticMethodFrame.localVariables[argCnt] = arg;
+            argCnt++;
+          } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+            JavaType arg = auxstack.top();
+            auxstack.pop();
+            staticMethodFrame.localVariables[argCnt] = arg;
+            argCnt += 2;
+          } else if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+            JavaType arg = auxstack.top();
+            auxstack.pop();
+            staticMethodFrame.localVariables[argCnt] = arg;
+            argCnt++;
+          } else if (descriptor[i] == '[') {
+            while (descriptor[i] == '[') {
+              i++;
+            }
+            if (descriptor[i] == 'L') {
+              while (descriptor[i] != ';') {
+                i++;
+              }
+            }
+            JavaType arg = auxstack.top();
+            auxstack.pop();
+            staticMethodFrame.localVariables[argCnt] = arg;
+            argCnt++;
+          } else {
+            cout << "Tipo de descritor nao reconhecido: " << descriptor[i]
+                 << endl;
+            exit(0);
+          }
+        }
+        staticMethodFrame.localVariables[0] = objectref;
+
+        frame.jvmStack->push(staticMethodFrame);
       }
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
@@ -4118,66 +4154,63 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case newOp: {
-      // uint8_t byte1 = bytecode[frame.localPC + 1];
-      // uint8_t byte2 = bytecode[frame.localPC + 2];
-      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      uint8_t byte1 = bytecode[frame.localPC + 1];
+      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
 
-      // string className = getCPInfoFirst(frame.constantPool, index - 1);
+      string className = getCPInfoFirst(frame.constantPool, index - 1);
 
-      // if (className.compare("java/lang/String") == 0) {
-      //   JavaType objectref;
-      //   objectref.type_reference = (uint64_t) new string("");
-      //   objectref.tag = CAT1;
-      //   frame.operandStack.push(objectref);
-      // } else if (className.compare("java/lang/StringBuilder") == 0) {
-      //   JavaType objectref;
-      //   objectref.type_reference = (uint64_t) new string("");
-      //   objectref.tag = CAT1;
-      //   frame.operandStack.push(objectref);
-      // } else {
-      //   if (!isClassInitialized(className)) {
-      //     setClassAsInitialized(className);
+      if (className.compare("java/lang/String") == 0) {
+        JavaType objectref;
+        objectref.type_reference = (uint64_t) new string("");
+        objectref.tag = CAT1;
+        frame.operandStack.push(objectref);
+      } else if (className.compare("java/lang/StringBuilder") == 0) {
+        JavaType objectref;
+        objectref.type_reference = (uint64_t) new string("");
+        objectref.tag = CAT1;
+        frame.operandStack.push(objectref);
+      } else {
+        if (!isClassInitialized(className)) {
+          setClassAsInitialized(className);
 
-      //     ClassFile aux = classLoader->loadClassFile(className + ".class");
-      //     classLoader->loadSuperClasses(&aux);
-      //     ClassFile* classFile =
-      //     classLoader->getClassFromMethodArea(className); vector<CPInfo*>
-      //     constantPool = classFile->getConstantPool(); vector<MethodInfo*>
-      //     methods = classFile->getMethods(); MethodInfo* method;
+          loadClassFile(className + ".class");
+          loadSuperClasses();
+          MethodInfo method;
 
-      //     bool foundClinit = false;
-      //     for (int i = 0; i < classFile->getMethodsCount() && !foundClinit;
-      //          i++) {
-      //       method = methods[i];
-      //       uint16_t nameIndex = method->getNameIndex();
-      //       uint16_t descriptorIndex = method->getDescriptorIndex();
-      //       string name =
-      //           constantPool[nameIndex - 1]->getInfo(constantPool).first;
-      //       string classDescriptor =
-      //           constantPool[descriptorIndex -
-      //           1]->getInfo(constantPool).first;
-      //       if (name.compare("<clinit>") == 0 &&
-      //           classDescriptor.compare("()V") == 0) {
-      //         foundClinit = true;
-      //       }
-      //     }
+          bool foundClinit = false;
+          for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
+            method = classFile.methods[i];
+            uint16_t nameIndex = method.name_index;
+            uint16_t descriptorIndex = method.descriptor_index;
+            string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
 
-      //     if (foundClinit) {
-      //       Frame clinitMethodFrame(constantPool, method, frame->jvmStack);
-      //       frame->jvmStack->push(clinitMethodFrame);
-      //       frame->localPC -= 2;
-      //       return clinitMethodFrame.localPC;
-      //     }
-      //   }
+            string classDescriptor =
+                getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
 
-      //   ClassFile* classFile = methodArea->getClassFile(className);
-      //   JavaType objectref;
-      //   objectref.tag = CAT1;
-      //   objectref.type_reference = (uint64_t)initializeFields(classFile);
-      //   frame->operandStack.push(objectref);
-      // }
-      // frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      // return frame.localPC;
+            if (name.compare("<clinit>") == 0 &&
+                classDescriptor.compare("()V") == 0) {
+              foundClinit = true;
+            }
+          }
+
+          if (foundClinit) {
+            Frame clinitMethodFrame =
+                createFrame(classFile.constantPool, method, frame.jvmStack);
+            frame.jvmStack->push(clinitMethodFrame);
+            frame.localPC -= 2;
+            return clinitMethodFrame.localPC;
+          }
+        }
+
+        classFile = getClassFile(className);
+        JavaType objectref;
+        objectref.tag = CAT1;
+        objectref.type_reference = (uint64_t)initializeFields();
+        frame.operandStack.push(objectref);
+      }
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case newarray: {
       uint8_t* bytecode = frame.codeAttribute.code;
@@ -4190,45 +4223,45 @@ uint32_t func_exec(Frame& frame) {
       vector<JavaType>* array = new vector<JavaType>(count.type_int);
 
       if (atype == T_BOOLEAN) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_boolean = (int8_t)0;
-        //   }
-        // } else if (atype == T_CHAR) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_char = (int16_t)0;
-        //   }
-        // } else if (atype == T_FLOAT) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_float = (uint32_t)0;
-        //   }
-        // } else if (atype == T_DOUBLE) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT2;
-        //     array.at(i).type_double = (uint64_t)0;
-        //   }
-        // } else if (atype == T_BYTE) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_byte = (int8_t)0;
-        //   }
-        // } else if (atype == T_SHORT) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_short = (int16_t)0;
-        //   }
-        // } else if (atype == T_INT) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT1;
-        //     array.at(i).type_int = (int32_t)0;
-        //   }
-        // } else if (atype == T_LONG) {
-        //   for (int32_t i = 0; i < count.type_int; i++) {
-        //     array.at(i).tag = CAT2;
-        //     array.at(i).type_long = (int64_t)0;
-        //   }
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_boolean = (int8_t)0;
+        }
+      } else if (atype == T_CHAR) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_char = (int16_t)0;
+        }
+      } else if (atype == T_FLOAT) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_float = (uint32_t)0;
+        }
+      } else if (atype == T_DOUBLE) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT2;
+          array->at(i).type_double = (uint64_t)0;
+        }
+      } else if (atype == T_BYTE) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_byte = (int8_t)0;
+        }
+      } else if (atype == T_SHORT) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_short = (int16_t)0;
+        }
+      } else if (atype == T_INT) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT1;
+          array->at(i).type_int = (int32_t)0;
+        }
+      } else if (atype == T_LONG) {
+        for (uint32_t i = 0; i < count.type_int; i++) {
+          array->at(i).tag = CAT2;
+          array->at(i).type_long = (int64_t)0;
+        }
       } else {
         printf("newarray: tipo de array indefinido: %u\n", atype);
       }
@@ -4241,10 +4274,6 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case anewarray: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
-
       int32_t count = (int32_t)frame.operandStack.top().type_int;
       frame.operandStack.pop();
 
@@ -4321,7 +4350,7 @@ uint32_t func_exec(Frame& frame) {
       uint32_t dimensions = byte3;
       vector<int> dimensionsArray;
 
-      for (int i = 0; i < dimensions; i++) {
+      for (uint32_t i = 0; i < dimensions; i++) {
         uint32_t dimension = frame.operandStack.top().type_int;
         frame.operandStack.pop();
         if (dimension == 0) {

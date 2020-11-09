@@ -4,11 +4,28 @@
 #include <iostream>
 #include <vector>
 
-#include "./cp_info.hpp"
 #include "./attribute_info.hpp"
+#include "./cp_info.hpp"
 using namespace std;
 
 typedef unsigned char BYTE;
+
+typedef struct {
+  uint8_t tag;
+  union {
+    uint32_t type_empty;
+    uint32_t type_boolean;
+    uint32_t type_byte;
+    uint32_t type_char;
+    uint32_t type_short;
+    uint32_t type_int;
+    uint32_t type_float;
+    uint64_t type_reference;
+    uint32_t type_returnAddress;
+    uint64_t type_long;
+    uint64_t type_double;
+  };
+} JavaType;
 
 typedef struct {
   uint8_t tag;
@@ -31,13 +48,13 @@ typedef struct {
   };
 } CPInfo;
 
-
 typedef struct {
   uint16_t access_flags;
   uint16_t name_index;
   uint16_t descriptor_index;
   uint16_t attributes_count;
   vector<AttributeInfo> attributes;
+  JavaType staticValue;
 } FieldInfo;
 
 typedef struct {

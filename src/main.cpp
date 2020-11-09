@@ -58,6 +58,15 @@ int main(int argc, char* argv[]) {
     initialize_instruction();
 
     loadClassFile(className);
+    if (className.compare(
+            getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1) +
+            ".class") != 0) {
+      printf(
+          "O nome do .class nao bate com o nome da classe encontrato no "
+          "constant pool!\n");
+      exit(-1);
+    }
+
     if (option.compare("-e") == 0) {
       printClassFile();
     } else if (option.compare("-i") == 0) {
