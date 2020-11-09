@@ -12,7 +12,7 @@ void initialize_instruction();
 
 pair<string, int> get_mnemonic(uint8_t opcode);
 
-uint32_t func_exec(Frame frame);
+uint32_t func_exec(Frame& frame);
 typedef struct {
   uint8_t opcode;
   string mnemonic;

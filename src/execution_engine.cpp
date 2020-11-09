@@ -48,19 +48,19 @@ void execute() {
   Frame currentFrame = getCurrentFrame();
 
   do {
-    currentFrame = getCurrentFrame();
     uint8_t* bytecode = currentFrame.codeAttribute.code;
 
     uint8_t opcode = bytecode[currentFrame.localPC];
 
     jvmThread.pc += func_exec(currentFrame);
-    jvmThread.pc = jvmThread.pc;
 
     if (get_mnemonic(opcode).first.compare("returnOp") == 0) {
       popFromJVMStack();
       if (!isJVMStackEmpty()) {
-        jvmThread.pc = getCurrentFrame().localPC;
+        currentFrame = getCurrentFrame();
+        jvmThread.pc = currentFrame.localPC;
       }
     }
+
   } while (!isJVMStackEmpty());
 }

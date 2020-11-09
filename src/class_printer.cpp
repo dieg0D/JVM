@@ -1,5 +1,7 @@
 #include "../include/class_printer.hpp"
 
+#include <string.h>
+
 #include <bitset>
 #include <iostream>
 #include <sstream>

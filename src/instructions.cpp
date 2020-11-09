@@ -1090,7 +1090,7 @@ pair<string, int> get_mnemonic(uint8_t opcode) {
   return make_pair(mnemonic, length);
 };
 
-uint32_t func_exec(Frame frame) {
+uint32_t func_exec(Frame& frame) {
   uint8_t* bytecode = frame.codeAttribute.code;
   uint8_t opcode = bytecode[frame.localPC];
 
@@ -1098,552 +1098,730 @@ uint32_t func_exec(Frame frame) {
   switch (opcode) {
     // Constants
     case nop: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aconst_null: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_m1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_4: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iconst_5: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lconst_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lconst_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fconst_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fconst_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fconst_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dconst_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dconst_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case bipush: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case sipush: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ldc: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ldc_w: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ldc2_w: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Loads
     case iload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iload_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iload_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iload_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iload_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lload_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lload_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lload_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lload_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fload_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fload_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fload_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fload_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dload_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dload_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dload_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dload_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aload_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aload_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aload_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aload_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iaload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case laload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case faload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case daload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aaload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case baload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case caload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case saload: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Stores
     case istore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lstore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fstore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dstore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case astore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case istore_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case istore_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case istore_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case istore_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lstore_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lstore_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lstore_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lstore_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fstore_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fstore_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fstore_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fstore_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dstore_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dstore_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dstore_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dstore_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case astore_0: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case astore_1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case astore_2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case astore_3: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case aastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case bastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case castore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case sastore: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Stack
     case pop: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case pop2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup_x1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup_x2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup2_x1: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dup2_x2: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case swapOp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Math
     case iadd: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ladd: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fadd: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dadd: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case isub: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lsub: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fsub: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dsub: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case imul: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lmul: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fmul: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dmul: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case idiv: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ldivOp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fdiv: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ddiv: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case irem: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lrem: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case frem: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case drem: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ineg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lneg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fneg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dneg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ishl: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lshl: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ishr: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lshr: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iushr: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lushr: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iand: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case land: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ior: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lor: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ixor: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lxor: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iinc: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Conversions
     case i2l: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case i2f: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case i2d: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case l2i: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case l2f: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case l2d: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case f2i: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case f2l: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case f2d: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case d2i: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case d2l: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case d2f: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case i2b: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case i2c: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case i2s: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Comparisons
     case lcmp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fcmpl: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case fcmpg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dcmpl: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dcmpg: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifeq: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifne: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case iflt: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifge: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifgt: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifle: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmpeq: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmpne: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmplt: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmpge: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmpgt: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_icmple: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_acmpeq: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case if_acmpne: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Control
     case gotoOp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case jsr: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ret: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case tableswitch: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lookupswitch: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ireturn: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case lreturn: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case freturn: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case dreturn: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case areturn: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case returnOp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // References
@@ -1653,11 +1831,11 @@ uint32_t func_exec(Frame frame) {
 
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
       string className = getCPInfoFirst(frame.constantPool, index - 1);
-      cout << className << endl;
+      // cout << className << endl;
 
       string nameAndType =
           getCPInfoSecond(frame.constantPool, index - 1).second;
-      cout << nameAndType << endl;
+      // cout << nameAndType << endl;
 
       // int j = 0;
 
@@ -1668,7 +1846,8 @@ uint32_t func_exec(Frame frame) {
       // string fieldDescriptor = nameAndType.substr(j + 3, nameAndType.size());
 
       if (className.compare("java/lang/System") == 0) {
-        return get_mnemonic(opcode).second + 1;  // incrementa jvthread.pc em 1
+        frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+        return frame.localPC;  // incrementa jvthread.pc em 1
       } else {
         // if (!isClassInitialized(className)) {
         //   setClassAsInitialized(className);
@@ -1755,78 +1934,102 @@ uint32_t func_exec(Frame frame) {
       //   }
       // }
 
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case putstatic: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case getfield: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case putfield: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokevirtual: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokespecial: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokestatic: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokeinterface: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case invokedynamic: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case newOp: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case newarray: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case anewarray: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case arraylength: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case athrow: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case checkcast: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case instanceof: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case monitorenter: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case monitorexit: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
 
     // Extended
     case wide: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case multianewarray: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifnull: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case ifnonnull: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case goto_w: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     case jsr_w: {
-      return get_mnemonic(opcode).second + 1;
+      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
+      return frame.localPC;
     }
     default:
       return 0;
