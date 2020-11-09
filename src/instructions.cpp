@@ -1,6 +1,10 @@
 #include "../include/instructions.hpp"
 
+#include <string.h>
+
+#include <bitset>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "../include/class_loader.hpp"
@@ -1170,6 +1174,40 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case ldc: {
+      uint8_t byte = bytecode[frame.localPC + 1];
+      uint8_t index = byte;
+      JavaType value;
+      stringstream stream;
+
+      CPInfo cpInfo = frame.constantPool[index - 1];
+      stream << (unsigned int)(unsigned char)(cpInfo.tag);
+      string tag_info = stream.str();
+      int tag = stoi(tag_info);
+
+      switch (tag) {
+        case 8:
+          value.type_reference = (uint64_t) new string(
+              getCPInfoFirst(frame.constantPool,
+                             cpInfo.CONSTANT_String_info.string_index - 1));
+          value.tag = CAT1;
+          frame.operandStack.push(value);
+          break;
+        case 3:
+          value.type_int = cpInfo.CONSTANT_Integer_info.bytes;
+          value.tag = CAT1;
+          frame.operandStack.push(value);
+          break;
+        case 4:
+          value.type_float = cpInfo.CONSTANT_Float_info.bytes;
+          value.tag = CAT1;
+          frame.operandStack.push(value);
+          break;
+        default:
+          cout << "A funcao ldc encontrou um tipo indefinido: %d" << cpInfo.tag
+               << endl;
+          exit(0);
+          break;
+      }
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
@@ -1820,6 +1858,9 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case returnOp: {
+      if (!frame.operandStack.empty()) {
+        printf("A pilha de operandos nao esta vazia! Pode haver erros!\n");
+      }
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
@@ -1831,19 +1872,11 @@ uint32_t func_exec(Frame& frame) {
 
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
       string className = getCPInfoFirst(frame.constantPool, index - 1);
-      // cout << className << endl;
 
-      string nameAndType =
-          getCPInfoSecond(frame.constantPool, index - 1).second;
-      // cout << nameAndType << endl;
+      string fieldName = getCPInfoSecond(frame.constantPool, index - 1).second;
 
-      // int j = 0;
-
-      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
-      //   j++;
-      // }
-      // string fieldName = nameAndType.substr(0, j);
-      // string fieldDescriptor = nameAndType.substr(j + 3, nameAndType.size());
+      string fieldDescriptor =
+          getCPInfoSecond(frame.constantPool, index - 1).first;
 
       if (className.compare("java/lang/System") == 0) {
         frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
@@ -1950,6 +1983,363 @@ uint32_t func_exec(Frame& frame) {
       return frame.localPC;
     }
     case invokevirtual: {
+      uint8_t byte1 = bytecode[frame.localPC + 1];
+      uint8_t byte2 = bytecode[frame.localPC + 2];
+
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      string className = getCPInfoFirst(frame.constantPool, index - 1);
+
+      string methodName = getCPInfoSecond(frame.constantPool, index - 1).second;
+
+      string descriptor = getCPInfoSecond(frame.constantPool, index - 1).first;
+
+      // Para debug
+      // cout << className << " " << methodName << " " << descriptor << endl;
+
+      if (className.compare("java/io/PrintStream") == 0) {
+        if (methodName.compare("println") == 0) {
+          if (descriptor.compare("(Ljava/lang/String;)V") == 0) {
+            string* stringReference =
+                (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+            cout << *stringReference << endl;
+          } else if (descriptor.compare("(C)V") == 0) {
+            uint8_t character = frame.operandStack.top().type_char;
+            frame.operandStack.pop();
+            cout << character << endl;
+          } else if (descriptor.compare("(I)V") == 0) {
+            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+            cout << integer << endl;
+          } else if (descriptor.compare("(F)V") == 0) {
+            float floatNumber;
+            memcpy(&floatNumber, &(frame.operandStack.top().type_float),
+                   sizeof(float));
+            frame.operandStack.pop();
+            cout << floatNumber << endl;
+          } else if (descriptor.compare("(D)V") == 0) {
+            double doubleNumber;
+            memcpy(&doubleNumber, &(frame.operandStack.top().type_double),
+                   sizeof(double));
+            frame.operandStack.pop();
+            cout << doubleNumber << endl;
+          } else if (descriptor.compare("(J)V") == 0) {
+            int64_t longNumber = (int64_t)frame.operandStack.top().type_long;
+            frame.operandStack.pop();
+            cout << longNumber << endl;
+          } else if (descriptor.compare("(Z)V") == 0) {
+            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+
+            if (integer == 1) {
+              cout << "true" << endl;
+            } else if (integer == 0) {
+              cout << "false" << endl;
+            } else {
+              cout << "Erro no tipo booleano!\\n" << endl;
+              exit(0);
+            }
+          } else if (descriptor.compare("()V") == 0) {
+            cout << endl;
+          } else {
+            cout
+                << "invokevirtualFunction: tipo do descritor nao reconhecido : "
+                << descriptor.c_str() << endl;
+            exit(0);
+          }
+        } else if (methodName.compare("print") == 0) {
+          if (descriptor.compare("(Ljava/lang/String;)V") == 0) {
+            string* stringReference =
+                (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+            cout << *stringReference;
+          } else if (descriptor.compare("(I)V") == 0) {
+            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+            cout << integer;
+          } else if (descriptor.compare("(F)V") == 0) {
+            float floatNumber;
+            memcpy(&floatNumber, &(frame.operandStack.top().type_float),
+                   sizeof(float));
+            frame.operandStack.pop();
+            cout << floatNumber;
+          } else if (descriptor.compare("(D)V") == 0) {
+            double doubleNumber;
+            memcpy(&doubleNumber, &(frame.operandStack.top().type_double),
+                   sizeof(double));
+            frame.operandStack.pop();
+            cout << doubleNumber;
+          } else if (descriptor.compare("(J)V") == 0) {
+            int64_t longNumber = (int64_t)frame.operandStack.top().type_long;
+            frame.operandStack.pop();
+            cout << longNumber;
+          } else if (descriptor.compare("(Z)V") == 0) {
+            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+
+            if (integer == 1) {
+              cout << "true";
+            } else if (integer == 0) {
+              cout << "false";
+            } else {
+              cout << "Erro no tipo booleano!";
+              exit(0);
+            }
+          } else if (descriptor.compare("()V") == 0) {
+            // Nao faz nada
+          } else {
+            cout
+                << "invokevirtualFunction: tipo do descritor nao reconhecido : "
+                << descriptor.c_str() << endl;
+            exit(0);
+          }
+        } else {
+          printf("invokevirtualFunction: falta implementar\n");
+          exit(0);
+        }
+      } else if (className.compare("java/lang/StringBuilder") == 0) {
+        if (methodName.compare("append") == 0) {
+          if (descriptor.compare(
+                  "(Ljava/lang/String;)Ljava/lang/StringBuilder;") == 0) {
+            string* str1 = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+            string* str2 = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            JavaType objectref;
+            objectref.type_reference = (uint64_t) new string(*str2 + *str1);
+            objectref.tag = CAT1;
+            frame.operandStack.push(objectref);
+          } else if (descriptor.compare("(I)Ljava/lang/StringBuilder;") == 0) {
+            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+            string* str = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            JavaType objectref;
+            objectref.type_reference =
+                (uint64_t) new string(*str + to_string(integer));
+            objectref.tag = CAT1;
+            frame.operandStack.push(objectref);
+          } else if (descriptor.compare("(J)Ljava/lang/StringBuilder;") == 0) {
+            int64_t longNumber = (int64_t)(frame.operandStack.top().type_long);
+            frame.operandStack.pop();
+            string* str = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            JavaType objectref;
+            objectref.type_reference =
+                (uint64_t) new string(*str + to_string(longNumber));
+            objectref.tag = CAT1;
+            frame.operandStack.push(objectref);
+          } else if (descriptor.compare("(F)Ljava/lang/StringBuilder;") == 0) {
+            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+            string* str = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            float floatNumber;
+            memcpy(&floatNumber, &integer, sizeof(float));
+
+            JavaType objectref;
+            objectref.type_reference =
+                (uint64_t) new string(*str + to_string(floatNumber));
+            objectref.tag = CAT1;
+            frame.operandStack.push(objectref);
+          } else if (descriptor.compare("(D)Ljava/lang/StringBuilder;") == 0) {
+            uint64_t longNumber =
+                (uint64_t)(frame.operandStack.top().type_double);
+            frame.operandStack.pop();
+            string* str = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            double doubleNumber;
+            memcpy(&doubleNumber, &longNumber, sizeof(double));
+
+            JavaType objectref;
+            objectref.type_reference =
+                (uint64_t) new string(*str + to_string(doubleNumber));
+            objectref.tag = CAT1;
+            frame.operandStack.push(objectref);
+          } else if (descriptor.compare("(Z)Ljava/lang/StringBuilder;") == 0) {
+            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
+            frame.operandStack.pop();
+            string* str = (string*)(frame.operandStack.top().type_reference);
+            frame.operandStack.pop();
+
+            JavaType objectref;
+            if (integer == 1) {
+              objectref.type_reference = (uint64_t) new string(*str + "true");
+            } else if (integer == 0) {
+              objectref.type_reference = (uint64_t) new string(*str + "false");
+            } else {
+              cout << "Erro no tipo booleano durante a concatenacao!";
+              exit(0);
+            }
+            frame.operandStack.push(objectref);
+            objectref.tag = CAT1;
+          } else {
+            printf(
+                "invokevirtual: StringBuilder: descritor nao reconhecido: %s\n",
+                descriptor.c_str());
+            exit(0);
+          }
+        } else if (methodName.compare("toString") == 0) {
+          // Fingindo que estou convertendo em string
+        } else {
+          printf(
+              "invokevirtualFunction: Metodo do StringBuilder nao reconhecido "
+              "%s\n",
+              methodName.c_str());
+          exit(0);
+        }
+      } else {
+        stack<JavaType> auxstack;
+        for (int i = 1; descriptor[i] != ')'; i++) {
+          if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+          } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+          } else if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+          } else if (descriptor[i] == '[') {
+            while (descriptor[i] == '[') {
+              i++;
+            }
+            if (descriptor[i] == 'L') {
+              while (descriptor[i] != ';') {
+                i++;
+              }
+            }
+          } else {
+            cout << "Tipo de descritor nao reconhecido na contagem: "
+                 << descriptor[i] << endl;
+            exit(0);
+          }
+          auxstack.push(frame.operandStack.top());
+          frame.operandStack.pop();
+        }
+
+        // ORIENTACAO OBJETOS NAO IMPLEMENTADA AINDA
+        // bool foundMethod = false;
+        // vector<CPInfo*> constantPool;
+        // MethodInfo* method;
+
+        // JavaType objectref = frame.operandStack.top();
+        // frame.operandStack.pop();
+        // map<string, JavaType>* object =
+        //     (map<string, JavaType>*)objectref.type_reference;
+
+        // string* objectClassName =
+        //     (string*)object.at("<this_class>").type_reference;
+
+        // ClassFile* objectClassFile =
+        // methodArea.getClassFile(*objectClassName);
+
+        // constantPool = objectClassFile.getConstantPool();
+        // vector<MethodInfo*> methods = objectClassFile.getMethods();
+
+        // for (int i = 0; i < objectClassFile.getMethodsCount() &&
+        // !foundMethod;
+        //      i++) {
+        //   method = methods[i];
+        //   uint16_t nameIndex = method.getNameIndex();
+        //   uint16_t descriptorIndex = method.getDescriptorIndex();
+        //   string name = constantPool[nameIndex -
+        //   1].getInfo(constantPool).first; string methodDescriptor =
+        //       constantPool[descriptorIndex - 1].getInfo(constantPool).first;
+        //   if (name.compare(methodName) == 0 &&
+        //       methodDescriptor.compare(descriptor) == 0) {
+        //     foundMethod = true;
+        //   }
+        // }
+
+        // // Caso nao encontre checa as superclasses
+        // if (!foundMethod) {
+        //   do {
+        //     ClassFile* classFile = methodArea.getClassFile(className);
+        //     constantPool = classFile.getConstantPool();
+        //     vector<MethodInfo*> methods = classFile.getMethods();
+
+        //     for (int i = 0; i < classFile.getMethodsCount() && !foundMethod;
+        //          i++) {
+        //       method = methods[i];
+        //       uint16_t nameIndex = method.getNameIndex();
+        //       uint16_t descriptorIndex = method.getDescriptorIndex();
+        //       string name =
+        //           constantPool[nameIndex - 1].getInfo(constantPool).first;
+        //       string methodDescriptor =
+        //           constantPool[descriptorIndex -
+        //           1].getInfo(constantPool).first;
+        //       if (name.compare(methodName) == 0 &&
+        //           methodDescriptor.compare(descriptor) == 0) {
+        //         foundMethod = true;
+        //       }
+        //     }
+
+        //     if (!foundMethod) {
+        //       if (classFile.getSuperClass() == 0) {
+        //         printf(
+        //             "invokevirutal:  metodo nao foi encontrado em nenhuma
+        //             " "superclasse! Talvez esteja em uma interface, falta
+        //             " "Implementar!\n");
+        //         exit(0);
+        //       }
+        //       className = constantPool[classFile.getSuperClass() - 1]
+        //                       .getInfo(constantPool)
+        //                       .first;
+        //     }
+        //   } while (!foundMethod);
+        // }
+
+        // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+
+        // int argCnt = 1;
+        // for (int i = 1; descriptor[i] != ')'; i++) {
+        //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+        //     JavaType arg = auxstack.top();
+        //     auxstack.pop();
+        //     staticMethodFrame.localVariables[argCnt] = arg;
+        //     argCnt++;
+        //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+        //     JavaType arg = auxstack.top();
+        //     auxstack.pop();
+        //     staticMethodFrame.localVariables[argCnt] = arg;
+        //     argCnt += 2;
+        //   } else if (descriptor[i] == 'L') {
+        //     int j = i;
+        //     while (descriptor[i] != ';') {
+        //       i++;
+        //     }
+        //     JavaType arg = auxstack.top();
+        //     auxstack.pop();
+        //     staticMethodFrame.localVariables[argCnt] = arg;
+        //     argCnt++;
+        //   } else if (descriptor[i] == '[') {
+        //     while (descriptor[i] == '[') {
+        //       i++;
+        //     }
+        //     if (descriptor[i] == 'L') {
+        //       while (descriptor[i] != ';') {
+        //         i++;
+        //       }
+        //     }
+        //     JavaType arg = auxstack.top();
+        //     auxstack.pop();
+        //     staticMethodFrame.localVariables[argCnt] = arg;
+        //     argCnt++;
+        //   } else {
+        //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i]
+        //          << endl;
+        //     exit(0);
+        //   }
+        // }
+        // staticMethodFrame.localVariables[0] = objectref;
+
+        // frame->jvmStack->push(staticMethodFrame);
+        // frame->localPC++;
+        // return staticMethodFrame.localPC;
+      }
       frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
       return frame.localPC;
     }
