@@ -32,12 +32,12 @@ typedef struct {
 } JavaType;
 
 typedef struct {
-  vector<MethodInfo> method;
+  MethodInfo method;
   vector<CPInfo> constantPool;
   CodeAttribute codeAttribute;
   stack<JavaType> operandStack;
   vector<JavaType> localVariables;
-  uint32_t localPC;
+  uint32_t localPC = 0;
 } Frame;
 
 Frame createFrame(vector<CPInfo> constantPool, MethodInfo method);

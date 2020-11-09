@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void loadClassFile(string className, string projectPath) {
+void loadClassFile(string className) {
   string path = "";
 
   if (className.compare("java/lang/Object") == 0) {
@@ -37,7 +37,7 @@ void loadClassFile(string className, string projectPath) {
   exit(0);
 }
 
-void loadSuperClasses(string projectPath) {
+void loadSuperClasses() {
   if (classFile.superClass == 0) {
     return;
   }
@@ -54,10 +54,10 @@ void loadSuperClasses(string projectPath) {
   // cout << superClassPath << endl;
 
   if (superClassPath.compare("java/lang/Object") == 0) {
-    loadClassFile("java/lang/Object", projectPath);
+    loadClassFile("java/lang/Object");
   } else {
-    loadClassFile(superClassPath + ".class", projectPath);
-    loadSuperClasses(projectPath);
+    loadClassFile(superClassPath + ".class");
+    loadSuperClasses();
   }
   return;
 }

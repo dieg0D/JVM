@@ -33,6 +33,8 @@ Frame createFrame(vector<CPInfo> constantPool, MethodInfo method) {
     frame.codeAttribute = attributes[i].code;
     frame.localVariables = vector<JavaType>(maxLocals);
     frame.localPC = 0;
+    frame.constantPool = constantPool;
+    frame.method = method;
   } else {
     printf("Atributo Code nao encontrado no metodo [%d]\n", method.name_index);
     exit(0);

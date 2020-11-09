@@ -45,14 +45,16 @@ void execute() {
       createFrame(classFile.constantPool, executionEngine.mainMethod);
 
   pushToJVMStack(mainFrame);
+  Frame currentFrame = getCurrentFrame();
 
   do {
-    Frame currentFrame = getCurrentFrame();
+    currentFrame = getCurrentFrame();
     uint8_t* bytecode = currentFrame.codeAttribute.code;
 
-    uint8_t opcode = bytecode[jvmThread.pc];
+    uint8_t opcode = bytecode[currentFrame.localPC];
 
-    incrementPcBy(func_exec(currentFrame));
+    jvmThread.pc += func_exec(currentFrame);
+    jvmThread.pc = jvmThread.pc;
 
     if (get_mnemonic(opcode).first.compare("returnOp") == 0) {
       popFromJVMStack();

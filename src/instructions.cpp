@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+#include "../include/class_loader.hpp"
+#include "../include/class_printer.hpp"
 #include "../include/common.hpp"
 #include "../include/frame.hpp"
 
@@ -1075,8 +1077,6 @@ void initialize_instruction() {
 }
 
 pair<string, int> get_mnemonic(uint8_t opcode) {
-  //   cout << "GET MNEMONIC" << endl;
-  //   cout << (unsigned int)(unsigned char)opcode << endl;
   string mnemonic = "";
   int length = -1;
   for (auto i : instructions) {
@@ -1090,10 +1090,11 @@ pair<string, int> get_mnemonic(uint8_t opcode) {
   return make_pair(mnemonic, length);
 };
 
-uint32_t func_exec(Frame currentFrame) {
-  uint8_t* bytecode = currentFrame.codeAttribute.code;
-  uint8_t opcode = bytecode[jvmThread.pc];
+uint32_t func_exec(Frame frame) {
+  uint8_t* bytecode = frame.codeAttribute.code;
+  uint8_t opcode = bytecode[frame.localPC];
 
+  cout << hex << (unsigned int)(unsigned char)opcode << endl;
   switch (opcode) {
     // Constants
     case nop: {
@@ -1647,6 +1648,113 @@ uint32_t func_exec(Frame currentFrame) {
 
     // References
     case getstatic: {
+      uint8_t byte1 = bytecode[frame.localPC + 1];
+      uint8_t byte2 = bytecode[frame.localPC + 2];
+
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      string className = getCPInfoFirst(frame.constantPool, index - 1);
+      cout << className << endl;
+
+      string nameAndType =
+          getCPInfoSecond(frame.constantPool, index - 1).second;
+      cout << nameAndType << endl;
+
+      // int j = 0;
+
+      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
+      //   j++;
+      // }
+      // string fieldName = nameAndType.substr(0, j);
+      // string fieldDescriptor = nameAndType.substr(j + 3, nameAndType.size());
+
+      if (className.compare("java/lang/System") == 0) {
+        return get_mnemonic(opcode).second + 1;  // incrementa jvthread.pc em 1
+      } else {
+        // if (!isClassInitialized(className)) {
+        //   setClassAsInitialized(className);
+
+        //   loadClassFile(className + ".class");
+        //   loadSuperClasses();
+        //   ClassFile* classFile =
+        //   classLoader->getClassFromMethodArea(className); vector<CPInfo*>
+        //   constantPool = classFile->getConstantPool(); vector<MethodInfo*>
+        //   methods = classFile->getMethods(); MethodInfo* method;
+
+        //   bool foundClinit = false;
+        //   for (int i = 0; i < classFile->getMethodsCount() && !foundClinit;
+        //        i++) {
+        //     method = methods[i];
+        //     uint16_t nameIndex = method->getNameIndex();
+        //     uint16_t descriptorIndex = method->getDescriptorIndex();
+        //     string name =
+        //         constantPool[nameIndex - 1]->getInfo(constantPool).first;
+        //     string classDescriptor =
+        //         constantPool[descriptorIndex -
+        //         1]->getInfo(constantPool).first;
+        //     if (name.compare("<clinit>") == 0 &&
+        //         classDescriptor.compare("()V") == 0) {
+        //       foundClinit = true;
+        //     }
+        //   }
+
+        //   if (foundClinit) {
+        //     Frame clinitMethodFrame(constantPool, method, frame->jvmStack);
+        //     frame->jvmStack->push(clinitMethodFrame);
+        //     frame->localPC -= 2;
+        //     return clinitMethodFrame.localPC;
+        //   }
+      }
+
+      //   ClassFile* classFile = methodArea->getClassFile(className);
+      //   vector<CPInfo*> constantPool = classFile->getConstantPool();
+      //   vector<FieldInfo*> fields = classFile->getFields();
+      //   FieldInfo* field;
+      //   bool foundField = false;
+
+      //   for (int i = 0; i < classFile->getFieldsCount() && !foundField; i++)
+      //   {
+      //     field = fields[i];
+      //     uint16_t nameIndex = field->getNameIndex();
+      //     uint16_t descriptorIndex = field->getDescriptorIndex();
+      //     string name =
+      //         constantPool[nameIndex - 1]->getInfo(constantPool).first;
+      //     string descriptor =
+      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
+      //     if (name.compare(fieldName) == 0 &&
+      //         descriptor.compare(fieldDescriptor) == 0) {
+      //       foundField = true;
+      //     }
+      //   }
+
+      //   if (!foundField) {
+      //     printf(
+      //         "getstatic: o field especificado nao pode ser resolvido! Deve "
+      //         "estar em uma superclasse ou superinterface! Falta "
+      //         "implementar!\n");
+      //     exit(0);
+      //   }
+
+      //   if (fieldDescriptor.compare("C") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor.compare("I") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor.compare("F") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor.compare("D") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor.compare("J") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor.compare("Z") == 0) {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else if (fieldDescriptor[0] == '[') {
+      //     frame->operandStack.push(field->staticValue);
+      //   } else {
+      //     printf("getstatic: tipo do descritor nao reconhecido: %s\n",
+      //            fieldDescriptor.c_str());
+      //     exit(0);
+      //   }
+      // }
+
       return get_mnemonic(opcode).second + 1;
     }
     case putstatic: {

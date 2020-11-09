@@ -1,7 +1,9 @@
 #ifndef __CPINFO_H_INCLUDED__
 #define __CPINFO_H_INCLUDED__
-
 #include <vector>
+
+#include "../include/class_file.hpp"
+
 typedef struct {
   uint16_t name_index;
 } ConstantClassInfo;

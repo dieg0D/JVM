@@ -15,6 +15,7 @@ MethodArea methodArea;
 ExecutionEngine executionEngine;
 JavaVirtualMachineThread jvmThread;
 vector<Instruction> instructions;
+string projectPath;
 
 string getProjectPath(string commandLinePath) {
   int i = commandLinePath.size() - 1;
@@ -52,16 +53,16 @@ int main(int argc, char* argv[]) {
   // Verifica se os argumentos foram passados
   if (argc == 3) {
     string option = argv[1];
-    string projectPath = getProjectPath(argv[2]);
+    projectPath = getProjectPath(argv[2]);
     string className = getClassName(argv[2]);
     initialize_instruction();
 
-    loadClassFile(className, projectPath);
+    loadClassFile(className);
 
     if (option.compare("-e") == 0) {
       printClassFile();
     } else if (option.compare("-i") == 0) {
-      loadSuperClasses(projectPath);
+      loadSuperClasses();
       classFile = methodArea.classes.begin()->second;
       findMainMethod();
       execute();
