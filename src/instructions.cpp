@@ -1193,7 +1193,7 @@ uint32_t func_exec(Frame* frame) {
   uint8_t* bytecode = frame->codeAttribute.code;
   uint8_t opcode = bytecode[frame->localPC];
 
-  // cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
+  cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
   switch (opcode) {
     // Constants
     case nop: {
@@ -3472,7 +3472,6 @@ uint32_t func_exec(Frame* frame) {
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       frame->localPC = baseAddress + branchOffset;
-      // frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
       return frame->localPC;
     }
     case jsr: {
@@ -3497,32 +3496,32 @@ uint32_t func_exec(Frame* frame) {
         frame->localPC = frame->localPC + 1;
       }
 
-      uint8_t defaultByte1 = bytecode[frame->localPC + 1];
-      uint8_t defaultByte2 = bytecode[frame->localPC + 2];
-      uint8_t defaultByte3 = bytecode[frame->localPC + 3];
-      uint8_t defaultByte4 = bytecode[frame->localPC + 4];
+      uint8_t defaultByte1 = bytecode[frame->localPC++];
+      uint8_t defaultByte2 = bytecode[frame->localPC++];
+      uint8_t defaultByte3 = bytecode[frame->localPC++];
+      uint8_t defaultByte4 = bytecode[frame->localPC++];
       int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
                              (defaultByte3 << 8) | defaultByte4;
 
-      uint8_t lowByte1 = bytecode[frame->localPC + 5];
-      uint8_t lowByte2 = bytecode[frame->localPC + 6];
-      uint8_t lowByte3 = bytecode[frame->localPC + 7];
-      uint8_t lowByte4 = bytecode[frame->localPC + 8];
+      uint8_t lowByte1 = bytecode[frame->localPC++];
+      uint8_t lowByte2 = bytecode[frame->localPC++];
+      uint8_t lowByte3 = bytecode[frame->localPC++];
+      uint8_t lowByte4 = bytecode[frame->localPC++];
       int32_t low =
           (lowByte1 << 24) | (lowByte2 << 16) | (lowByte3 << 8) | lowByte4;
 
-      uint8_t highByte1 = bytecode[frame->localPC + 9];
-      uint8_t highByte2 = bytecode[frame->localPC + 10];
-      uint8_t highByte3 = bytecode[frame->localPC + 11];
-      uint8_t highByte4 = bytecode[frame->localPC + 12];
+      uint8_t highByte1 = bytecode[frame->localPC++];
+      uint8_t highByte2 = bytecode[frame->localPC++];
+      uint8_t highByte3 = bytecode[frame->localPC++];
+      uint8_t highByte4 = bytecode[frame->localPC++];
       int32_t high =
           (highByte1 << 24) | (highByte2 << 16) | (highByte3 << 8) | highByte4;
 
       for (int match = low; match <= high; match++) {
-        uint8_t offsetByte1 = bytecode[frame->localPC + 13];
-        uint8_t offsetByte2 = bytecode[frame->localPC + 14];
-        uint8_t offsetByte3 = bytecode[frame->localPC + 15];
-        uint8_t offsetByte4 = bytecode[frame->localPC + 16];
+        uint8_t offsetByte1 = bytecode[frame->localPC++];
+        uint8_t offsetByte2 = bytecode[frame->localPC++];
+        uint8_t offsetByte3 = bytecode[frame->localPC++];
+        uint8_t offsetByte4 = bytecode[frame->localPC++];
         int32_t offset = (offsetByte1 << 24) | (offsetByte2 << 16) |
                          (offsetByte3 << 8) | offsetByte4;
 
@@ -3544,32 +3543,32 @@ uint32_t func_exec(Frame* frame) {
         frame->localPC++;
       }
 
-      uint8_t defaultByte1 = bytecode[frame->localPC + 1];
-      uint8_t defaultByte2 = bytecode[frame->localPC + 2];
-      uint8_t defaultByte3 = bytecode[frame->localPC + 3];
-      uint8_t defaultByte4 = bytecode[frame->localPC + 4];
+      uint8_t defaultByte1 = bytecode[frame->localPC++];
+      uint8_t defaultByte2 = bytecode[frame->localPC++];
+      uint8_t defaultByte3 = bytecode[frame->localPC++];
+      uint8_t defaultByte4 = bytecode[frame->localPC++];
       int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
                              (defaultByte3 << 8) | defaultByte4;
 
-      uint8_t npairs1 = bytecode[frame->localPC + 5];
-      uint8_t npairs2 = bytecode[frame->localPC + 6];
-      uint8_t npairs3 = bytecode[frame->localPC + 7];
-      uint8_t npairs4 = bytecode[frame->localPC + 8];
+      uint8_t npairs1 = bytecode[frame->localPC++];
+      uint8_t npairs2 = bytecode[frame->localPC++];
+      uint8_t npairs3 = bytecode[frame->localPC++];
+      uint8_t npairs4 = bytecode[frame->localPC++];
       int32_t npairs =
           (npairs1 << 24) | (npairs2 << 16) | (npairs3 << 8) | npairs4;
 
       for (int i = 0; i < npairs; i++) {
-        uint8_t matchByte1 = bytecode[frame->localPC + 9];
-        uint8_t matchByte2 = bytecode[frame->localPC + 10];
-        uint8_t matchByte3 = bytecode[frame->localPC + 11];
-        uint8_t matchByte4 = bytecode[frame->localPC + 12];
+        uint8_t matchByte1 = bytecode[frame->localPC++];
+        uint8_t matchByte2 = bytecode[frame->localPC++];
+        uint8_t matchByte3 = bytecode[frame->localPC++];
+        uint8_t matchByte4 = bytecode[frame->localPC++];
         int32_t match = (matchByte1 << 24) | (matchByte2 << 16) |
                         (matchByte3 << 8) | matchByte4;
 
-        uint8_t offsetByte1 = bytecode[frame->localPC + 13];
-        uint8_t offsetByte2 = bytecode[frame->localPC + 14];
-        uint8_t offsetByte3 = bytecode[frame->localPC + 15];
-        uint8_t offsetByte4 = bytecode[frame->localPC + 16];
+        uint8_t offsetByte1 = bytecode[frame->localPC++];
+        uint8_t offsetByte2 = bytecode[frame->localPC++];
+        uint8_t offsetByte3 = bytecode[frame->localPC++];
+        uint8_t offsetByte4 = bytecode[frame->localPC++];
         int32_t offset = (offsetByte1 << 24) | (offsetByte2 << 16) |
                          (offsetByte3 << 8) | offsetByte4;
 
@@ -3587,13 +3586,11 @@ uint32_t func_exec(Frame* frame) {
       value.tag = CAT1;
       value.type_int = frame->operandStack.top().type_int;
       frame->operandStack.pop();
-      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame->jvmStack->top());
-      invoker->operandStack.push(value);
-      return invoker->localPC;
-      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
-      return frame->localPC;
+      popFromJVMStack();
+      Frame* oldFrame = getCurrentFrame();
+      oldFrame->operandStack.push(value);
+      return oldFrame->localPC;
     }
     case lreturn: {
       JavaType value;
@@ -3601,13 +3598,10 @@ uint32_t func_exec(Frame* frame) {
       value.tag = CAT2;
       value.type_long = frame->operandStack.top().type_long;
       frame->operandStack.pop();
-      frame->jvmStack->pop();
-
-      Frame* invoker = &(frame->jvmStack->top());
-      invoker->operandStack.push(value);
-      return invoker->localPC;
-      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
-      return frame->localPC;
+      popFromJVMStack();
+      Frame* oldFrame = getCurrentFrame();
+      oldFrame->operandStack.push(value);
+      return oldFrame->localPC;
     }
     case freturn: {
       JavaType value;
@@ -3615,13 +3609,10 @@ uint32_t func_exec(Frame* frame) {
       value.tag = CAT1;
       value.type_float = frame->operandStack.top().type_float;
       frame->operandStack.pop();
-      frame->jvmStack->pop();
-
-      Frame* invoker = &(frame->jvmStack->top());
-      invoker->operandStack.push(value);
-      return invoker->localPC;
-      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
-      return frame->localPC;
+      popFromJVMStack();
+      Frame* oldFrame = getCurrentFrame();
+      oldFrame->operandStack.push(value);
+      return oldFrame->localPC;
     }
     case dreturn: {
       JavaType value;
@@ -3629,13 +3620,10 @@ uint32_t func_exec(Frame* frame) {
       value.tag = CAT2;
       value.type_double = frame->operandStack.top().type_double;
       frame->operandStack.pop();
-      frame->jvmStack->pop();
-
-      Frame* invoker = &(frame->jvmStack->top());
-      invoker->operandStack.push(value);
-      return invoker->localPC;
-      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
-      return frame->localPC;
+      popFromJVMStack();
+      Frame* oldFrame = getCurrentFrame();
+      oldFrame->operandStack.push(value);
+      return oldFrame->localPC;
     }
     case areturn: {
       JavaType value;
@@ -3643,13 +3631,10 @@ uint32_t func_exec(Frame* frame) {
       value.tag = CAT1;
       value.type_reference = frame->operandStack.top().type_reference;
       frame->operandStack.pop();
-      frame->jvmStack->pop();
-
-      Frame* invoker = &(frame->jvmStack->top());
-      invoker->operandStack.push(value);
-      return invoker->localPC;
-      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
-      return frame->localPC;
+      popFromJVMStack();
+      Frame* oldFrame = getCurrentFrame();
+      oldFrame->operandStack.push(value);
+      return oldFrame->localPC;
     }
     case returnOp: {
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
