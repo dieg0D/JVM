@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
       printClassFile();
     } else if (option.compare("-i") == 0) {
       loadSuperClasses();
-      classFile = getClassFile(
+      classFile = *getClassFile(
           className.replace(className.end() - 6, className.end(), ""));
       findMainMethod();
       execute();

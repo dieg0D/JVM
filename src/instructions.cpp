@@ -48,7 +48,7 @@ vector<JavaType>* buildMultiAnewArray(vector<int> dimensions, int index,
 
 map<string, JavaType>* initializeFields() {
   map<string, JavaType>* object = new map<string, JavaType>;
-  ClassFile objectClass = classFile;
+  ClassFile* objectClass = &classFile;
 
   do {
     for (uint16_t i = 0; i < classFile.fieldsCount; i++) {
@@ -94,7 +94,7 @@ map<string, JavaType>* initializeFields() {
 
     string superClassName =
         getCPInfoFirst(classFile.constantPool, classFile.superClass - 1);
-    classFile = getClassFile(superClassName);
+    classFile = *getClassFile(superClassName);
   } while (classFile.superClass != 0);
 
   // Warning!
@@ -103,7 +103,7 @@ map<string, JavaType>* initializeFields() {
 
   JavaType thisClass;
   string thisClassName =
-      getCPInfoFirst(classFile.constantPool, classFile.thisClass - 1);
+      getCPInfoFirst(objectClass->constantPool, objectClass->thisClass - 1);
   thisClass.type_reference = (uint64_t) new string(thisClassName);
   object->insert(make_pair("<this_class>", thisClass));
   return object;
@@ -1193,7 +1193,7 @@ uint32_t func_exec(Frame* frame) {
   uint8_t* bytecode = frame->codeAttribute.code;
   uint8_t opcode = bytecode[frame->localPC];
 
-  cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
+  // cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
   switch (opcode) {
     // Constants
     case nop: {
@@ -1982,7 +1982,8 @@ uint32_t func_exec(Frame* frame) {
       arrayref = frame->operandStack.top();
       frame->operandStack.pop();
 
-      cout << "to aqui ?" << value.type_int << " " << index.type_int << endl;
+      // cout << "to aqui ?" << value.type_int << " " << index.type_int << endl;
+      // cout << "arrayref.type_reference: " << arrayref.type_reference << endl;
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
@@ -2001,6 +2002,11 @@ uint32_t func_exec(Frame* frame) {
       frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
+      // cout << "to aqui ?" << value.type_int << " " << index.type_int << " "
+      //      << arrayref.type_reference << endl;
+      // cout << "(lastore) arrayref.type_reference: " <<
+      // arrayref.type_reference
+      //      << endl;
       array->at((int32_t)index.type_int) = value;
 
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
@@ -3243,8 +3249,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case ifeq: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value = frame->operandStack.top();
@@ -3307,8 +3313,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case ifgt: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value = frame->operandStack.top();
@@ -3323,8 +3329,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case ifle: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value = frame->operandStack.top();
@@ -3339,8 +3345,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case if_icmpeq: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value2 = frame->operandStack.top();
@@ -3393,8 +3399,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case if_icmpge: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value2 = frame->operandStack.top();
@@ -3429,8 +3435,8 @@ uint32_t func_exec(Frame* frame) {
     }
     case if_icmple: {
       uint32_t baseAddress = frame->localPC;
-      uint8_t byte1 = bytecode[++frame->localPC];
-      uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
       JavaType value2 = frame->operandStack.top();
@@ -3672,18 +3678,19 @@ uint32_t func_exec(Frame* frame) {
 
           loadClassFile(className + ".class");
           loadSuperClasses();
-          ClassFile classFile = getClassFile(className);
-          MethodInfo method;
+          ClassFile* classFile = getClassFile(className);
+          MethodInfo* method;
 
           bool foundClinit = false;
-          for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
-            method = classFile.methods[i];
-            uint16_t nameIndex = method.name_index;
-            uint16_t descriptorIndex = method.descriptor_index;
-            string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+          for (int i = 0; i < classFile->methodsCount && !foundClinit; i++) {
+            method = &classFile->methods[i];
+            uint16_t nameIndex = method->name_index;
+            uint16_t descriptorIndex = method->descriptor_index;
+            string name =
+                getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
             string classDescriptor =
-                getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+                getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
             if (name.compare("<clinit>") == 0 &&
                 classDescriptor.compare("()V") == 0) {
@@ -3693,24 +3700,24 @@ uint32_t func_exec(Frame* frame) {
 
           if (foundClinit) {
             Frame clinitMethodFrame =
-                createFrame(classFile.constantPool, method, frame->jvmStack);
-            frame->jvmStack->push(clinitMethodFrame);
+                createFrame(classFile->constantPool, method, frame->jvmStack);
+            pushToJVMStack(clinitMethodFrame);
             return clinitMethodFrame.localPC;
           }
         }
 
-        ClassFile classFile = getClassFile(className);
-        FieldInfo field;
+        ClassFile* classFile = getClassFile(className);
+        FieldInfo* field;
         bool foundField = false;
 
-        for (int i = 0; i < classFile.fieldsCount && !foundField; i++) {
-          field = classFile.fields[i];
-          uint16_t nameIndex = field.name_index;
-          uint16_t descriptorIndex = field.descriptor_index;
-          string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+        for (int i = 0; i < classFile->fieldsCount && !foundField; i++) {
+          field = &classFile->fields[i];
+          uint16_t nameIndex = field->name_index;
+          uint16_t descriptorIndex = field->descriptor_index;
+          string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
           string descriptor =
-              getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+              getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
           if (name.compare(fieldName) == 0 &&
               descriptor.compare(fieldDescriptor) == 0) {
@@ -3724,19 +3731,19 @@ uint32_t func_exec(Frame* frame) {
         }
 
         if (fieldDescriptor.compare("C") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor.compare("I") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor.compare("F") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor.compare("D") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor.compare("J") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor.compare("Z") == 0) {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else if (fieldDescriptor[0] == '[') {
-          frame->operandStack.push(field.staticValue);
+          frame->operandStack.push(field->staticValue);
         } else {
           printf("getstatic: tipo do descritor nao reconhecido: %s\n",
                  fieldDescriptor.c_str());
@@ -3765,18 +3772,17 @@ uint32_t func_exec(Frame* frame) {
         loadClassFile(className + ".class");
         loadSuperClasses();
 
-        ClassFile classFile = getClassFile(className);
-
-        MethodInfo method;
+        ClassFile* classFile = getClassFile(className);
+        MethodInfo* method;
 
         bool foundClinit = false;
-        for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
-          method = classFile.methods[i];
-          uint16_t nameIndex = method.name_index;
-          uint16_t descriptorIndex = method.descriptor_index;
-          string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+        for (int i = 0; i < classFile->methodsCount && !foundClinit; i++) {
+          method = &classFile->methods[i];
+          uint16_t nameIndex = method->name_index;
+          uint16_t descriptorIndex = method->descriptor_index;
+          string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
           string classDescriptor =
-              getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+              getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
           if (name.compare("<clinit>") == 0 &&
               classDescriptor.compare("()V") == 0) {
             foundClinit = true;
@@ -3785,24 +3791,24 @@ uint32_t func_exec(Frame* frame) {
 
         if (foundClinit) {
           Frame clinitMethodFrame =
-              createFrame(classFile.constantPool, method, frame->jvmStack);
-          frame->jvmStack->push(clinitMethodFrame);
+              createFrame(classFile->constantPool, method, frame->jvmStack);
+          pushToJVMStack(clinitMethodFrame);
           return clinitMethodFrame.localPC;
         }
       }
 
-      ClassFile classFile = getClassFile(className);
+      ClassFile* classFile = getClassFile(className);
 
-      FieldInfo field;
+      FieldInfo* field;
       bool foundField = false;
 
-      for (int i = 0; i < classFile.fieldsCount && !foundField; i++) {
-        field = classFile.fields[i];
-        uint16_t nameIndex = field.name_index;
-        uint16_t descriptorIndex = field.descriptor_index;
-        string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+      for (int i = 0; i < classFile->fieldsCount && !foundField; i++) {
+        field = &classFile->fields[i];
+        uint16_t nameIndex = field->name_index;
+        uint16_t descriptorIndex = field->descriptor_index;
+        string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
         string descriptor =
-            getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+            getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
         if (name.compare(fieldName) == 0 &&
             descriptor.compare(fieldDescriptor) == 0) {
           foundField = true;
@@ -3817,36 +3823,43 @@ uint32_t func_exec(Frame* frame) {
         exit(0);
       }
 
-      cout << "to no roleeeee " << endl;
+      // cout << "to no roleeeee " << endl;
 
       if (fieldDescriptor.compare("C") == 0) {
-        field.staticValue.tag = CAT1;
-        field.staticValue.type_char = frame->operandStack.top().type_char;
+        field->staticValue.tag = CAT1;
+        field->staticValue.type_char = frame->operandStack.top().type_char;
         frame->operandStack.pop();
       } else if (fieldDescriptor.compare("I") == 0) {
-        field.staticValue.tag = CAT1;
-        field.staticValue.type_int = frame->operandStack.top().type_int;
+        field->staticValue.tag = CAT1;
+        field->staticValue.type_int = frame->operandStack.top().type_int;
         frame->operandStack.pop();
       } else if (fieldDescriptor.compare("F") == 0) {
-        field.staticValue.tag = CAT1;
-        field.staticValue.type_float = frame->operandStack.top().type_float;
+        field->staticValue.tag = CAT1;
+        field->staticValue.type_float = frame->operandStack.top().type_float;
         frame->operandStack.pop();
       } else if (fieldDescriptor.compare("D") == 0) {
-        field.staticValue.tag = CAT2;
-        field.staticValue.type_double = frame->operandStack.top().type_double;
+        field->staticValue.tag = CAT2;
+        field->staticValue.type_double = frame->operandStack.top().type_double;
         frame->operandStack.pop();
       } else if (fieldDescriptor.compare("J") == 0) {
-        field.staticValue.tag = CAT2;
-        field.staticValue.type_long = frame->operandStack.top().type_long;
+        field->staticValue.tag = CAT2;
+        field->staticValue.type_long = frame->operandStack.top().type_long;
         frame->operandStack.pop();
       } else if (fieldDescriptor.compare("Z") == 0) {
-        field.staticValue.tag = CAT1;
-        field.staticValue.type_boolean = frame->operandStack.top().type_boolean;
+        field->staticValue.tag = CAT1;
+        field->staticValue.type_boolean =
+            frame->operandStack.top().type_boolean;
         frame->operandStack.pop();
       } else if (fieldDescriptor[0] == '[') {
-        field.staticValue.tag = CAT1;
-        field.staticValue.type_reference =
+        field->staticValue.tag = CAT1;
+        field->staticValue.type_reference =
             frame->operandStack.top().type_reference;
+
+        // cout << "tag: " << field->staticValue.tag
+        //      << " type_ref: " << field.staticValue.type_reference << endl;
+
+        // cout << "name_index: " << field.name_index << endl;
+        // cout << "descriptor_index: " << field.descriptor_index << endl;
         frame->operandStack.pop();
       } else {
         printf("putstatic: tipo do descritor nao reconhecido: %s\n",
@@ -4147,7 +4160,7 @@ uint32_t func_exec(Frame* frame) {
 
         // ORIENTACAO OBJETOS NAO IMPLEMENTADA AINDA
         bool foundMethod = false;
-        MethodInfo method;
+        MethodInfo* method;
 
         JavaType objectref = frame->operandStack.top();
         frame->operandStack.pop();
@@ -4157,12 +4170,13 @@ uint32_t func_exec(Frame* frame) {
         string* objectClassName =
             (string*)object->at("<this_class>").type_reference;
 
-        ClassFile objectClassFile = getClassFile(*objectClassName);
+        ClassFile* objectClassFile = getClassFile(*objectClassName);
 
-        for (int i = 0; i < objectClassFile.methodsCount && !foundMethod; i++) {
-          method = objectClassFile.methods[i];
-          uint16_t nameIndex = method.name_index;
-          uint16_t descriptorIndex = method.descriptor_index;
+        for (int i = 0; i < objectClassFile->methodsCount && !foundMethod;
+             i++) {
+          method = &objectClassFile->methods[i];
+          uint16_t nameIndex = method->name_index;
+          uint16_t descriptorIndex = method->descriptor_index;
           string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
 
           string methodDescriptor =
@@ -4176,17 +4190,17 @@ uint32_t func_exec(Frame* frame) {
         // // Caso nao encontre checa as superclasses
         if (!foundMethod) {
           do {
-            ClassFile classFile = getClassFile(className);
+            ClassFile* classFile = getClassFile(className);
 
-            for (int i = 0; i < classFile.methodsCount && !foundMethod; i++) {
-              method = classFile.methods[i];
-              uint16_t nameIndex = method.name_index;
-              uint16_t descriptorIndex = method.descriptor_index;
+            for (int i = 0; i < classFile->methodsCount && !foundMethod; i++) {
+              method = &classFile->methods[i];
+              uint16_t nameIndex = method->name_index;
+              uint16_t descriptorIndex = method->descriptor_index;
               string name =
-                  getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+                  getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
               string methodDescriptor =
-                  getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+                  getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
               if (name.compare(methodName) == 0 &&
                   methodDescriptor.compare(descriptor) == 0) {
@@ -4195,15 +4209,15 @@ uint32_t func_exec(Frame* frame) {
             }
 
             if (!foundMethod) {
-              if (classFile.superClass == 0) {
+              if (classFile->superClass == 0) {
                 printf(
                     "invokevirutal:  metodo nao foi encontrado em nenhuma "
                     "superclasse!");
                 exit(0);
               }
 
-              className = getCPInfoFirst(classFile.constantPool,
-                                         classFile.superClass - 1);
+              className = getCPInfoFirst(classFile->constantPool,
+                                         classFile->superClass - 1);
             }
           } while (!foundMethod);
         }
@@ -4252,317 +4266,292 @@ uint32_t func_exec(Frame* frame) {
         }
         staticMethodFrame.localVariables[0] = objectref;
 
-        frame->jvmStack->push(staticMethodFrame);
+        pushToJVMStack(staticMethodFrame);
       }
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
       return frame->localPC;
     }
     case invokespecial: {
-      //     MethodArea* methodArea = classLoader->getMethodArea();
-      // uint8_t* bytecode = frame->getCode();
-      // uint8_t byte1 = bytecode[++frame->localPC];
-      // uint8_t byte2 = bytecode[++frame->localPC];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
 
-      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
-      // string className =
-      //     frame->constantPool[index - 1]->getInfo(frame->constantPool).first;
-      // string nameAndType =
-      //     frame->constantPool[index -
-      //     1]->getInfo(frame->constantPool).second;
-      // int j = 0;
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
-      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
-      //   j++;
-      // }
-      // string methodName = nameAndType.substr(0, j);
-      // string descriptor = nameAndType.substr(j + 3, nameAndType.size());
+      string methodName =
+          getCPInfoSecond(frame->constantPool, index - 1).second;
 
-      // if (className.compare("java/lang/String") == 0) {
-      //   if (methodName.compare("<init>") == 0) {
-      //     string* stringReference =
-      //         (string*)(frame->operandStack.top().type_reference);
-      //     frame->operandStack.pop();
-      //     string* initStringReference =
-      //         (string*)(frame->operandStack.top().type_reference);
-      //     frame->operandStack.pop();
-      //     *initStringReference = *stringReference;
-      //   } else {
-      //     printf("invokespecial: metodo da classe string desconhecido: %s\n",
-      //            methodName.c_str());
-      //     exit(0);
-      //   }
-      //   return ++frame->localPC;
-      // }
-      // if (className.compare("java/lang/StringBuilder") == 0) {
-      //   if (methodName.compare("<init>") == 0) {
-      //     frame->operandStack.pop();
-      //   }
-      //   return ++frame->localPC;
-      // }
+      string descriptor = getCPInfoSecond(frame->constantPool, index - 1).first;
 
-      // bool foundMethod = false;
-      // vector<CPInfo*> constantPool;
-      // MethodInfo* method;
-      // do {
-      //   ClassFile* classFile = methodArea->getClassFile(className);
-      //   constantPool = classFile->getConstantPool();
-      //   vector<MethodInfo*> methods = classFile->getMethods();
+      if (className.compare("java/lang/String") == 0) {
+        if (methodName.compare("<init>") == 0) {
+          string* stringReference =
+              (string*)(frame->operandStack.top().type_reference);
+          frame->operandStack.pop();
+          string* initStringReference =
+              (string*)(frame->operandStack.top().type_reference);
+          frame->operandStack.pop();
+          *initStringReference = *stringReference;
+        } else {
+          printf("invokespecial: metodo da classe string desconhecido: %s\n",
+                 methodName.c_str());
+          exit(0);
+        }
+        frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+        return frame->localPC;
+      }
+      if (className.compare("java/lang/StringBuilder") == 0) {
+        if (methodName.compare("<init>") == 0) {
+          frame->operandStack.pop();
+        }
+        frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+        return frame->localPC;
+      }
 
-      //   for (int i = 0; i < classFile->getMethodsCount() && !foundMethod;
-      //   i++) {
-      //     method = methods[i];
-      //     uint16_t nameIndex = method->getNameIndex();
-      //     uint16_t descriptorIndex = method->getDescriptorIndex();
-      //     string name = constantPool[nameIndex -
-      //     1]->getInfo(constantPool).first; string methodDescriptor =
-      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
-      //     if (name.compare(methodName) == 0 &&
-      //         methodDescriptor.compare(descriptor) == 0) {
-      //       foundMethod = true;
-      //     }
-      //   }
+      bool foundMethod = false;
+      MethodInfo* method;
+      do {
+        ClassFile* classFile = getClassFile(className);
 
-      //   if (!foundMethod) {
-      //     if (classFile->getSuperClass() == 0) {
-      //       printf(
-      //           "invokespecial:  metodo nao foi encontrado em nenhuma
-      //           superclasse! " "Talvez esteja em uma interface, falta
-      //           Implementar!\n");
-      //     }
-      //     string className = constantPool[classFile->getSuperClass() - 1]
-      //                            ->getInfo(constantPool)
-      //                            .first;
-      //   }
-      // } while (!foundMethod);
+        for (int i = 0; i < classFile->methodsCount && !foundMethod; i++) {
+          method = &classFile->methods[i];
+          uint16_t nameIndex = method->name_index;
+          uint16_t descriptorIndex = method->descriptor_index;
+          string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
-      // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+          string methodDescriptor =
+              getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
-      // stack<JavaType> auxstack;
+          if (name.compare(methodName) == 0 &&
+              methodDescriptor.compare(descriptor) == 0) {
+            foundMethod = true;
+          }
+        }
 
-      // for (int i = 1; descriptor[i] != ')'; i++) {
-      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
-      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
-      //   } else if (descriptor[i] == 'L') {
-      //     while (descriptor[i] != ';') {
-      //       i++;
-      //     }
-      //   } else if (descriptor[i] == '[') {
-      //     while (descriptor[i] == '[') {
-      //       i++;
-      //     }
-      //     if (descriptor[i] == 'L') {
-      //       while (descriptor[i] != ';') {
-      //         i++;
-      //       }
-      //     }
-      //   } else {
-      //     cout << "Tipo de descritor nao reconhecido na contagem: " <<
-      //     descriptor[i]
-      //          << endl;
-      //     exit(0);
-      //   }
-      //   auxstack.push(frame->operandStack.top());
-      //   frame->operandStack.pop();
-      // }
-      // int argCnt = 1;
-      // for (int i = 1; descriptor[i] != ')'; i++) {
-      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt += 2;
-      //   } else if (descriptor[i] == 'L') {
-      //     int j = i;
-      //     while (descriptor[i] != ';') {
-      //       i++;
-      //     }
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else if (descriptor[i] == '[') {
-      //     while (descriptor[i] == '[') {
-      //       i++;
-      //     }
-      //     if (descriptor[i] == 'L') {
-      //       while (descriptor[i] != ';') {
-      //         i++;
-      //       }
-      //     }
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else {
-      //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i] <<
-      //     endl; exit(0);
-      //   }
-      // }
-      // JavaType objectref = frame->operandStack.top();
-      // frame->operandStack.pop();
-      // staticMethodFrame->localVariables[0] = objectref;
+        if (!foundMethod) {
+          if (classFile->superClass == 0) {
+            printf(
+                "invokespecial:  metodo nao foi encontrado em nenhuma "
+                "superclasse! Talvez esteja em uma interface, falta "
+                "Implementar!\n");
+          }
+          string className = getCPInfoFirst(classFile->constantPool,
+                                            classFile->superClass - 1);
+        }
+      } while (!foundMethod);
 
-      // frame->jvmStack->push(staticMethodFrame);
-      // frame->localPC++;
-      // return staticMethodFrame->localPC;
+      Frame staticMethodFrame =
+          createFrame(classFile.constantPool, method, frame->jvmStack);
+
+      stack<JavaType> auxstack;
+
+      for (int i = 1; descriptor[i] != ')'; i++) {
+        if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+        } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+        } else if (descriptor[i] == 'L') {
+          while (descriptor[i] != ';') {
+            i++;
+          }
+        } else if (descriptor[i] == '[') {
+          while (descriptor[i] == '[') {
+            i++;
+          }
+          if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+          }
+        } else {
+          cout << "Tipo de descritor nao reconhecido na contagem: "
+               << descriptor[i] << endl;
+          exit(0);
+        }
+        auxstack.push(frame->operandStack.top());
+        frame->operandStack.pop();
+      }
+      int argCnt = 1;
+      for (int i = 1; descriptor[i] != ')'; i++) {
+        if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt += 2;
+        } else if (descriptor[i] == 'L') {
+          while (descriptor[i] != ';') {
+            i++;
+          }
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else if (descriptor[i] == '[') {
+          while (descriptor[i] == '[') {
+            i++;
+          }
+          if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+          }
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else {
+          cout << "Tipo de descritor nao reconhecido: " << descriptor[i]
+               << endl;
+          exit(0);
+        }
+      }
+      JavaType objectref = frame->operandStack.top();
+      frame->operandStack.pop();
+      staticMethodFrame.localVariables[0] = objectref;
+
+      pushToJVMStack(staticMethodFrame);
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
       return frame->localPC;
     }
     case invokestatic: {
-      //     uint8_t* bytecode = frame->getCode();
-      // uint8_t byte1 = bytecode[++frame->localPC];
-      // uint8_t byte2 = bytecode[++frame->localPC];
-      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
-      // MethodArea* methodArea = classLoader->getMethodArea();
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
 
-      // string className =
-      //     frame->constantPool[index - 1]->getInfo(frame->constantPool).first;
-      // string nameAndType =
-      //     frame->constantPool[index -
-      //     1]->getInfo(frame->constantPool).second;
-      // int j = 0;
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
-      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
-      //   j++;
-      // }
-      // string methodName = nameAndType.substr(0, j);
-      // string descriptor = nameAndType.substr(j + 3, nameAndType.size());
+      string methodName =
+          getCPInfoSecond(frame->constantPool, index - 1).second;
 
-      // if (!methodArea->isClassInitialized(className)) {
-      //   methodArea->setClassAsInitialized(className);
+      string descriptor = getCPInfoSecond(frame->constantPool, index - 1).first;
 
-      //   ClassFile aux = classLoader->loadClassFile(className + ".class");
-      //   classLoader->loadSuperClasses(&aux);
-      //   ClassFile* classFile =
-      //   classLoader->getClassFromMethodArea(className); vector<CPInfo*>
-      //   constantPool = classFile->getConstantPool(); vector<MethodInfo*>
-      //   methods = classFile->getMethods(); MethodInfo* method;
+      if (!isClassInitialized(className)) {
+        setClassAsInitialized(className);
 
-      //   bool foundClinit = false;
-      //   for (int i = 0; i < classFile->getMethodsCount() && !foundClinit;
-      //   i++) {
-      //     method = methods[i];
-      //     uint16_t nameIndex = method->getNameIndex();
-      //     uint16_t descriptorIndex = method->getDescriptorIndex();
-      //     string name = constantPool[nameIndex -
-      //     1]->getInfo(constantPool).first; string classDescriptor =
-      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
-      //     if (name.compare("<clinit>") == 0 &&
-      //         classDescriptor.compare("()V") == 0) {
-      //       foundClinit = true;
-      //     }
-      //   }
+        loadClassFile(className + ".class");
+        loadSuperClasses();
+        ClassFile* classFile = getClassFile(className);
+        MethodInfo* method;
 
-      //   if (foundClinit) {
-      //     Frame clinitMethodFrame(constantPool, method, frame->jvmStack);
-      //     frame->jvmStack->push(clinitMethodFrame);
-      //     frame->localPC -= 2;
-      //     return clinitMethodFrame->localPC;
-      //   }
-      // }
+        bool foundClinit = false;
+        for (int i = 0; i < classFile->methodsCount && !foundClinit; i++) {
+          method = &classFile->methods[i];
+          uint16_t nameIndex = method->name_index;
+          uint16_t descriptorIndex = method->descriptor_index;
+          string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
-      // ClassFile* classFile = methodArea->getClassFile(className);
-      // vector<CPInfo*> constantPool = classFile->getConstantPool();
-      // vector<MethodInfo*> methods = classFile->getMethods();
-      // MethodInfo* method;
-      // bool foundMethod = false;
+          string classDescriptor =
+              getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
+          if (name.compare("<clinit>") == 0 &&
+              classDescriptor.compare("()V") == 0) {
+            foundClinit = true;
+          }
+        }
 
-      // for (int i = 0; i < classFile->getMethodsCount() && !foundMethod; i++)
-      // {
-      //   method = methods[i];
-      //   uint16_t nameIndex = method->getNameIndex();
-      //   uint16_t descriptorIndex = method->getDescriptorIndex();
-      //   string name = constantPool[nameIndex -
-      //   1]->getInfo(constantPool).first; string classDescriptor =
-      //       constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
-      //   if (name.compare(methodName) == 0 &&
-      //       classDescriptor.compare(descriptor) == 0) {
-      //     foundMethod = true;
-      //   }
-      // }
+        if (foundClinit) {
+          Frame clinitMethodFrame =
+              createFrame(classFile->constantPool, method, frame->jvmStack);
+          pushToJVMStack(clinitMethodFrame);
+          return clinitMethodFrame.localPC;
+        }
+      }
 
-      // if (!foundMethod) {
-      //   printf("Invokestatic: o método especificado nao foi encontrado!\n");
-      //   exit(0);
-      // }
+      ClassFile* classFile = getClassFile(className);
+      MethodInfo* method;
+      bool foundMethod = false;
 
-      // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+      for (int i = 0; i < classFile->methodsCount && !foundMethod; i++) {
+        method = &classFile->methods[i];
+        uint16_t nameIndex = method->name_index;
+        uint16_t descriptorIndex = method->descriptor_index;
+        string name = getCPInfoFirst(classFile->constantPool, nameIndex - 1);
+        string classDescriptor =
+            getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
-      // stack<JavaType> auxstack;
+        if (name.compare(methodName) == 0 &&
+            classDescriptor.compare(descriptor) == 0) {
+          foundMethod = true;
+        }
+      }
 
-      // for (int i = 1; descriptor[i] != ')'; i++) {
-      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
-      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
-      //   } else if (descriptor[i] == 'L') {
-      //     while (descriptor[i] != ';') {
-      //       i++;
-      //     }
-      //   } else if (descriptor[i] == '[') {
-      //     while (descriptor[i] == '[') {
-      //       i++;
-      //     }
-      //     if (descriptor[i] == 'L') {
-      //       while (descriptor[i] != ';') {
-      //         i++;
-      //       }
-      //     }
-      //   } else {
-      //     cout << "Tipo de descritor nao reconhecido na contagem: " <<
-      //     descriptor[i]
-      //          << endl;
-      //     exit(0);
-      //   }
-      //   auxstack.push(frame->operandStack.top());
-      //   frame->operandStack.pop();
-      // }
-      // int argCnt = 0;
-      // for (int i = 1; descriptor[i] != ')'; i++) {
-      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt += 2;
-      //   } else if (descriptor[i] == 'L') {
-      //     int j = i;
-      //     while (descriptor[i] != ';') {
-      //       i++;
-      //     }
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else if (descriptor[i] == '[') {
-      //     while (descriptor[i] == '[') {
-      //       i++;
-      //     }
-      //     if (descriptor[i] == 'L') {
-      //       while (descriptor[i] != ';') {
-      //         i++;
-      //       }
-      //     }
-      //     JavaType arg = auxstack.top();
-      //     auxstack.pop();
-      //     staticMethodFrame->localVariables[argCnt] = arg;
-      //     argCnt++;
-      //   } else {
-      //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i] <<
-      //     endl; exit(0);
-      //   }
-      // }
+      if (!foundMethod) {
+        printf("Invokestatic: o método especificado nao foi encontrado!\n");
+        exit(0);
+      }
 
-      // frame->jvmStack->push(staticMethodFrame);
-      // frame->localPC++;
-      // return staticMethodFrame->localPC;
+      Frame staticMethodFrame =
+          createFrame(classFile->constantPool, method, frame->jvmStack);
+
+      stack<JavaType> auxstack;
+
+      for (int i = 1; descriptor[i] != ')'; i++) {
+        if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+        } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+        } else if (descriptor[i] == 'L') {
+          while (descriptor[i] != ';') {
+            i++;
+          }
+        } else if (descriptor[i] == '[') {
+          while (descriptor[i] == '[') {
+            i++;
+          }
+          if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+          }
+        } else {
+          cout << "Tipo de descritor nao reconhecido na contagem: "
+               << descriptor[i] << endl;
+          exit(0);
+        }
+        auxstack.push(frame->operandStack.top());
+        frame->operandStack.pop();
+      }
+      int argCnt = 0;
+      for (int i = 1; descriptor[i] != ')'; i++) {
+        if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt += 2;
+        } else if (descriptor[i] == 'L') {
+          while (descriptor[i] != ';') {
+            i++;
+          }
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else if (descriptor[i] == '[') {
+          while (descriptor[i] == '[') {
+            i++;
+          }
+          if (descriptor[i] == 'L') {
+            while (descriptor[i] != ';') {
+              i++;
+            }
+          }
+          JavaType arg = auxstack.top();
+          auxstack.pop();
+          staticMethodFrame.localVariables[argCnt] = arg;
+          argCnt++;
+        } else {
+          cout << "Tipo de descritor nao reconhecido: " << descriptor[i]
+               << endl;
+          exit(0);
+        }
+      }
+
+      pushToJVMStack(staticMethodFrame);
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
       return frame->localPC;
     }
@@ -4601,17 +4590,19 @@ uint32_t func_exec(Frame* frame) {
 
           loadClassFile(className + ".class");
           loadSuperClasses();
-          MethodInfo method;
+          ClassFile* classFile = getClassFile(className);
+          MethodInfo* method;
 
           bool foundClinit = false;
-          for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
-            method = classFile.methods[i];
-            uint16_t nameIndex = method.name_index;
-            uint16_t descriptorIndex = method.descriptor_index;
-            string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+          for (int i = 0; i < classFile->methodsCount && !foundClinit; i++) {
+            method = &classFile->methods[i];
+            uint16_t nameIndex = method->name_index;
+            uint16_t descriptorIndex = method->descriptor_index;
+            string name =
+                getCPInfoFirst(classFile->constantPool, nameIndex - 1);
 
             string classDescriptor =
-                getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+                getCPInfoFirst(classFile->constantPool, descriptorIndex - 1);
 
             if (name.compare("<clinit>") == 0 &&
                 classDescriptor.compare("()V") == 0) {
@@ -4621,14 +4612,13 @@ uint32_t func_exec(Frame* frame) {
 
           if (foundClinit) {
             Frame clinitMethodFrame =
-                createFrame(classFile.constantPool, method, frame->jvmStack);
-            frame->jvmStack->push(clinitMethodFrame);
-            frame->localPC -= 2;
+                createFrame(classFile->constantPool, method, frame->jvmStack);
+            pushToJVMStack(clinitMethodFrame);
             return clinitMethodFrame.localPC;
           }
         }
 
-        classFile = getClassFile(className);
+        classFile = *getClassFile(className);
         JavaType objectref;
         objectref.tag = CAT1;
         objectref.type_reference = (uint64_t)initializeFields();
@@ -4694,7 +4684,7 @@ uint32_t func_exec(Frame* frame) {
       arrayref.tag = CAT1;
       arrayref.type_reference = (uint64_t)array;
       frame->operandStack.push(arrayref);
-
+      // cout << "arrayref.type_reference: " << arrayref.type_reference << endl;
       frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
       return frame->localPC;
     }

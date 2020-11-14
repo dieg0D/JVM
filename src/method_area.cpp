@@ -13,7 +13,7 @@ void insertClass() {
   methodArea.classes.insert(make_pair(name, classFile));
 }
 
-ClassFile getClassFile(string name) { return (methodArea.classes[name]); }
+ClassFile* getClassFile(string name) { return &(methodArea.classes[name]); }
 
 bool isClassInitialized(string name) {
   if (methodArea.clinitWasExecuted.count(name)) {

@@ -8,20 +8,19 @@
 
 using namespace std;
 
-Frame createFrame(vector<CPInfo> constantPool, MethodInfo method,
+Frame createFrame(vector<CPInfo> constantPool, MethodInfo* method,
                   stack<Frame>* jvmStack) {
   Frame frame;
 
-  uint16_t attributesCount = method.attributes_count;
-  vector<AttributeInfo> attributes = method.attributes;
+  uint16_t attributesCount = method->attributes_count;
+  vector<AttributeInfo> attributes = method->attributes;
   int i;
 
   bool foundCode = false;
   for (i = 0; i < attributesCount && !foundCode; i++) {
     AttributeInfo attribute = attributes[i];
     uint16_t nameIndex = attribute.attribute_name_index;
-    string attributeName =
-        getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+    string attributeName = getCPInfoFirst(constantPool, nameIndex - 1);
 
     if (attributeName.compare("Code") == 0) {
       foundCode = true;
@@ -38,7 +37,7 @@ Frame createFrame(vector<CPInfo> constantPool, MethodInfo method,
     frame.method = method;
     frame.jvmStack = jvmStack;
   } else {
-    printf("Atributo Code nao encontrado no metodo [%d]\n", method.name_index);
+    printf("Atributo Code nao encontrado no metodo [%d]\n", method->name_index);
     exit(0);
   }
 

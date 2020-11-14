@@ -17,7 +17,7 @@ const uint8_t CAT2 = 2;
 struct Frame;
 
 struct Frame {
-  MethodInfo method;
+  MethodInfo* method;
   vector<CPInfo> constantPool;
   CodeAttribute codeAttribute;
   stack<JavaType> operandStack;
@@ -26,5 +26,5 @@ struct Frame {
   uint32_t localPC = 0;
 };
 
-Frame createFrame(vector<CPInfo> constantPool, MethodInfo method, stack<Frame>* jvmStack);
+Frame createFrame(vector<CPInfo> constantPool, MethodInfo* method, stack<Frame>* jvmStack);
 #endif

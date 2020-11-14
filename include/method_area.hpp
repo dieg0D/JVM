@@ -14,7 +14,7 @@ typedef struct {
 } MethodArea;
 
 void insertClass();
-ClassFile getClassFile(string name);
+ClassFile* getClassFile(string name);
 bool isClassInitialized(string name);
 void setClassAsInitialized(string name);
 
