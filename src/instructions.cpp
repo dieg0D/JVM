@@ -1189,96 +1189,96 @@ pair<string, int> get_mnemonic(uint8_t opcode) {
   return make_pair(mnemonic, length);
 };
 
-uint32_t func_exec(Frame& frame) {
-  uint8_t* bytecode = frame.codeAttribute.code;
-  uint8_t opcode = bytecode[frame.localPC];
+uint32_t func_exec(Frame* frame) {
+  uint8_t* bytecode = frame->codeAttribute.code;
+  uint8_t opcode = bytecode[frame->localPC];
 
-  // cout << hex << (unsigned int)(unsigned char)opcode << endl;
+  cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
   switch (opcode) {
     // Constants
     case nop: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aconst_null: {
       JavaType null;
       null.tag = CAT_NULL;
       null.type_reference = JAVA_NULL;
-      frame.operandStack.push(null);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(null);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_m1: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)(-1);
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_0: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)0;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_1: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)1;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_2: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)2;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_3: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)3;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_4: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)4;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iconst_5: {
       JavaType constant;
       constant.tag = CAT1;
       constant.type_int = (int32_t)5;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lconst_0: {
       JavaType constant;
       constant.tag = CAT2;
       constant.type_long = (int64_t)0;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lconst_1: {
       JavaType constant;
       constant.tag = CAT2;
       constant.type_long = (int64_t)1;
-      frame.operandStack.push(constant);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(constant);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fconst_0: {
       JavaType value;
@@ -1286,9 +1286,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&value.type_float, &fconst, sizeof(uint32_t));
       value.tag = CAT1;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fconst_1: {
       JavaType value;
@@ -1296,9 +1296,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&value.type_float, &fconst, sizeof(uint32_t));
       value.tag = CAT1;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fconst_2: {
       JavaType value;
@@ -1306,9 +1306,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&value.type_float, &fconst, sizeof(uint32_t));
       value.tag = CAT1;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dconst_0: {
       JavaType value;
@@ -1316,9 +1316,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&value.type_double, &dconst, sizeof(uint64_t));
       value.tag = CAT2;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dconst_1: {
       JavaType value;
@@ -1326,40 +1326,38 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&value.type_double, &dconst, sizeof(uint64_t));
       value.tag = CAT2;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case bipush: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t byte = bytecode[frame.localPC + 1];
+      uint8_t byte = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.type_int = (int32_t)((int8_t)byte);
       value.tag = CAT1;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case sipush: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       JavaType value;
 
       value.type_short = (int32_t)((((int16_t)(int8_t)byte1 << 8)) | byte2);
       value.tag = CAT1;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ldc: {
-      uint8_t byte = bytecode[frame.localPC + 1];
+      uint8_t byte = bytecode[frame->localPC + 1];
       uint8_t index = byte;
       JavaType value;
       stringstream stream;
 
-      CPInfo cpInfo = frame.constantPool[index - 1];
+      CPInfo cpInfo = frame->constantPool[index - 1];
       stream << (unsigned int)(unsigned char)(cpInfo.tag);
       string tag_info = stream.str();
       int tag = stoi(tag_info);
@@ -1367,20 +1365,20 @@ uint32_t func_exec(Frame& frame) {
       switch (tag) {
         case 8:
           value.type_reference = (uint64_t) new string(
-              getCPInfoFirst(frame.constantPool,
+              getCPInfoFirst(frame->constantPool,
                              cpInfo.CONSTANT_String_info.string_index - 1));
           value.tag = CAT1;
-          frame.operandStack.push(value);
+          frame->operandStack.push(value);
           break;
         case 3:
           value.type_int = cpInfo.CONSTANT_Integer_info.bytes;
           value.tag = CAT1;
-          frame.operandStack.push(value);
+          frame->operandStack.push(value);
           break;
         case 4:
           value.type_float = cpInfo.CONSTANT_Float_info.bytes;
           value.tag = CAT1;
-          frame.operandStack.push(value);
+          frame->operandStack.push(value);
           break;
         default:
           cout << "A funcao ldc encontrou um tipo indefinido: %d" << cpInfo.tag
@@ -1388,24 +1386,24 @@ uint32_t func_exec(Frame& frame) {
           exit(0);
           break;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ldc_w: {
       printf("Instrucao ldc_wFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ldc2_w: {
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
 
       JavaType value;
       stringstream stream;
 
-      CPInfo cpInfo = frame.constantPool[index - 1];
+      CPInfo cpInfo = frame->constantPool[index - 1];
       stream << (unsigned int)(unsigned char)(cpInfo.tag);
       string tag_info = stream.str();
       int tag = stoi(tag_info);
@@ -1416,14 +1414,14 @@ uint32_t func_exec(Frame& frame) {
               ((uint64_t)cpInfo.CONSTANT_Long_info.high_bytes << 32) |
               cpInfo.CONSTANT_Long_info.low_bytes;
           value.tag = CAT2;
-          frame.operandStack.push(value);
+          frame->operandStack.push(value);
           break;
         case 6:
           value.type_double =
               ((uint64_t)cpInfo.CONSTANT_Double_info.high_bytes << 32) |
               cpInfo.CONSTANT_Double_info.low_bytes;
           value.tag = CAT2;
-          frame.operandStack.push(value);
+          frame->operandStack.push(value);
           break;
         default:
           printf("A funcao ldc2_w encontrou um tipo indefinido: %d\n",
@@ -1431,632 +1429,632 @@ uint32_t func_exec(Frame& frame) {
           exit(0);
           break;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Loads
     case iload: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
-      value = frame.localVariables[index];
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value = frame->localVariables[index];
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lload: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
-      value = frame.localVariables[index];
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value = frame->localVariables[index];
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fload: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
-      value = frame.localVariables[index];
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value = frame->localVariables[index];
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dload: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
-      value = frame.localVariables[index];
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value = frame->localVariables[index];
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aload: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
-      value = frame.localVariables[index];
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value = frame->localVariables[index];
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iload_0: {
       JavaType value;
-      value.type_int = frame.localVariables[0].type_int;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_int = frame->localVariables[0].type_int;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iload_1: {
       JavaType value;
-      value.type_int = frame.localVariables[1].type_int;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_int = frame->localVariables[1].type_int;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iload_2: {
       JavaType value;
-      value.type_int = frame.localVariables[2].type_int;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_int = frame->localVariables[2].type_int;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iload_3: {
       JavaType value;
-      value.type_int = frame.localVariables[3].type_int;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_int = frame->localVariables[3].type_int;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lload_0: {
       JavaType value;
-      value.type_long = frame.localVariables[0].type_long;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_long = frame->localVariables[0].type_long;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lload_1: {
       JavaType value;
-      value.type_long = frame.localVariables[1].type_long;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_long = frame->localVariables[1].type_long;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lload_2: {
       JavaType value;
-      value.type_long = frame.localVariables[2].type_long;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_long = frame->localVariables[2].type_long;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lload_3: {
       JavaType value;
-      value.type_long = frame.localVariables[3].type_long;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_long = frame->localVariables[3].type_long;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fload_0: {
       JavaType value;
-      value.type_float = frame.localVariables[0].type_float;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_float = frame->localVariables[0].type_float;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fload_1: {
       JavaType value;
-      value.type_float = frame.localVariables[1].type_float;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_float = frame->localVariables[1].type_float;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fload_2: {
       JavaType value;
-      value.type_float = frame.localVariables[2].type_float;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_float = frame->localVariables[2].type_float;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fload_3: {
       JavaType value;
-      value.type_float = frame.localVariables[3].type_float;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_float = frame->localVariables[3].type_float;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dload_0: {
       JavaType value;
-      value.type_double = frame.localVariables[0].type_double;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_double = frame->localVariables[0].type_double;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dload_1: {
       JavaType value;
-      value.type_double = frame.localVariables[1].type_double;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_double = frame->localVariables[1].type_double;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dload_2: {
       JavaType value;
-      value.type_double = frame.localVariables[2].type_double;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_double = frame->localVariables[2].type_double;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dload_3: {
       JavaType value;
-      value.type_double = frame.localVariables[3].type_double;
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      value.type_double = frame->localVariables[3].type_double;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aload_0: {
       JavaType objectref;
 
-      objectref.type_reference = frame.localVariables[0].type_reference;
-      frame.operandStack.push(objectref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      objectref.type_reference = frame->localVariables[0].type_reference;
+      frame->operandStack.push(objectref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aload_1: {
       JavaType objectref;
 
-      objectref.type_reference = frame.localVariables[1].type_reference;
-      frame.operandStack.push(objectref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      objectref.type_reference = frame->localVariables[1].type_reference;
+      frame->operandStack.push(objectref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aload_2: {
       JavaType objectref;
 
-      objectref.type_reference = frame.localVariables[2].type_reference;
-      frame.operandStack.push(objectref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      objectref.type_reference = frame->localVariables[2].type_reference;
+      frame->operandStack.push(objectref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aload_3: {
       JavaType objectref;
 
-      objectref.type_reference = frame.localVariables[3].type_reference;
-      frame.operandStack.push(objectref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      objectref.type_reference = frame->localVariables[3].type_reference;
+      frame->operandStack.push(objectref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iaload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case laload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case faload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case daload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aaload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case baload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case caload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case saload: {
       JavaType index;
       JavaType arrayref;
 
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       JavaType value = array->at((int32_t)index.type_int);
 
-      frame.operandStack.push(value);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(value);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Stores
     case istore: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.tag = CAT1;
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      frame.localVariables[index] = value;
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      frame->localVariables[index] = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     case lstore: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.tag = CAT2;
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      frame.localVariables[index] = value;
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      frame->localVariables[index] = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fstore: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.tag = CAT1;
-      value.type_float = frame.operandStack.top().type_float;
-      frame.operandStack.pop();
-      frame.localVariables[index] = value;
+      value.type_float = frame->operandStack.top().type_float;
+      frame->operandStack.pop();
+      frame->localVariables[index] = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dstore: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.tag = CAT2;
-      value.type_double = frame.operandStack.top().type_double;
-      frame.operandStack.pop();
-      frame.localVariables[index] = value;
+      value.type_double = frame->operandStack.top().type_double;
+      frame->operandStack.pop();
+      frame->localVariables[index] = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case astore: {
-      uint8_t index = bytecode[frame.localPC + 1];
+      uint8_t index = bytecode[frame->localPC + 1];
       JavaType value;
 
       value.tag = CAT1;
-      value.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.localVariables[index] = value;
+      value.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->localVariables[index] = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case istore_0: {
-      frame.localVariables[0] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[0] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case istore_1: {
-      frame.localVariables[1] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[1] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case istore_2: {
-      frame.localVariables[2] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[2] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case istore_3: {
-      frame.localVariables[3] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[3] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lstore_0: {
-      frame.localVariables[0] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[0] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lstore_1: {
-      frame.localVariables[1] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[1] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lstore_2: {
-      frame.localVariables[2] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[2] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lstore_3: {
-      frame.localVariables[3] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[3] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fstore_0: {
-      frame.localVariables[0] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[0] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fstore_1: {
-      frame.localVariables[1] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[1] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fstore_2: {
-      frame.localVariables[2] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[2] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fstore_3: {
-      frame.localVariables[3] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[3] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dstore_0: {
-      frame.localVariables[0] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[0] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dstore_1: {
-      frame.localVariables[1] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[1] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dstore_2: {
-      frame.localVariables[2] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[2] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dstore_3: {
-      frame.localVariables[3] = frame.operandStack.top();
-      frame.operandStack.pop();
+      frame->localVariables[3] = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case astore_0: {
       JavaType objectref;
 
       objectref.tag = CAT1;
-      objectref.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.localVariables[0] = objectref;
+      objectref.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->localVariables[0] = objectref;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case astore_1: {
       JavaType objectref;
 
       objectref.tag = CAT1;
-      objectref.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.localVariables[1] = objectref;
+      objectref.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->localVariables[1] = objectref;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case astore_2: {
       JavaType objectref;
 
       objectref.tag = CAT1;
-      objectref.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.localVariables[2] = objectref;
+      objectref.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->localVariables[2] = objectref;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case astore_3: {
       JavaType objectref;
 
       objectref.tag = CAT1;
-      objectref.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.localVariables[3] = objectref;
+      objectref.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->localVariables[3] = objectref;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iastore: {
       JavaType value;
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
+      cout << "to aqui ?" << value.type_int << " " << index.type_int << endl;
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
-
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lastore: {
       JavaType value;
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fastore: {
       JavaType value;
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dastore: {
       JavaType value;
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case aastore: {
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType index = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType index = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = value;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case bastore: {
       JavaType value;
@@ -2064,12 +2062,12 @@ uint32_t func_exec(Frame& frame) {
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       byteValue.tag = CAT1;
       byteValue.type_byte = (int8_t)value.type_int;
@@ -2077,8 +2075,8 @@ uint32_t func_exec(Frame& frame) {
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = byteValue;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case castore: {
       JavaType value;
@@ -2086,12 +2084,12 @@ uint32_t func_exec(Frame& frame) {
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       charValue.tag = CAT1;
       charValue.type_byte = (int8_t)value.type_int;
@@ -2099,8 +2097,8 @@ uint32_t func_exec(Frame& frame) {
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = charValue;
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case sastore: {
       JavaType value;
@@ -2108,94 +2106,94 @@ uint32_t func_exec(Frame& frame) {
       JavaType index;
       JavaType arrayref;
 
-      value = frame.operandStack.top();
-      frame.operandStack.pop();
-      index = frame.operandStack.top();
-      frame.operandStack.pop();
-      arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      value = frame->operandStack.top();
+      frame->operandStack.pop();
+      index = frame->operandStack.top();
+      frame->operandStack.pop();
+      arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       shortValue.tag = CAT1;
       shortValue.type_byte = (int16_t)value.type_int;
 
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
       array->at((int32_t)index.type_int) = shortValue;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Stack
     case pop: {
-      frame.operandStack.pop();
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.pop();
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case pop2: {
       printf("Instrucao pop2Function nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup: {
-      JavaType duplicated = frame.operandStack.top();
-      frame.operandStack.pop();
-      frame.operandStack.push(duplicated);
-      frame.operandStack.push(duplicated);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      JavaType duplicated = frame->operandStack.top();
+      frame->operandStack.pop();
+      frame->operandStack.push(duplicated);
+      frame->operandStack.push(duplicated);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup_x1: {
       printf("Instrucao dup_x1Function nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup_x2: {
       printf("Instrucao dup_x2Function nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup2: {
-      if (frame.operandStack.top().tag == CAT1) {
-        JavaType value1 = frame.operandStack.top();
-        frame.operandStack.pop();
-        JavaType value2 = frame.operandStack.top();
-        frame.operandStack.pop();
+      if (frame->operandStack.top().tag == CAT1) {
+        JavaType value1 = frame->operandStack.top();
+        frame->operandStack.pop();
+        JavaType value2 = frame->operandStack.top();
+        frame->operandStack.pop();
 
-        frame.operandStack.push(value2);
-        frame.operandStack.push(value1);
-        frame.operandStack.push(value2);
-        frame.operandStack.push(value1);
-      } else if (frame.operandStack.top().tag == CAT2) {
-        JavaType value = frame.operandStack.top();
-        frame.operandStack.pop();
-        frame.operandStack.push(value);
-        frame.operandStack.push(value);
+        frame->operandStack.push(value2);
+        frame->operandStack.push(value1);
+        frame->operandStack.push(value2);
+        frame->operandStack.push(value1);
+      } else if (frame->operandStack.top().tag == CAT2) {
+        JavaType value = frame->operandStack.top();
+        frame->operandStack.pop();
+        frame->operandStack.push(value);
+        frame->operandStack.push(value);
       } else {
         cout << "Erro no dup2: categoria indefinida!: "
-             << frame.operandStack.top().tag << endl;
+             << frame->operandStack.top().tag << endl;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup2_x1: {
       printf("Instrucao dup2_x1Function nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dup2_x2: {
       printf("Instrucao dup2_x2Function nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case swapOp: {
       printf("Instrucao swapFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Math
@@ -2204,31 +2202,31 @@ uint32_t func_exec(Frame& frame) {
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_int = (int32_t)value1.type_int + (int32_t)value2.type_int;
 
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ladd: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long + (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fadd: {
       JavaType value1;
@@ -2238,10 +2236,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue2;
       float fresult;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -2250,9 +2248,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dadd: {
       JavaType value1;
@@ -2262,10 +2260,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue2;
       double dresult;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -2274,41 +2272,41 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case isub: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int =
           (int32_t)((int32_t)value1.type_int - (int32_t)value2.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lsub: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long - (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fsub: {
       JavaType value1;
@@ -2318,10 +2316,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue2;
       float fresult;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -2330,9 +2328,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dsub: {
       JavaType value1;
@@ -2342,10 +2340,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue2;
       double dresult;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -2354,41 +2352,41 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case imul: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int =
           (int32_t)((int32_t)value1.type_int * (int32_t)value2.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lmul: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long * (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fmul: {
       JavaType value1;
@@ -2398,10 +2396,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue2;
       float fresult;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -2410,9 +2408,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dmul: {
       JavaType value1;
@@ -2422,10 +2420,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue2;
       double dresult;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -2434,41 +2432,41 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case idiv: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int =
           (int32_t)((int32_t)value1.type_int / (int32_t)value2.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ldivOp: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long / (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fdiv: {
       JavaType value1;
@@ -2478,10 +2476,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue2;
       float fresult;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -2490,9 +2488,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ddiv: {
       JavaType value1;
@@ -2502,10 +2500,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue2;
       double dresult;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -2514,47 +2512,47 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case irem: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int = (int32_t)(
           (int32_t)value1.type_int -
           (int32_t)((int32_t)value1.type_int / (int32_t)value2.type_int) *
               (int32_t)value2.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lrem: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       result.type_long = (int64_t)(
           (int64_t)value1.type_long -
           (int64_t)((int64_t)value1.type_long / (int64_t)value2.type_long) *
               (int64_t)value2.type_long);
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case frem: {
       JavaType value1;
@@ -2564,10 +2562,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue2;
       float fresult;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -2576,9 +2574,9 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dremOp: {
       JavaType value1;
@@ -2588,10 +2586,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue2;
       double dresult;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -2600,35 +2598,35 @@ uint32_t func_exec(Frame& frame) {
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ineg: {
       JavaType value;
       JavaType result;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int = (int32_t)(-(int32_t)value.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lneg: {
       JavaType value;
       JavaType result;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       result.type_long = (int64_t)(-(int64_t)value.type_long);
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fneg: {
       JavaType value;
@@ -2636,17 +2634,17 @@ uint32_t func_exec(Frame& frame) {
       float fvalue;
       float fresult;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       memcpy(&fvalue, &value.type_int, sizeof(float));
 
       fresult = -fvalue;
 
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dneg: {
       JavaType value;
@@ -2654,221 +2652,221 @@ uint32_t func_exec(Frame& frame) {
       double dvalue;
       double dresult;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       memcpy(&dvalue, &value.type_long, sizeof(double));
 
       dresult = -dvalue;
 
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ishl: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int = (int32_t)((int32_t)value1.type_int
                                   << ((int32_t)value2.type_int & 0x0000001F));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lshl: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       result.type_long = (int64_t)((int64_t)value1.type_long
                                    << ((int32_t)value2.type_int & 0x0000003F));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ishr: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int = (int32_t)((int32_t)value1.type_int >>
                                   ((int32_t)value2.type_int & 0x0000001F));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lshr: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       result.type_long = (int64_t)((int64_t)value1.type_long >>
                                    ((int32_t)value2.type_int & 0x0000003F));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iushr: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       result.type_int = (uint32_t)((uint32_t)value1.type_int >>
                                    ((int32_t)value2.type_int & 0x0000001F));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lushr: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       result.type_long = (uint64_t)((uint64_t)value1.type_long >>
                                     ((int32_t)value2.type_int & 0x0000003F));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iand: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_int = (int32_t)value1.type_int & (int32_t)value2.type_int;
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case land: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long & (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ior: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_int = (int32_t)value1.type_int | (int32_t)value2.type_int;
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lor: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long | (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ixor: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_int = (int32_t)value1.type_int ^ (int32_t)value2.type_int;
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lxor: {
       JavaType value1;
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_long = (int64_t)value1.type_long ^ (int64_t)value2.type_long;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iinc: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t* bytecode = frame->codeAttribute.code;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
 
       uint16_t index = byte1;
       int32_t constValue = (int32_t)((int8_t)byte2);
-      frame.localVariables[index].type_int =
-          (int32_t)frame.localVariables[index].type_int + constValue;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localVariables[index].type_int =
+          (int32_t)frame->localVariables[index].type_int + constValue;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Conversions
@@ -2876,113 +2874,113 @@ uint32_t func_exec(Frame& frame) {
       JavaType value;
       JavaType result;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_long = (int64_t)((int32_t)value.type_int);
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case i2f: {
       JavaType value;
       JavaType result;
       float fresult;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       fresult = (float)((int32_t)value.type_int);
       memcpy(&(result.type_float), &fresult, sizeof(float));
 
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case i2d: {
       JavaType value;
       JavaType result;
       double dresult;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       dresult = (double)((int32_t)value.type_int);
       memcpy(&(result.type_float), &dresult, sizeof(double));
 
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case l2i: {
       JavaType value;
       JavaType result;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       result.type_int = int32_t((int64_t)value.type_long);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case l2f: {
       JavaType value;
       JavaType result;
       float fresult;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       fresult = (float)((int64_t)value.type_long);
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case l2d: {
       JavaType value;
       JavaType result;
       double dresult;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
       dresult = (double)((int64_t)value.type_long);
       memcpy(&(result.type_float), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case f2i: {
       JavaType value;
       JavaType result;
       float fvalue;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue, &(value.type_int), sizeof(float));
       result.type_int = (int32_t)fvalue;
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case f2l: {
       JavaType value;
       JavaType result;
       float fvalue;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue, &(value.type_int), sizeof(float));
       result.type_long = (int64_t)fvalue;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case f2d: {
       JavaType value;
@@ -2990,46 +2988,46 @@ uint32_t func_exec(Frame& frame) {
       float fvalue;
       double dresult;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue, &(value.type_int), sizeof(float));
       dresult = (double)fvalue;
       memcpy(&(result.type_double), &dresult, sizeof(double));
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case d2i: {
       JavaType value;
       JavaType result;
       double dvalue;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue, &(value.type_long), sizeof(double));
       result.type_int = (int32_t)dvalue;
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case d2l: {
       JavaType value;
       JavaType result;
       double dvalue;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue, &(value.type_long), sizeof(double));
       result.type_long = (int64_t)dvalue;
       result.tag = CAT2;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case d2f: {
       JavaType value;
@@ -3037,52 +3035,52 @@ uint32_t func_exec(Frame& frame) {
       double dvalue;
       float fresult;
 
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue, &(value.type_long), sizeof(double));
       fresult = (float)dvalue;
       memcpy(&(result.type_float), &fresult, sizeof(float));
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case i2b: {
       JavaType value;
       JavaType result;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_byte = (int8_t)((int32_t)value.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case i2c: {
       JavaType value;
       JavaType result;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_char = (uint8_t)((int32_t)value.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case i2s: {
       JavaType value;
       JavaType result;
 
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
       result.type_short = (int16_t)((int32_t)value.type_int);
       result.tag = CAT1;
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Comparisons
@@ -3091,10 +3089,10 @@ uint32_t func_exec(Frame& frame) {
       JavaType value2;
       JavaType result;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       if (value1.type_long > value2.type_long) {
         result.tag = CAT1;
@@ -3107,9 +3105,9 @@ uint32_t func_exec(Frame& frame) {
         result.type_int = (int32_t)-1;
       }
 
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fcmpl: {
       JavaType value1;
@@ -3118,10 +3116,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue1;
       float fvalue2;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -3140,9 +3138,9 @@ uint32_t func_exec(Frame& frame) {
         result.type_int = (int32_t)-1;
       }
 
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case fcmpg: {
       JavaType value1;
@@ -3151,10 +3149,10 @@ uint32_t func_exec(Frame& frame) {
       float fvalue1;
       float fvalue2;
 
-      value2.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      value1.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      value2.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      value1.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       memcpy(&fvalue1, &value1.type_int, sizeof(float));
       memcpy(&fvalue2, &value2.type_int, sizeof(float));
@@ -3173,9 +3171,9 @@ uint32_t func_exec(Frame& frame) {
         result.type_int = (int32_t)1;
       }
 
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dcmpl: {
       JavaType value1;
@@ -3184,10 +3182,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue1;
       double dvalue2;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -3206,9 +3204,9 @@ uint32_t func_exec(Frame& frame) {
         result.type_int = (int32_t)-1;
       }
 
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dcmpg: {
       JavaType value1;
@@ -3217,10 +3215,10 @@ uint32_t func_exec(Frame& frame) {
       double dvalue1;
       double dvalue2;
 
-      value2.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      value1.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
+      value2.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      value1.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
 
       memcpy(&dvalue1, &value1.type_long, sizeof(double));
       memcpy(&dvalue2, &value2.type_long, sizeof(double));
@@ -3239,435 +3237,435 @@ uint32_t func_exec(Frame& frame) {
         result.type_int = (int32_t)1;
       }
 
-      frame.operandStack.push(result);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(result);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifeq: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int == 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifne: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int != 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case iflt: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int < 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifge: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int >= 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifgt: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int > 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifle: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value.type_int <= 0) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmpeq: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int == (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmpne: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int != (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmplt: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int < (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmpge: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int >= (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmpgt: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int > (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_icmple: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[++frame.localPC];
-      uint8_t byte2 = bytecode[++frame.localPC];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[++frame->localPC];
+      uint8_t byte2 = bytecode[++frame->localPC];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value2 = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType value1 = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value2 = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType value1 = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if ((int32_t)value1.type_int <= (int32_t)value2.type_int) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_acmpeq: {
       printf("Instrucao if_acmpeqFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case if_acmpne: {
       printf("Instrucao if_acmpneFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Control
     case gotoOp: {
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      frame.localPC = baseAddress + branchOffset;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = baseAddress + branchOffset;
+      // frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case jsr: {
       printf("Instrucao jsrFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ret: {
       printf("Instrucao retFunction nao implementada ainda!\n");
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case tableswitch: {
-      uint32_t baseAddress = frame.localPC;
-      JavaType key = frame.operandStack.top();
-      frame.operandStack.pop();
+      uint32_t baseAddress = frame->localPC;
+      JavaType key = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC = frame.localPC + 1;
-      while ((frame.localPC) % 4 != 0) {
-        frame.localPC = frame.localPC + 1;
+      frame->localPC = frame->localPC + 1;
+      while ((frame->localPC) % 4 != 0) {
+        frame->localPC = frame->localPC + 1;
       }
 
-      uint8_t defaultByte1 = bytecode[frame.localPC + 1];
-      uint8_t defaultByte2 = bytecode[frame.localPC + 2];
-      uint8_t defaultByte3 = bytecode[frame.localPC + 3];
-      uint8_t defaultByte4 = bytecode[frame.localPC + 4];
+      uint8_t defaultByte1 = bytecode[frame->localPC + 1];
+      uint8_t defaultByte2 = bytecode[frame->localPC + 2];
+      uint8_t defaultByte3 = bytecode[frame->localPC + 3];
+      uint8_t defaultByte4 = bytecode[frame->localPC + 4];
       int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
                              (defaultByte3 << 8) | defaultByte4;
 
-      uint8_t lowByte1 = bytecode[frame.localPC + 5];
-      uint8_t lowByte2 = bytecode[frame.localPC + 6];
-      uint8_t lowByte3 = bytecode[frame.localPC + 7];
-      uint8_t lowByte4 = bytecode[frame.localPC + 8];
+      uint8_t lowByte1 = bytecode[frame->localPC + 5];
+      uint8_t lowByte2 = bytecode[frame->localPC + 6];
+      uint8_t lowByte3 = bytecode[frame->localPC + 7];
+      uint8_t lowByte4 = bytecode[frame->localPC + 8];
       int32_t low =
           (lowByte1 << 24) | (lowByte2 << 16) | (lowByte3 << 8) | lowByte4;
 
-      uint8_t highByte1 = bytecode[frame.localPC + 9];
-      uint8_t highByte2 = bytecode[frame.localPC + 10];
-      uint8_t highByte3 = bytecode[frame.localPC + 11];
-      uint8_t highByte4 = bytecode[frame.localPC + 12];
+      uint8_t highByte1 = bytecode[frame->localPC + 9];
+      uint8_t highByte2 = bytecode[frame->localPC + 10];
+      uint8_t highByte3 = bytecode[frame->localPC + 11];
+      uint8_t highByte4 = bytecode[frame->localPC + 12];
       int32_t high =
           (highByte1 << 24) | (highByte2 << 16) | (highByte3 << 8) | highByte4;
 
       for (int match = low; match <= high; match++) {
-        uint8_t offsetByte1 = bytecode[frame.localPC + 13];
-        uint8_t offsetByte2 = bytecode[frame.localPC + 14];
-        uint8_t offsetByte3 = bytecode[frame.localPC + 15];
-        uint8_t offsetByte4 = bytecode[frame.localPC + 16];
+        uint8_t offsetByte1 = bytecode[frame->localPC + 13];
+        uint8_t offsetByte2 = bytecode[frame->localPC + 14];
+        uint8_t offsetByte3 = bytecode[frame->localPC + 15];
+        uint8_t offsetByte4 = bytecode[frame->localPC + 16];
         int32_t offset = (offsetByte1 << 24) | (offsetByte2 << 16) |
                          (offsetByte3 << 8) | offsetByte4;
 
         if ((int32_t)key.type_int == match) {
-          frame.localPC = baseAddress + offset;
-          return frame.localPC;
+          frame->localPC = baseAddress + offset;
+          return frame->localPC;
         }
       }
-      frame.localPC = baseAddress + defaultValue;
-      return frame.localPC;
+      frame->localPC = baseAddress + defaultValue;
+      return frame->localPC;
     }
     case lookupswitch: {
-      uint32_t baseAddress = frame.localPC;
-      JavaType key = frame.operandStack.top();
-      frame.operandStack.pop();
+      uint32_t baseAddress = frame->localPC;
+      JavaType key = frame->operandStack.top();
+      frame->operandStack.pop();
 
-      frame.localPC++;
-      while ((frame.localPC) % 4 != 0) {
-        frame.localPC++;
+      frame->localPC++;
+      while ((frame->localPC) % 4 != 0) {
+        frame->localPC++;
       }
 
-      uint8_t defaultByte1 = bytecode[frame.localPC + 1];
-      uint8_t defaultByte2 = bytecode[frame.localPC + 2];
-      uint8_t defaultByte3 = bytecode[frame.localPC + 3];
-      uint8_t defaultByte4 = bytecode[frame.localPC + 4];
+      uint8_t defaultByte1 = bytecode[frame->localPC + 1];
+      uint8_t defaultByte2 = bytecode[frame->localPC + 2];
+      uint8_t defaultByte3 = bytecode[frame->localPC + 3];
+      uint8_t defaultByte4 = bytecode[frame->localPC + 4];
       int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
                              (defaultByte3 << 8) | defaultByte4;
 
-      uint8_t npairs1 = bytecode[frame.localPC + 5];
-      uint8_t npairs2 = bytecode[frame.localPC + 6];
-      uint8_t npairs3 = bytecode[frame.localPC + 7];
-      uint8_t npairs4 = bytecode[frame.localPC + 8];
+      uint8_t npairs1 = bytecode[frame->localPC + 5];
+      uint8_t npairs2 = bytecode[frame->localPC + 6];
+      uint8_t npairs3 = bytecode[frame->localPC + 7];
+      uint8_t npairs4 = bytecode[frame->localPC + 8];
       int32_t npairs =
           (npairs1 << 24) | (npairs2 << 16) | (npairs3 << 8) | npairs4;
 
       for (int i = 0; i < npairs; i++) {
-        uint8_t matchByte1 = bytecode[frame.localPC + 9];
-        uint8_t matchByte2 = bytecode[frame.localPC + 10];
-        uint8_t matchByte3 = bytecode[frame.localPC + 11];
-        uint8_t matchByte4 = bytecode[frame.localPC + 12];
+        uint8_t matchByte1 = bytecode[frame->localPC + 9];
+        uint8_t matchByte2 = bytecode[frame->localPC + 10];
+        uint8_t matchByte3 = bytecode[frame->localPC + 11];
+        uint8_t matchByte4 = bytecode[frame->localPC + 12];
         int32_t match = (matchByte1 << 24) | (matchByte2 << 16) |
                         (matchByte3 << 8) | matchByte4;
 
-        uint8_t offsetByte1 = bytecode[frame.localPC + 13];
-        uint8_t offsetByte2 = bytecode[frame.localPC + 14];
-        uint8_t offsetByte3 = bytecode[frame.localPC + 15];
-        uint8_t offsetByte4 = bytecode[frame.localPC + 16];
+        uint8_t offsetByte1 = bytecode[frame->localPC + 13];
+        uint8_t offsetByte2 = bytecode[frame->localPC + 14];
+        uint8_t offsetByte3 = bytecode[frame->localPC + 15];
+        uint8_t offsetByte4 = bytecode[frame->localPC + 16];
         int32_t offset = (offsetByte1 << 24) | (offsetByte2 << 16) |
                          (offsetByte3 << 8) | offsetByte4;
 
         if ((int32_t)key.type_int == match) {
-          frame.localPC = baseAddress + offset;
-          return frame.localPC;
+          frame->localPC = baseAddress + offset;
+          return frame->localPC;
         }
       }
-      frame.localPC = baseAddress + defaultValue;
-      return frame.localPC;
+      frame->localPC = baseAddress + defaultValue;
+      return frame->localPC;
     }
     case ireturn: {
       JavaType value;
 
       value.tag = CAT1;
-      value.type_int = frame.operandStack.top().type_int;
-      frame.operandStack.pop();
-      frame.jvmStack->pop();
+      value.type_int = frame->operandStack.top().type_int;
+      frame->operandStack.pop();
+      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame.jvmStack->top());
+      Frame* invoker = &(frame->jvmStack->top());
       invoker->operandStack.push(value);
       return invoker->localPC;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case lreturn: {
       JavaType value;
 
       value.tag = CAT2;
-      value.type_long = frame.operandStack.top().type_long;
-      frame.operandStack.pop();
-      frame.jvmStack->pop();
+      value.type_long = frame->operandStack.top().type_long;
+      frame->operandStack.pop();
+      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame.jvmStack->top());
+      Frame* invoker = &(frame->jvmStack->top());
       invoker->operandStack.push(value);
       return invoker->localPC;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case freturn: {
       JavaType value;
 
       value.tag = CAT1;
-      value.type_float = frame.operandStack.top().type_float;
-      frame.operandStack.pop();
-      frame.jvmStack->pop();
+      value.type_float = frame->operandStack.top().type_float;
+      frame->operandStack.pop();
+      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame.jvmStack->top());
+      Frame* invoker = &(frame->jvmStack->top());
       invoker->operandStack.push(value);
       return invoker->localPC;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case dreturn: {
       JavaType value;
 
       value.tag = CAT2;
-      value.type_double = frame.operandStack.top().type_double;
-      frame.operandStack.pop();
-      frame.jvmStack->pop();
+      value.type_double = frame->operandStack.top().type_double;
+      frame->operandStack.pop();
+      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame.jvmStack->top());
+      Frame* invoker = &(frame->jvmStack->top());
       invoker->operandStack.push(value);
       return invoker->localPC;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case areturn: {
       JavaType value;
 
       value.tag = CAT1;
-      value.type_reference = frame.operandStack.top().type_reference;
-      frame.operandStack.pop();
-      frame.jvmStack->pop();
+      value.type_reference = frame->operandStack.top().type_reference;
+      frame->operandStack.pop();
+      frame->jvmStack->pop();
 
-      Frame* invoker = &(frame.jvmStack->top());
+      Frame* invoker = &(frame->jvmStack->top());
       invoker->operandStack.push(value);
       return invoker->localPC;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case returnOp: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // References
     case getstatic: {
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
 
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
-      string className = getCPInfoFirst(frame.constantPool, index - 1);
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
-      string fieldName = getCPInfoSecond(frame.constantPool, index - 1).second;
+      string fieldName = getCPInfoSecond(frame->constantPool, index - 1).second;
 
       string fieldDescriptor =
-          getCPInfoSecond(frame.constantPool, index - 1).first;
+          getCPInfoSecond(frame->constantPool, index - 1).first;
 
       if (className.compare("java/lang/System") == 0) {
-        frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-        return frame.localPC;  // incrementa jvthread.pc em 1
+        frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+        return frame->localPC;  // incrementa jvthread.pc em 1
       } else {
         if (!isClassInitialized(className)) {
           setClassAsInitialized(className);
@@ -3695,8 +3693,8 @@ uint32_t func_exec(Frame& frame) {
 
           if (foundClinit) {
             Frame clinitMethodFrame =
-                createFrame(classFile.constantPool, method, frame.jvmStack);
-            frame.jvmStack->push(clinitMethodFrame);
+                createFrame(classFile.constantPool, method, frame->jvmStack);
+            frame->jvmStack->push(clinitMethodFrame);
             return clinitMethodFrame.localPC;
           }
         }
@@ -3726,19 +3724,19 @@ uint32_t func_exec(Frame& frame) {
         }
 
         if (fieldDescriptor.compare("C") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor.compare("I") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor.compare("F") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor.compare("D") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor.compare("J") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor.compare("Z") == 0) {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else if (fieldDescriptor[0] == '[') {
-          frame.operandStack.push(field.staticValue);
+          frame->operandStack.push(field.staticValue);
         } else {
           printf("getstatic: tipo do descritor nao reconhecido: %s\n",
                  fieldDescriptor.c_str());
@@ -3746,51 +3744,177 @@ uint32_t func_exec(Frame& frame) {
         }
       }
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case putstatic: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
-    }
-    case getfield: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
-    }
-    case putfield: {
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
+
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
-      string className = getCPInfoFirst(frame.constantPool, index - 1);
-
-      string fieldName = getCPInfoSecond(frame.constantPool, index - 1).second;
+      string fieldName = getCPInfoSecond(frame->constantPool, index - 1).second;
 
       string fieldDescriptor =
-          getCPInfoSecond(frame.constantPool, index - 1).first;
+          getCPInfoSecond(frame->constantPool, index - 1).first;
+
+      if (!isClassInitialized(className)) {
+        setClassAsInitialized(className);
+
+        loadClassFile(className + ".class");
+        loadSuperClasses();
+
+        ClassFile classFile = getClassFile(className);
+
+        MethodInfo method;
+
+        bool foundClinit = false;
+        for (int i = 0; i < classFile.methodsCount && !foundClinit; i++) {
+          method = classFile.methods[i];
+          uint16_t nameIndex = method.name_index;
+          uint16_t descriptorIndex = method.descriptor_index;
+          string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+          string classDescriptor =
+              getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+          if (name.compare("<clinit>") == 0 &&
+              classDescriptor.compare("()V") == 0) {
+            foundClinit = true;
+          }
+        }
+
+        if (foundClinit) {
+          Frame clinitMethodFrame =
+              createFrame(classFile.constantPool, method, frame->jvmStack);
+          frame->jvmStack->push(clinitMethodFrame);
+          return clinitMethodFrame.localPC;
+        }
+      }
+
+      ClassFile classFile = getClassFile(className);
+
+      FieldInfo field;
+      bool foundField = false;
+
+      for (int i = 0; i < classFile.fieldsCount && !foundField; i++) {
+        field = classFile.fields[i];
+        uint16_t nameIndex = field.name_index;
+        uint16_t descriptorIndex = field.descriptor_index;
+        string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+        string descriptor =
+            getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+        if (name.compare(fieldName) == 0 &&
+            descriptor.compare(fieldDescriptor) == 0) {
+          foundField = true;
+        }
+      }
+
+      if (!foundField) {
+        printf(
+            "putstatic: o field especificado nao pode ser resolvido! Deve "
+            "estar em "
+            "uma superclasse ou superinterface! Falta implementar!\n");
+        exit(0);
+      }
+
+      cout << "to no roleeeee " << endl;
+
+      if (fieldDescriptor.compare("C") == 0) {
+        field.staticValue.tag = CAT1;
+        field.staticValue.type_char = frame->operandStack.top().type_char;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor.compare("I") == 0) {
+        field.staticValue.tag = CAT1;
+        field.staticValue.type_int = frame->operandStack.top().type_int;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor.compare("F") == 0) {
+        field.staticValue.tag = CAT1;
+        field.staticValue.type_float = frame->operandStack.top().type_float;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor.compare("D") == 0) {
+        field.staticValue.tag = CAT2;
+        field.staticValue.type_double = frame->operandStack.top().type_double;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor.compare("J") == 0) {
+        field.staticValue.tag = CAT2;
+        field.staticValue.type_long = frame->operandStack.top().type_long;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor.compare("Z") == 0) {
+        field.staticValue.tag = CAT1;
+        field.staticValue.type_boolean = frame->operandStack.top().type_boolean;
+        frame->operandStack.pop();
+      } else if (fieldDescriptor[0] == '[') {
+        field.staticValue.tag = CAT1;
+        field.staticValue.type_reference =
+            frame->operandStack.top().type_reference;
+        frame->operandStack.pop();
+      } else {
+        printf("putstatic: tipo do descritor nao reconhecido: %s\n",
+               fieldDescriptor.c_str());
+        exit(0);
+      }
+
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
+    }
+    case getfield: {
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
+
+      string fieldName = getCPInfoSecond(frame->constantPool, index - 1).second;
+
+      string fieldDescriptor =
+          getCPInfoSecond(frame->constantPool, index - 1).first;
+
+      JavaType objectref = frame->operandStack.top();
+      frame->operandStack.pop();
+
+      map<string, JavaType>* object =
+          (map<string, JavaType>*)objectref.type_reference;
+      JavaType value = object->at(fieldName);
+      frame->operandStack.push(value);
+
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
+    }
+    case putfield: {
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
+      uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
+
+      string fieldName = getCPInfoSecond(frame->constantPool, index - 1).second;
+
+      string fieldDescriptor =
+          getCPInfoSecond(frame->constantPool, index - 1).first;
       // Falta resolver o field!
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
-      JavaType objectref = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
+      JavaType objectref = frame->operandStack.top();
+      frame->operandStack.pop();
 
       map<string, JavaType>* object =
           (map<string, JavaType>*)objectref.type_reference;
       object->at(fieldName) = value;
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case invokevirtual: {
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
 
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
-      string className = getCPInfoFirst(frame.constantPool, index - 1);
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
-      string methodName = getCPInfoSecond(frame.constantPool, index - 1).second;
+      string methodName =
+          getCPInfoSecond(frame->constantPool, index - 1).second;
 
-      string descriptor = getCPInfoSecond(frame.constantPool, index - 1).first;
+      string descriptor = getCPInfoSecond(frame->constantPool, index - 1).first;
 
       // Para debug
       // cout << className << " " << methodName << " " << descriptor << endl;
@@ -3799,36 +3923,36 @@ uint32_t func_exec(Frame& frame) {
         if (methodName.compare("println") == 0) {
           if (descriptor.compare("(Ljava/lang/String;)V") == 0) {
             string* stringReference =
-                (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+                (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
             cout << *stringReference << endl;
           } else if (descriptor.compare("(C)V") == 0) {
-            uint8_t character = frame.operandStack.top().type_char;
-            frame.operandStack.pop();
+            uint8_t character = frame->operandStack.top().type_char;
+            frame->operandStack.pop();
             cout << character << endl;
           } else if (descriptor.compare("(I)V") == 0) {
-            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
+            int32_t integer = (int32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
             cout << integer << endl;
           } else if (descriptor.compare("(F)V") == 0) {
             float floatNumber;
-            memcpy(&floatNumber, &(frame.operandStack.top().type_float),
+            memcpy(&floatNumber, &(frame->operandStack.top().type_float),
                    sizeof(float));
-            frame.operandStack.pop();
+            frame->operandStack.pop();
             cout << floatNumber << endl;
           } else if (descriptor.compare("(D)V") == 0) {
             double doubleNumber;
-            memcpy(&doubleNumber, &(frame.operandStack.top().type_double),
+            memcpy(&doubleNumber, &(frame->operandStack.top().type_double),
                    sizeof(double));
-            frame.operandStack.pop();
+            frame->operandStack.pop();
             cout << doubleNumber << endl;
           } else if (descriptor.compare("(J)V") == 0) {
-            int64_t longNumber = (int64_t)frame.operandStack.top().type_long;
-            frame.operandStack.pop();
+            int64_t longNumber = (int64_t)frame->operandStack.top().type_long;
+            frame->operandStack.pop();
             cout << longNumber << endl;
           } else if (descriptor.compare("(Z)V") == 0) {
-            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
+            uint32_t integer = (uint32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
 
             if (integer == 1) {
               cout << "true" << endl;
@@ -3849,32 +3973,32 @@ uint32_t func_exec(Frame& frame) {
         } else if (methodName.compare("print") == 0) {
           if (descriptor.compare("(Ljava/lang/String;)V") == 0) {
             string* stringReference =
-                (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+                (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
             cout << *stringReference;
           } else if (descriptor.compare("(I)V") == 0) {
-            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
+            int32_t integer = (int32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
             cout << integer;
           } else if (descriptor.compare("(F)V") == 0) {
             float floatNumber;
-            memcpy(&floatNumber, &(frame.operandStack.top().type_float),
+            memcpy(&floatNumber, &(frame->operandStack.top().type_float),
                    sizeof(float));
-            frame.operandStack.pop();
+            frame->operandStack.pop();
             cout << floatNumber;
           } else if (descriptor.compare("(D)V") == 0) {
             double doubleNumber;
-            memcpy(&doubleNumber, &(frame.operandStack.top().type_double),
+            memcpy(&doubleNumber, &(frame->operandStack.top().type_double),
                    sizeof(double));
-            frame.operandStack.pop();
+            frame->operandStack.pop();
             cout << doubleNumber;
           } else if (descriptor.compare("(J)V") == 0) {
-            int64_t longNumber = (int64_t)frame.operandStack.top().type_long;
-            frame.operandStack.pop();
+            int64_t longNumber = (int64_t)frame->operandStack.top().type_long;
+            frame->operandStack.pop();
             cout << longNumber;
           } else if (descriptor.compare("(Z)V") == 0) {
-            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
+            uint32_t integer = (uint32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
 
             if (integer == 1) {
               cout << "true";
@@ -3900,42 +4024,42 @@ uint32_t func_exec(Frame& frame) {
         if (methodName.compare("append") == 0) {
           if (descriptor.compare(
                   "(Ljava/lang/String;)Ljava/lang/StringBuilder;") == 0) {
-            string* str1 = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
-            string* str2 = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+            string* str1 = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
+            string* str2 = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             JavaType objectref;
             objectref.type_reference = (uint64_t) new string(*str2 + *str1);
             objectref.tag = CAT1;
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
           } else if (descriptor.compare("(I)Ljava/lang/StringBuilder;") == 0) {
-            int32_t integer = (int32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
-            string* str = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+            int32_t integer = (int32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
+            string* str = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             JavaType objectref;
             objectref.type_reference =
                 (uint64_t) new string(*str + to_string(integer));
             objectref.tag = CAT1;
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
           } else if (descriptor.compare("(J)Ljava/lang/StringBuilder;") == 0) {
-            int64_t longNumber = (int64_t)(frame.operandStack.top().type_long);
-            frame.operandStack.pop();
-            string* str = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+            int64_t longNumber = (int64_t)(frame->operandStack.top().type_long);
+            frame->operandStack.pop();
+            string* str = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             JavaType objectref;
             objectref.type_reference =
                 (uint64_t) new string(*str + to_string(longNumber));
             objectref.tag = CAT1;
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
           } else if (descriptor.compare("(F)Ljava/lang/StringBuilder;") == 0) {
-            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
-            string* str = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+            uint32_t integer = (uint32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
+            string* str = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             float floatNumber;
             memcpy(&floatNumber, &integer, sizeof(float));
@@ -3944,13 +4068,13 @@ uint32_t func_exec(Frame& frame) {
             objectref.type_reference =
                 (uint64_t) new string(*str + to_string(floatNumber));
             objectref.tag = CAT1;
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
           } else if (descriptor.compare("(D)Ljava/lang/StringBuilder;") == 0) {
             uint64_t longNumber =
-                (uint64_t)(frame.operandStack.top().type_double);
-            frame.operandStack.pop();
-            string* str = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+                (uint64_t)(frame->operandStack.top().type_double);
+            frame->operandStack.pop();
+            string* str = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             double doubleNumber;
             memcpy(&doubleNumber, &longNumber, sizeof(double));
@@ -3959,12 +4083,12 @@ uint32_t func_exec(Frame& frame) {
             objectref.type_reference =
                 (uint64_t) new string(*str + to_string(doubleNumber));
             objectref.tag = CAT1;
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
           } else if (descriptor.compare("(Z)Ljava/lang/StringBuilder;") == 0) {
-            uint32_t integer = (uint32_t)(frame.operandStack.top().type_int);
-            frame.operandStack.pop();
-            string* str = (string*)(frame.operandStack.top().type_reference);
-            frame.operandStack.pop();
+            uint32_t integer = (uint32_t)(frame->operandStack.top().type_int);
+            frame->operandStack.pop();
+            string* str = (string*)(frame->operandStack.top().type_reference);
+            frame->operandStack.pop();
 
             JavaType objectref;
             if (integer == 1) {
@@ -3975,7 +4099,7 @@ uint32_t func_exec(Frame& frame) {
               cout << "Erro no tipo booleano durante a concatenacao!";
               exit(0);
             }
-            frame.operandStack.push(objectref);
+            frame->operandStack.push(objectref);
             objectref.tag = CAT1;
           } else {
             printf(
@@ -4017,16 +4141,16 @@ uint32_t func_exec(Frame& frame) {
                  << descriptor[i] << endl;
             exit(0);
           }
-          auxstack.push(frame.operandStack.top());
-          frame.operandStack.pop();
+          auxstack.push(frame->operandStack.top());
+          frame->operandStack.pop();
         }
 
         // ORIENTACAO OBJETOS NAO IMPLEMENTADA AINDA
         bool foundMethod = false;
         MethodInfo method;
 
-        JavaType objectref = frame.operandStack.top();
-        frame.operandStack.pop();
+        JavaType objectref = frame->operandStack.top();
+        frame->operandStack.pop();
         map<string, JavaType>* object =
             (map<string, JavaType>*)objectref.type_reference;
 
@@ -4085,7 +4209,7 @@ uint32_t func_exec(Frame& frame) {
         }
 
         Frame staticMethodFrame =
-            createFrame(classFile.constantPool, method, frame.jvmStack);
+            createFrame(classFile.constantPool, method, frame->jvmStack);
 
         int argCnt = 1;
         for (int i = 1; descriptor[i] != ')'; i++) {
@@ -4128,48 +4252,349 @@ uint32_t func_exec(Frame& frame) {
         }
         staticMethodFrame.localVariables[0] = objectref;
 
-        frame.jvmStack->push(staticMethodFrame);
+        frame->jvmStack->push(staticMethodFrame);
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case invokespecial: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      //     MethodArea* methodArea = classLoader->getMethodArea();
+      // uint8_t* bytecode = frame->getCode();
+      // uint8_t byte1 = bytecode[++frame->localPC];
+      // uint8_t byte2 = bytecode[++frame->localPC];
+
+      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      // string className =
+      //     frame->constantPool[index - 1]->getInfo(frame->constantPool).first;
+      // string nameAndType =
+      //     frame->constantPool[index -
+      //     1]->getInfo(frame->constantPool).second;
+      // int j = 0;
+
+      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
+      //   j++;
+      // }
+      // string methodName = nameAndType.substr(0, j);
+      // string descriptor = nameAndType.substr(j + 3, nameAndType.size());
+
+      // if (className.compare("java/lang/String") == 0) {
+      //   if (methodName.compare("<init>") == 0) {
+      //     string* stringReference =
+      //         (string*)(frame->operandStack.top().type_reference);
+      //     frame->operandStack.pop();
+      //     string* initStringReference =
+      //         (string*)(frame->operandStack.top().type_reference);
+      //     frame->operandStack.pop();
+      //     *initStringReference = *stringReference;
+      //   } else {
+      //     printf("invokespecial: metodo da classe string desconhecido: %s\n",
+      //            methodName.c_str());
+      //     exit(0);
+      //   }
+      //   return ++frame->localPC;
+      // }
+      // if (className.compare("java/lang/StringBuilder") == 0) {
+      //   if (methodName.compare("<init>") == 0) {
+      //     frame->operandStack.pop();
+      //   }
+      //   return ++frame->localPC;
+      // }
+
+      // bool foundMethod = false;
+      // vector<CPInfo*> constantPool;
+      // MethodInfo* method;
+      // do {
+      //   ClassFile* classFile = methodArea->getClassFile(className);
+      //   constantPool = classFile->getConstantPool();
+      //   vector<MethodInfo*> methods = classFile->getMethods();
+
+      //   for (int i = 0; i < classFile->getMethodsCount() && !foundMethod;
+      //   i++) {
+      //     method = methods[i];
+      //     uint16_t nameIndex = method->getNameIndex();
+      //     uint16_t descriptorIndex = method->getDescriptorIndex();
+      //     string name = constantPool[nameIndex -
+      //     1]->getInfo(constantPool).first; string methodDescriptor =
+      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
+      //     if (name.compare(methodName) == 0 &&
+      //         methodDescriptor.compare(descriptor) == 0) {
+      //       foundMethod = true;
+      //     }
+      //   }
+
+      //   if (!foundMethod) {
+      //     if (classFile->getSuperClass() == 0) {
+      //       printf(
+      //           "invokespecial:  metodo nao foi encontrado em nenhuma
+      //           superclasse! " "Talvez esteja em uma interface, falta
+      //           Implementar!\n");
+      //     }
+      //     string className = constantPool[classFile->getSuperClass() - 1]
+      //                            ->getInfo(constantPool)
+      //                            .first;
+      //   }
+      // } while (!foundMethod);
+
+      // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+
+      // stack<JavaType> auxstack;
+
+      // for (int i = 1; descriptor[i] != ')'; i++) {
+      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+      //   } else if (descriptor[i] == 'L') {
+      //     while (descriptor[i] != ';') {
+      //       i++;
+      //     }
+      //   } else if (descriptor[i] == '[') {
+      //     while (descriptor[i] == '[') {
+      //       i++;
+      //     }
+      //     if (descriptor[i] == 'L') {
+      //       while (descriptor[i] != ';') {
+      //         i++;
+      //       }
+      //     }
+      //   } else {
+      //     cout << "Tipo de descritor nao reconhecido na contagem: " <<
+      //     descriptor[i]
+      //          << endl;
+      //     exit(0);
+      //   }
+      //   auxstack.push(frame->operandStack.top());
+      //   frame->operandStack.pop();
+      // }
+      // int argCnt = 1;
+      // for (int i = 1; descriptor[i] != ')'; i++) {
+      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt += 2;
+      //   } else if (descriptor[i] == 'L') {
+      //     int j = i;
+      //     while (descriptor[i] != ';') {
+      //       i++;
+      //     }
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else if (descriptor[i] == '[') {
+      //     while (descriptor[i] == '[') {
+      //       i++;
+      //     }
+      //     if (descriptor[i] == 'L') {
+      //       while (descriptor[i] != ';') {
+      //         i++;
+      //       }
+      //     }
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else {
+      //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i] <<
+      //     endl; exit(0);
+      //   }
+      // }
+      // JavaType objectref = frame->operandStack.top();
+      // frame->operandStack.pop();
+      // staticMethodFrame->localVariables[0] = objectref;
+
+      // frame->jvmStack->push(staticMethodFrame);
+      // frame->localPC++;
+      // return staticMethodFrame->localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case invokestatic: {
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      //     uint8_t* bytecode = frame->getCode();
+      // uint8_t byte1 = bytecode[++frame->localPC];
+      // uint8_t byte2 = bytecode[++frame->localPC];
+      // uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+      // MethodArea* methodArea = classLoader->getMethodArea();
+
+      // string className =
+      //     frame->constantPool[index - 1]->getInfo(frame->constantPool).first;
+      // string nameAndType =
+      //     frame->constantPool[index -
+      //     1]->getInfo(frame->constantPool).second;
+      // int j = 0;
+
+      // while (j < nameAndType.size() && nameAndType[j + 1] != ':') {
+      //   j++;
+      // }
+      // string methodName = nameAndType.substr(0, j);
+      // string descriptor = nameAndType.substr(j + 3, nameAndType.size());
+
+      // if (!methodArea->isClassInitialized(className)) {
+      //   methodArea->setClassAsInitialized(className);
+
+      //   ClassFile aux = classLoader->loadClassFile(className + ".class");
+      //   classLoader->loadSuperClasses(&aux);
+      //   ClassFile* classFile =
+      //   classLoader->getClassFromMethodArea(className); vector<CPInfo*>
+      //   constantPool = classFile->getConstantPool(); vector<MethodInfo*>
+      //   methods = classFile->getMethods(); MethodInfo* method;
+
+      //   bool foundClinit = false;
+      //   for (int i = 0; i < classFile->getMethodsCount() && !foundClinit;
+      //   i++) {
+      //     method = methods[i];
+      //     uint16_t nameIndex = method->getNameIndex();
+      //     uint16_t descriptorIndex = method->getDescriptorIndex();
+      //     string name = constantPool[nameIndex -
+      //     1]->getInfo(constantPool).first; string classDescriptor =
+      //         constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
+      //     if (name.compare("<clinit>") == 0 &&
+      //         classDescriptor.compare("()V") == 0) {
+      //       foundClinit = true;
+      //     }
+      //   }
+
+      //   if (foundClinit) {
+      //     Frame clinitMethodFrame(constantPool, method, frame->jvmStack);
+      //     frame->jvmStack->push(clinitMethodFrame);
+      //     frame->localPC -= 2;
+      //     return clinitMethodFrame->localPC;
+      //   }
+      // }
+
+      // ClassFile* classFile = methodArea->getClassFile(className);
+      // vector<CPInfo*> constantPool = classFile->getConstantPool();
+      // vector<MethodInfo*> methods = classFile->getMethods();
+      // MethodInfo* method;
+      // bool foundMethod = false;
+
+      // for (int i = 0; i < classFile->getMethodsCount() && !foundMethod; i++)
+      // {
+      //   method = methods[i];
+      //   uint16_t nameIndex = method->getNameIndex();
+      //   uint16_t descriptorIndex = method->getDescriptorIndex();
+      //   string name = constantPool[nameIndex -
+      //   1]->getInfo(constantPool).first; string classDescriptor =
+      //       constantPool[descriptorIndex - 1]->getInfo(constantPool).first;
+      //   if (name.compare(methodName) == 0 &&
+      //       classDescriptor.compare(descriptor) == 0) {
+      //     foundMethod = true;
+      //   }
+      // }
+
+      // if (!foundMethod) {
+      //   printf("Invokestatic: o método especificado nao foi encontrado!\n");
+      //   exit(0);
+      // }
+
+      // Frame staticMethodFrame(constantPool, method, frame->jvmStack);
+
+      // stack<JavaType> auxstack;
+
+      // for (int i = 1; descriptor[i] != ')'; i++) {
+      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+      //   } else if (descriptor[i] == 'L') {
+      //     while (descriptor[i] != ';') {
+      //       i++;
+      //     }
+      //   } else if (descriptor[i] == '[') {
+      //     while (descriptor[i] == '[') {
+      //       i++;
+      //     }
+      //     if (descriptor[i] == 'L') {
+      //       while (descriptor[i] != ';') {
+      //         i++;
+      //       }
+      //     }
+      //   } else {
+      //     cout << "Tipo de descritor nao reconhecido na contagem: " <<
+      //     descriptor[i]
+      //          << endl;
+      //     exit(0);
+      //   }
+      //   auxstack.push(frame->operandStack.top());
+      //   frame->operandStack.pop();
+      // }
+      // int argCnt = 0;
+      // for (int i = 1; descriptor[i] != ')'; i++) {
+      //   if (descriptor[i] == 'I' || descriptor[i] == 'F') {
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else if (descriptor[i] == 'J' || descriptor[i] == 'D') {
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt += 2;
+      //   } else if (descriptor[i] == 'L') {
+      //     int j = i;
+      //     while (descriptor[i] != ';') {
+      //       i++;
+      //     }
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else if (descriptor[i] == '[') {
+      //     while (descriptor[i] == '[') {
+      //       i++;
+      //     }
+      //     if (descriptor[i] == 'L') {
+      //       while (descriptor[i] != ';') {
+      //         i++;
+      //       }
+      //     }
+      //     JavaType arg = auxstack.top();
+      //     auxstack.pop();
+      //     staticMethodFrame->localVariables[argCnt] = arg;
+      //     argCnt++;
+      //   } else {
+      //     cout << "Tipo de descritor nao reconhecido: " << descriptor[i] <<
+      //     endl; exit(0);
+      //   }
+      // }
+
+      // frame->jvmStack->push(staticMethodFrame);
+      // frame->localPC++;
+      // return staticMethodFrame->localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case invokeinterface: {
       cout << "Instrucao invokeinterface nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case invokedynamic: {
       cout << "Instrucao invokedynamic nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case newOp: {
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
 
-      string className = getCPInfoFirst(frame.constantPool, index - 1);
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
 
       if (className.compare("java/lang/String") == 0) {
         JavaType objectref;
         objectref.type_reference = (uint64_t) new string("");
         objectref.tag = CAT1;
-        frame.operandStack.push(objectref);
+        frame->operandStack.push(objectref);
       } else if (className.compare("java/lang/StringBuilder") == 0) {
         JavaType objectref;
         objectref.type_reference = (uint64_t) new string("");
         objectref.tag = CAT1;
-        frame.operandStack.push(objectref);
+        frame->operandStack.push(objectref);
       } else {
         if (!isClassInitialized(className)) {
           setClassAsInitialized(className);
@@ -4196,9 +4621,9 @@ uint32_t func_exec(Frame& frame) {
 
           if (foundClinit) {
             Frame clinitMethodFrame =
-                createFrame(classFile.constantPool, method, frame.jvmStack);
-            frame.jvmStack->push(clinitMethodFrame);
-            frame.localPC -= 2;
+                createFrame(classFile.constantPool, method, frame->jvmStack);
+            frame->jvmStack->push(clinitMethodFrame);
+            frame->localPC -= 2;
             return clinitMethodFrame.localPC;
           }
         }
@@ -4207,18 +4632,17 @@ uint32_t func_exec(Frame& frame) {
         JavaType objectref;
         objectref.tag = CAT1;
         objectref.type_reference = (uint64_t)initializeFields();
-        frame.operandStack.push(objectref);
+        frame->operandStack.push(objectref);
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case newarray: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t atype = bytecode[frame.localPC + 1];
+      uint8_t atype = bytecode[frame->localPC + 1];
 
       JavaType count;
-      count.type_int = (int32_t)frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      count.type_int = (int32_t)frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       vector<JavaType>* array = new vector<JavaType>(count.type_int);
 
@@ -4269,13 +4693,14 @@ uint32_t func_exec(Frame& frame) {
       JavaType arrayref;
       arrayref.tag = CAT1;
       arrayref.type_reference = (uint64_t)array;
-      frame.operandStack.push(arrayref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(arrayref);
+
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case anewarray: {
-      int32_t count = (int32_t)frame.operandStack.top().type_int;
-      frame.operandStack.pop();
+      int32_t count = (int32_t)frame->operandStack.top().type_int;
+      frame->operandStack.pop();
 
       vector<JavaType>* array = new vector<JavaType>(count);
 
@@ -4287,135 +4712,135 @@ uint32_t func_exec(Frame& frame) {
       JavaType arrayref;
       arrayref.tag = CAT1;
       arrayref.type_reference = (uint64_t)array;
-      frame.operandStack.push(arrayref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(arrayref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case arraylength: {
-      JavaType arrayref = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType arrayref = frame->operandStack.top();
+      frame->operandStack.pop();
       vector<JavaType>* array = (vector<JavaType>*)arrayref.type_reference;
 
       JavaType length;
       length.tag = CAT1;
       length.type_int = (uint32_t)array->size();
-      frame.operandStack.push(length);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(length);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case athrow: {
       cout << "Instrucao athrow nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case checkcast: {
       cout << "Instrucao checkcast nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case instanceof: {
       cout << "Instrucao instanceof nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case monitorenter: {
       cout << "Instrucao monitorenter nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case monitorexit: {
       cout << "Instrucao monitorexit nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
 
     // Extended
     case wide: {
       cout << "Instrucao wide nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case multianewarray: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
-      uint8_t byte3 = bytecode[frame.localPC + 3];
+      uint8_t* bytecode = frame->codeAttribute.code;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
+      uint8_t byte3 = bytecode[frame->localPC + 3];
       uint16_t index = ((uint16_t)byte1 << 8) | byte2;
       uint32_t dimensions = byte3;
       vector<int> dimensionsArray;
 
       for (uint32_t i = 0; i < dimensions; i++) {
-        uint32_t dimension = frame.operandStack.top().type_int;
-        frame.operandStack.pop();
+        uint32_t dimension = frame->operandStack.top().type_int;
+        frame->operandStack.pop();
         if (dimension == 0) {
           break;
         }
         dimensionsArray.push_back(dimension);
       }
 
-      string className = getCPInfoFirst(frame.constantPool, index - 1);
+      string className = getCPInfoFirst(frame->constantPool, index - 1);
       vector<JavaType>* array = buildMultiAnewArray(
           dimensionsArray, dimensions - 1, className[className.size() - 1]);
 
       JavaType arrayref;
       arrayref.tag = CAT1;
       arrayref.type_reference = (uint64_t)array;
-      frame.operandStack.push(arrayref);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->operandStack.push(arrayref);
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifnull: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t* bytecode = frame->codeAttribute.code;
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if (value.type_reference == JAVA_NULL) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case ifnonnull: {
-      uint8_t* bytecode = frame.codeAttribute.code;
-      uint32_t baseAddress = frame.localPC;
-      uint8_t byte1 = bytecode[frame.localPC + 1];
-      uint8_t byte2 = bytecode[frame.localPC + 2];
+      uint8_t* bytecode = frame->codeAttribute.code;
+      uint32_t baseAddress = frame->localPC;
+      uint8_t byte1 = bytecode[frame->localPC + 1];
+      uint8_t byte2 = bytecode[frame->localPC + 2];
       int16_t branchOffset = ((int16_t)byte1 << 8) | byte2;
 
-      JavaType value = frame.operandStack.top();
-      frame.operandStack.pop();
+      JavaType value = frame->operandStack.top();
+      frame->operandStack.pop();
 
       if (value.type_reference != JAVA_NULL) {
-        frame.localPC = baseAddress + branchOffset;
-        return frame.localPC;
+        frame->localPC = baseAddress + branchOffset;
+        return frame->localPC;
       }
 
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case goto_w: {
       cout << "Instrucao goto_w nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     case jsr_w: {
       cout << "Instrucao jsr_w nao implementada ainda!" << endl;
       exit(0);
-      frame.localPC = frame.localPC + get_mnemonic(opcode).second + 1;
-      return frame.localPC;
+      frame->localPC = frame->localPC + get_mnemonic(opcode).second + 1;
+      return frame->localPC;
     }
     default:
       return 0;

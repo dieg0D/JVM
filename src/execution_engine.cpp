@@ -25,7 +25,7 @@ void findMainMethod() {
     uint16_t nameIndex = method.name_index;
     uint16_t descriptorIndex = method.descriptor_index;
     string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
-    
+
     string descriptor =
         getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
 
@@ -51,12 +51,12 @@ void execute() {
                                 executionEngine.mainMethod, &jvmStack);
 
   pushToJVMStack(mainFrame);
-  Frame currentFrame = getCurrentFrame();
-
+  // int contador = 0;
   do {
-    uint8_t* bytecode = currentFrame.codeAttribute.code;
+    Frame* currentFrame = getCurrentFrame();
+    uint8_t* bytecode = currentFrame->codeAttribute.code;
 
-    uint8_t opcode = bytecode[currentFrame.localPC];
+    uint8_t opcode = bytecode[currentFrame->localPC];
 
     jvmThread.pc += func_exec(currentFrame);
 
@@ -64,9 +64,14 @@ void execute() {
       popFromJVMStack();
       if (!isJVMStackEmpty()) {
         currentFrame = getCurrentFrame();
-        jvmThread.pc = currentFrame.localPC;
+        jvmThread.pc = currentFrame->localPC;
       }
     }
+    // contador++;
+
+    // if (contador >= 20) {
+    //   break;
+    // }
 
   } while (!isJVMStackEmpty());
 }

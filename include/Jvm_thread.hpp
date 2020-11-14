@@ -18,7 +18,7 @@ void popFromJVMStack();
 
 void incrementPcBy(uint32_t increment);
 
-Frame getCurrentFrame();
+Frame* getCurrentFrame();
 
 bool isJVMStackEmpty();
 

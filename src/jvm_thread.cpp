@@ -12,7 +12,7 @@ void popFromJVMStack() { jvmThread.javaVirtualMachineStack.pop(); }
 
 void incrementPcBy(uint32_t increment) { jvmThread.pc += increment; }
 
-Frame getCurrentFrame() { return (jvmThread.javaVirtualMachineStack.top()); }
+Frame* getCurrentFrame() { return (&jvmThread.javaVirtualMachineStack.top()); }
 
 bool isJVMStackEmpty() { return jvmThread.javaVirtualMachineStack.empty(); }
 
