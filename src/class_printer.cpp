@@ -642,6 +642,642 @@ unsigned int getData(vector<uint8_t> fileData, int begin, int end,
   return bitset<sizeof(size) * 8>(data).to_ulong();
 };
 
+void func_exec(Frame currentFrame) {
+  uint8_t* bytecode = currentFrame.codeAttribute.code;
+  uint8_t opcode = bytecode[jvmThread.pc];
+  uint32_t pc;
+
+  switch (opcode) {
+    // Constants
+    case nop: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aconst_null: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_m1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_4: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iconst_5: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lconst_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lconst_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fconst_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fconst_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fconst_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dconst_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dconst_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case bipush: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case sipush: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ldc: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ldc_w: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ldc2_w: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Loads
+    case iload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iload_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iload_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iload_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iload_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lload_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lload_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lload_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lload_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fload_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fload_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fload_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fload_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dload_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dload_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dload_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dload_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aload_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aload_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aload_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aload_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iaload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case laload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case faload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case daload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aaload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case baload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case caload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case saload: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Stores
+    case istore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lstore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fstore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dstore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case astore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case istore_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case istore_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case istore_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case istore_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lstore_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lstore_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lstore_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lstore_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fstore_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fstore_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fstore_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fstore_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dstore_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dstore_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dstore_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dstore_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case astore_0: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case astore_1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case astore_2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case astore_3: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case aastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case bastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case castore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case sastore: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Stack
+    case pop: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case pop2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup_x1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup_x2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup2_x1: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dup2_x2: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case swapOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Math
+    case iadd: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ladd: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fadd: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dadd: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case isub: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lsub: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fsub: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dsub: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case imul: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lmul: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fmul: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dmul: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case idiv: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ldivOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fdiv: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ddiv: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case irem: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lrem: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case frem: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dremOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ineg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lneg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fneg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dneg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ishl: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lshl: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ishr: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lshr: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iushr: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lushr: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iand: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case land: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ior: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lor: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ixor: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lxor: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iinc: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Conversions
+    case i2l: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case i2f: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case i2d: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case l2i: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case l2f: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case l2d: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case f2i: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case f2l: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case f2d: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case d2i: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case d2l: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case d2f: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case i2b: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case i2c: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case i2s: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Comparisons
+    case lcmp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fcmpl: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case fcmpg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dcmpl: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dcmpg: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifeq: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifne: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case iflt: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifge: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifgt: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifle: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmpeq: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmpne: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmplt: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmpge: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmpgt: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_icmple: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_acmpeq: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case if_acmpne: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Control
+    case gotoOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case jsr: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ret: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case tableswitch: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lookupswitch: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ireturn: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case lreturn: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case freturn: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case dreturn: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case areturn: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case returnOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // References
+    case getstatic: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case putstatic: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case getfield: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case putfield: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case invokevirtual: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case invokespecial: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case invokestatic: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case invokeinterface: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case invokedynamic: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case newOp: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case newarray: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case anewarray: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case arraylength: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case athrow: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case checkcast: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case instanceof: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case monitorenter: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case monitorexit: {
+      return get_mnemonic(opcode).second + 1;
+    }
+
+    // Extended
+    case wide: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case multianewarray: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifnull: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case ifnonnull: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case goto_w: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    case jsr_w: {
+      return get_mnemonic(opcode).second + 1;
+    }
+    default:
+      return 0;
+  }
+}
+
 void printAttributes(string attributeName, AttributeInfo attr_info) {
   if (attributeName == "Code") {
     cout << "Misc----------------" << endl << endl;
