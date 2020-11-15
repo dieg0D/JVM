@@ -1193,7 +1193,7 @@ uint32_t func_exec(Frame* frame) {
   uint8_t* bytecode = frame->codeAttribute.code;
   uint8_t opcode = bytecode[frame->localPC];
 
-  cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
+  // cout << frame->localPC << " " << get_mnemonic(opcode).first << endl;
   switch (opcode) {
     // Constants
     case nop: {

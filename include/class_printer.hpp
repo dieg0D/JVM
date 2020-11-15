@@ -18,11 +18,10 @@ void printFields();
 
 void printMethods();
 
-void printAttributes();
-
 void printClassFile();
 
 string getCPInfoFirst(vector<CPInfo> cp_info, int indice);
 pair<string, string> getCPInfoSecond(vector<CPInfo> cp_info, int indice);
+void printAttributes(string attributeName, AttributeInfo attr_info);
 
 #endif

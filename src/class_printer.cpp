@@ -642,639 +642,259 @@ unsigned int getData(vector<uint8_t> fileData, int begin, int end,
   return bitset<sizeof(size) * 8>(data).to_ulong();
 };
 
-void func_exec(Frame currentFrame) {
-  uint8_t* bytecode = currentFrame.codeAttribute.code;
-  uint8_t opcode = bytecode[jvmThread.pc];
-  uint32_t pc;
+void printCode(CodeAttribute attribute) {
+  cout << endl << "Bytecode-----------" << endl << endl;
+  int length = attribute.codeLength;
+  uint8_t *bytecode = attribute.code;
+  for (int i = 0; i < length; i++) {
+    uint8_t opcode = bytecode[i];
 
-  switch (opcode) {
-    // Constants
-    case nop: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aconst_null: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_m1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_4: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iconst_5: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lconst_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lconst_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fconst_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fconst_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fconst_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dconst_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dconst_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case bipush: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case sipush: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ldc: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ldc_w: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ldc2_w: {
-      return get_mnemonic(opcode).second + 1;
-    }
+    cout << i << " " << get_mnemonic(opcode).first << " ";
 
-    // Loads
-    case iload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iload_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iload_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iload_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iload_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lload_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lload_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lload_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lload_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fload_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fload_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fload_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fload_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dload_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dload_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dload_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dload_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aload_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aload_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aload_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aload_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iaload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case laload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case faload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case daload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aaload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case baload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case caload: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case saload: {
-      return get_mnemonic(opcode).second + 1;
-    }
+    if (opcode == wide) {
+      uint8_t modifiedOpcode = bytecode[++i];
+      cout << get_mnemonic(modifiedOpcode).first << " ";
 
-    // Stores
-    case istore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lstore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fstore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dstore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case astore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case istore_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case istore_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case istore_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case istore_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lstore_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lstore_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lstore_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lstore_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fstore_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fstore_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fstore_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fstore_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dstore_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dstore_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dstore_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dstore_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case astore_0: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case astore_1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case astore_2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case astore_3: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case aastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case bastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case castore: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case sastore: {
-      return get_mnemonic(opcode).second + 1;
-    }
+      if ((modifiedOpcode >= iload && modifiedOpcode <= aload) ||
+          (modifiedOpcode >= istore && modifiedOpcode <= astore) ||
+          (modifiedOpcode == ret)) {
+        uint8_t indexbyte1 = bytecode[++i];
+        uint8_t indexbyte2 = bytecode[++i];
+        uint16_t index = (indexbyte1 << 8) | indexbyte2;
 
-    // Stack
-    case pop: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case pop2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup_x1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup_x2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup2_x1: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dup2_x2: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case swapOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
+        cout << index << endl;
+      } else if (modifiedOpcode == iinc) {
+        uint8_t indexbyte1 = bytecode[++i];
+        uint8_t indexbyte2 = bytecode[++i];
+        uint16_t index = (indexbyte1 << 8) | indexbyte2;
 
-    // Math
-    case iadd: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ladd: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fadd: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dadd: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case isub: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lsub: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fsub: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dsub: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case imul: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lmul: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fmul: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dmul: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case idiv: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ldivOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fdiv: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ddiv: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case irem: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lrem: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case frem: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dremOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ineg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lneg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fneg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dneg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ishl: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lshl: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ishr: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lshr: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iushr: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lushr: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iand: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case land: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ior: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lor: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ixor: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lxor: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iinc: {
-      return get_mnemonic(opcode).second + 1;
-    }
+        uint8_t constbyte1 = bytecode[++i];
+        uint8_t constbyte2 = bytecode[++i];
+        int16_t constImmediate = (constbyte1 << 8) | constbyte2;
+        cout << index << " by " << constImmediate << endl;
+      }
+    } else if (opcode == tableswitch) {
+      int baseAddress = i;
+      i++;
+      while (i % 4 != 0) {
+        i++;
+      }
 
-    // Conversions
-    case i2l: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case i2f: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case i2d: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case l2i: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case l2f: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case l2d: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case f2i: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case f2l: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case f2d: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case d2i: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case d2l: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case d2f: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case i2b: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case i2c: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case i2s: {
-      return get_mnemonic(opcode).second + 1;
-    }
+      uint8_t defaultByte1 = bytecode[i++];
+      uint8_t defaultByte2 = bytecode[i++];
+      uint8_t defaultByte3 = bytecode[i++];
+      uint8_t defaultByte4 = bytecode[i++];
+      int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
+                             (defaultByte3 << 8) | defaultByte4;
 
-    // Comparisons
-    case lcmp: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fcmpl: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case fcmpg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dcmpl: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dcmpg: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifeq: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifne: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case iflt: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifge: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifgt: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifle: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmpeq: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmpne: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmplt: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmpge: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmpgt: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_icmple: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_acmpeq: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case if_acmpne: {
-      return get_mnemonic(opcode).second + 1;
-    }
+      uint8_t lowByte1 = bytecode[i++];
+      uint8_t lowByte2 = bytecode[i++];
+      uint8_t lowByte3 = bytecode[i++];
+      uint8_t lowByte4 = bytecode[i++];
+      int32_t low =
+          (lowByte1 << 24) | (lowByte2 << 16) | (lowByte3 << 8) | lowByte4;
 
-    // Control
-    case gotoOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case jsr: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ret: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case tableswitch: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lookupswitch: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ireturn: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case lreturn: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case freturn: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case dreturn: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case areturn: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case returnOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
+      uint8_t highByte1 = bytecode[i++];
+      uint8_t highByte2 = bytecode[i++];
+      uint8_t highByte3 = bytecode[i++];
+      uint8_t highByte4 = bytecode[i++];
+      int32_t high =
+          (highByte1 << 24) | (highByte2 << 16) | (highByte3 << 8) | highByte4;
 
-    // References
-    case getstatic: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case putstatic: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case getfield: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case putfield: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case invokevirtual: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case invokespecial: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case invokestatic: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case invokeinterface: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case invokedynamic: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case newOp: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case newarray: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case anewarray: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case arraylength: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case athrow: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case checkcast: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case instanceof: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case monitorenter: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case monitorexit: {
-      return get_mnemonic(opcode).second + 1;
-    }
+      cout << low << " to " << high << endl;
 
-    // Extended
-    case wide: {
-      return get_mnemonic(opcode).second + 1;
+      for (int j = low; j <= high; j++) {
+        uint8_t jumpByte1 = bytecode[i++];
+        uint8_t jumpByte2 = bytecode[i++];
+        uint8_t jumpByte3 = bytecode[i++];
+        uint8_t jumpByte4 = bytecode[i++];
+        int32_t jump = (jumpByte1 << 24) | (jumpByte2 << 16) |
+                       (jumpByte3 << 8) | jumpByte4;
+
+        string sign = jump > 0 ? "+" : "";
+        printf("\t%d:    %d (%s%d)\n", j, baseAddress + jump, sign.c_str(),
+               jump);
+      }
+      string sign = defaultValue > 0 ? "+" : "";
+      printf("\tdefault:    %d (%s%d)\n", baseAddress + defaultValue,
+             sign.c_str(), defaultValue);
+      i--;
+    } else if (opcode == lookupswitch) {
+      int baseAddress = i;
+      i++;
+      while (i % 4 != 0) {
+        i++;
+      }
+
+      uint8_t defaultByte1 = bytecode[i++];
+      uint8_t defaultByte2 = bytecode[i++];
+      uint8_t defaultByte3 = bytecode[i++];
+      uint8_t defaultByte4 = bytecode[i++];
+      int32_t defaultValue = (defaultByte1 << 24) | (defaultByte2 << 16) |
+                             (defaultByte3 << 8) | defaultByte4;
+
+      uint8_t npairs1 = bytecode[i++];
+      uint8_t npairs2 = bytecode[i++];
+      uint8_t npairs3 = bytecode[i++];
+      uint8_t npairs4 = bytecode[i++];
+      int32_t npairs =
+          (npairs1 << 24) | (npairs2 << 16) | (npairs3 << 8) | npairs4;
+      cout << npairs << endl;
+
+      for (int j = 0; j < npairs; j++) {
+        uint8_t matchByte1 = bytecode[i++];
+        uint8_t matchByte2 = bytecode[i++];
+        uint8_t matchByte3 = bytecode[i++];
+        uint8_t matchByte4 = bytecode[i++];
+        int32_t match = (matchByte1 << 24) | (matchByte2 << 16) |
+                        (matchByte3 << 8) | matchByte4;
+        uint8_t offsetByte1 = bytecode[i++];
+        uint8_t offsetByte2 = bytecode[i++];
+        uint8_t offsetByte3 = bytecode[i++];
+        uint8_t offsetByte4 = bytecode[i++];
+        int32_t offset = (offsetByte1 << 24) | (offsetByte2 << 16) |
+                         (offsetByte3 << 8) | offsetByte4;
+        string sign = offset > 0 ? "+" : "";
+        printf("\t%d:    %d (%s%d)\n", match, baseAddress + offset,
+               sign.c_str(), offset);
+      }
+      string sign = defaultValue > 0 ? "+" : "";
+      printf("\tdefault:    %d (%s%d)\n", baseAddress + defaultValue,
+             sign.c_str(), defaultValue);
+      i--;
     }
-    case multianewarray: {
-      return get_mnemonic(opcode).second + 1;
+    // Operacoes que nao tem bytes adicionais
+    else if (get_mnemonic(opcode).second == 0) {
+      cout << endl;
+    } else if (get_mnemonic(opcode).second == 1) {
+      uint8_t byte = bytecode[++i];
+
+      // Operacoes que exigem referencia a constant pool
+      if (opcode == ldc) {
+        uint8_t index = byte;
+        cout << "#" << +index << " <"
+             << getCPInfoFirst(classFile.constantPool, index - 1) << ">"
+             << endl;
+      } else if ((opcode == bipush)) {
+        int32_t value = (int8_t)byte;
+        cout << value << endl;
+      } else if ((opcode >= iload && opcode <= aload) ||
+                 (opcode >= istore && opcode <= astore) || (opcode == ret)) {
+        uint8_t index = byte;
+        cout << +index << endl;
+      } else if (opcode == newarray) {
+        int atype = byte;
+        cout << atype << " ";
+        switch (atype) {
+          case T_BOOLEAN:
+            cout << "(bool)";
+            break;
+          case T_CHAR:
+            cout << "(char)";
+            break;
+          case T_FLOAT:
+            cout << "(float)";
+            break;
+          case T_DOUBLE:
+            cout << "(double)";
+            break;
+          case T_BYTE:
+            cout << "(byte)";
+            break;
+          case T_SHORT:
+            cout << "(short)";
+            break;
+          case T_INT:
+            cout << "(int)";
+            break;
+          case T_LONG:
+            cout << "(long)";
+            break;
+        }
+        cout << endl;
+      }
+    } else if (get_mnemonic(opcode).second == 2) {
+      uint8_t byte1 = bytecode[++i];
+      uint8_t byte2 = bytecode[++i];
+      if (opcode == sipush) {
+        int16_t immediate = ((int16_t)byte1 << 8) | byte2;
+        cout << immediate << endl;
+      } else if (opcode == iinc) {
+        uint8_t index = byte1;
+        int8_t constImmediate = byte2;
+        cout << +index << " by " << +constImmediate << endl;
+      } else if ((opcode >= ifeq && opcode <= jsr) || (opcode == ifnull) ||
+                 (opcode == ifnonnull)) {
+        int16_t offset = ((int16_t)byte1 << 8) | byte2;
+        int index = i - 2 + offset;
+        string sign = offset > 0 ? "+" : "";
+
+        cout << index << " (" << sign << offset << ")" << endl;
+      } else if ((opcode >= getstatic && opcode <= invokestatic)) {
+        uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+        string methodName = getCPInfoFirst(classFile.constantPool, index - 1);
+
+        string descriptor =
+            getCPInfoSecond(classFile.constantPool, index - 1).second;
+
+        cout << "#" << index << " <" << methodName << "." << descriptor << ">"
+             << endl;
+      } else if ((opcode == ldc_w) || (opcode == ldc2_w) || (opcode == newOp) ||
+                 (opcode == anewarray) || (opcode == checkcast) ||
+                 (opcode == instanceof)) {
+        uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+        string className = getCPInfoFirst(classFile.constantPool, index - 1);
+        cout << "#" << index << " <" << className << ">" << endl;
+      }
+    } else if (get_mnemonic(opcode).second == 3) {
+      uint8_t byte1 = bytecode[++i];
+      uint8_t byte2 = bytecode[++i];
+      uint8_t byte3 = bytecode[++i];
+      if (opcode == multianewarray) {
+        uint16_t index = ((uint16_t)byte1 << 8) | byte2;
+        uint8_t dimensions = byte3;
+
+        cout << "#" << index << " <"
+             << getCPInfoFirst(classFile.constantPool, index - 1) << "> "
+             << "dim " << +dimensions << endl;
+      }
+    } else if (get_mnemonic(opcode).second == 4) {
+      uint8_t byte1 = bytecode[++i];
+      uint8_t byte2 = bytecode[++i];
+      uint8_t byte3 = bytecode[++i];
+      uint8_t byte4 = bytecode[++i];
+
+      if (opcode == goto_w || opcode == jsr_w) {
+        int32_t offset = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+        int index = i - 2 + offset;
+        string sign = offset > 0 ? "+" : "";
+
+        cout << index << " (" << sign << offset << ")" << endl;
+      } else if ((opcode == invokeinterface || opcode == invokedynamic)) {
+        int16_t index = ((int16_t)byte1 << 8) | byte2;
+        string methodName = getCPInfoFirst(classFile.constantPool, index - 1);
+
+        string descriptor =
+            getCPInfoSecond(classFile.constantPool, index - 1).second;
+        cout << "#" << index << " <" << methodName << "." << descriptor << ">"
+             << endl;
+      }
     }
-    case ifnull: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case ifnonnull: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case goto_w: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    case jsr_w: {
-      return get_mnemonic(opcode).second + 1;
-    }
-    default:
-      return 0;
+  }
+
+  for (int j = 0; j < attribute.attributesCount; j++) {
+    string name =
+        getCPInfoFirst(classFile.constantPool,
+                       attribute.attributes[j].attribute_name_index - 1);
+    cout << endl << "\t [" << j << "] " << name << endl;
+    cout << "\t\t Attribute name index: \tcp_info#"
+         << attribute.attributes[j].attribute_name_index << " <" << name << ">"
+         << endl;
+    cout << "\t\t Attribute length:     \t" << dec
+         << attribute.attributes[j].attribute_length << endl;
+    cout << "Specific info --------------------------------------------" << endl
+         << endl;
+    printAttributes(name, attribute.attributes[j]);
   }
 }
 
@@ -1284,9 +904,50 @@ void printAttributes(string attributeName, AttributeInfo attr_info) {
     cout << "Max Stack:               " << attr_info.code.maxStack << endl;
     cout << "Maximum local variables: " << attr_info.code.maxLocals << endl;
     cout << "Code Length:             " << attr_info.code.codeLength << endl;
+    printCode(attr_info.code);
   } else if (attributeName == "ConstantValue") {
+    cout << "Constante value Index: cp info #"
+         << attr_info.constantValue.constantValueIndex << " "
+         << getCPInfoFirst(classFile.constantPool,
+                           attr_info.constantValue.constantValueIndex - 1)
+         << endl;
   } else if (attributeName == "Exceptions") {
+    ExceptionsAttribute exceptionTable = attr_info.exceptions;
+
+    printf("Nr.\tException\tVerbose\n");
+
+    for (int i = 0; i < attr_info.exceptions.numberOfExceptions; i++) {
+      uint16_t exceptionIndex = exceptionTable.execeptionIndexTable;
+      string verbose =
+          getCPInfoFirst(classFile.constantPool, exceptionIndex - 1);
+
+      printf("%d\tcp_info #%d\t%s\n", i, exceptionIndex, verbose.c_str());
+    }
   } else if (attributeName == "InnerClasses") {
+    ClassInfo *classes = attr_info.innerClasses.classes;
+
+    printf("Nr.\tInner Class\t\tOuter Class\tInner Name\tAccess Flags\n");
+
+    for (int i = 0; i < attr_info.innerClasses.numberOfClasses; i++) {
+      uint16_t innerClassInfoIndex = classes[i].innerClassInfoIndex;
+      uint16_t outerClassInfoIndex = classes[i].outerClassInfoIndex;
+      uint16_t innerNameIndex = classes[i].innerNameIndex;
+      uint16_t innerClassAccessFlags = classes[i].innerClassAccessFlags;
+      string innerClassName =
+          getCPInfoFirst(classFile.constantPool, innerClassInfoIndex - 1);
+      string outerClassName =
+          getCPInfoFirst(classFile.constantPool, outerClassInfoIndex - 1);
+      string innerName =
+          getCPInfoFirst(classFile.constantPool, innerNameIndex - 1);
+      string flags = accessFlagsDecoder(innerClassAccessFlags, 0);
+
+      printf("%d\tcp_info #%d\t\tcp_info #%d\tcp_info#%d\t0x%04x ", i,
+             innerClassInfoIndex, outerClassInfoIndex, innerNameIndex,
+             innerClassAccessFlags);
+      cout << flags << endl;
+      printf("\t%s\t%s\t%s\n", innerClassName.c_str(), outerClassName.c_str(),
+             innerName.c_str());
+    }
   } else if (attributeName == "SourceFile") {
     cout << "Source File name index:     cp_info# "
          << attr_info.sourceFile.sourcefileIndex << " <"
@@ -1294,9 +955,38 @@ void printAttributes(string attributeName, AttributeInfo attr_info) {
                            attr_info.sourceFile.sourcefileIndex - 1)
          << ">" << endl;
     ;
-
   } else if (attributeName == "LineNumberTable") {
+    uint16_t lineNumberTableLength =
+        attr_info.lineNumberTable.lineNumberTableLength;
+    LineNumber *lineNumberTable = attr_info.lineNumberTable.lineNumberTable;
+
+    printf("Nr.\tStart PC\tLineNumber\n");
+    for (int i = 0; i < lineNumberTableLength; i++) {
+      printf("%d\t%d\t\t%d\n", i, lineNumberTable[i].startPC,
+             lineNumberTable[i].lineNumber);
+    }
   } else if (attributeName == "LocalVariableTable") {
+    uint16_t localVariableTableLength =
+        attr_info.localVariableTable.localVariableTableLength;
+    LocalVariable *localVariableTable =
+        attr_info.localVariableTable.localVariableTable;
+
+    printf("Nr.\tStart PC\tLength\tIndex\tName\t\t\tDescriptor\n");
+    for (int i = 0; i < localVariableTableLength; i++) {
+      uint16_t startPC = localVariableTable[i].startPC;
+      uint16_t length = localVariableTable[i].length;
+      uint16_t index = localVariableTable[i].index;
+      uint16_t nameIndex = localVariableTable[i].nameIndex;
+      uint16_t descriptorIndex = localVariableTable[i].descriptorIndex;
+      string name = getCPInfoFirst(classFile.constantPool, nameIndex - 1);
+      string descriptor =
+          getCPInfoFirst(classFile.constantPool, descriptorIndex - 1);
+
+      printf("%d\t%d\t\t%d\t%d\tcp_info #%d\t\tcp_info #%d\n", i, startPC,
+             length, index, nameIndex, descriptorIndex);
+      printf("\t\t\t\t\t\t\t\t%s\r\t\t\t\t\t%s\n", descriptor.c_str(),
+             name.c_str());
+    }
   }
 }
 
@@ -1531,6 +1221,10 @@ void printFields() {
            << name << ">" << endl;
       cout << "\t\t Attribute length:     \t" << dec
            << classFile.fields[i].attributes[j].attribute_length << endl;
+      cout << "Specific info --------------------------------------------"
+           << endl
+           << endl;
+      printAttributes(name, classFile.methods[i].attributes[j]);
     }
 
     cout << endl;
@@ -1567,7 +1261,9 @@ void printMethods() {
            << name << ">" << endl;
       cout << "\t\t Attribute length:     \t" << dec
            << classFile.methods[i].attributes[j].attribute_length << endl;
-
+      cout << "Specific info --------------------------------------------"
+           << endl
+           << endl;
       printAttributes(name, classFile.methods[i].attributes[j]);
     }
 
